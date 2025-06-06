@@ -164,7 +164,7 @@ TrayState trayState(Ref ref) {
       )
       .value;
   final brightness = ref.watch(
-    appBrightnessProvider,
+    systemBrightnessProvider,
   );
 
   final selectedMap = ref.watch(selectedMapProvider);
@@ -644,6 +644,18 @@ VM3<String?, String?, Dns?> needSetup(Ref ref) {
     b: content,
     c: dns,
   );
+}
+
+@riverpod
+Brightness currentBrightness(Ref ref) {
+  final themeMode =
+      ref.watch(themeSettingProvider.select((state) => state.themeMode));
+  final systemBrightness = ref.watch(systemBrightnessProvider);
+  return switch (themeMode) {
+    ThemeMode.system => systemBrightness,
+    ThemeMode.light => Brightness.light,
+    ThemeMode.dark => Brightness.dark,
+  };
 }
 
 @riverpod
