@@ -126,7 +126,7 @@ final proxyStateProvider = AutoDisposeProvider<ProxyState>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ProxyStateRef = AutoDisposeProviderRef<ProxyState>;
-String _$trayStateHash() => r'61c99bbae2cb7ed69dc9ee0f2149510eb6a87df4';
+String _$trayStateHash() => r'2237a7dbf8fd66a0618e3d9caf99667857e6fd4d';
 
 /// See also [trayState].
 @ProviderFor(trayState)
@@ -1992,6 +1992,23 @@ final needSetupProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef NeedSetupRef = AutoDisposeProviderRef<VM3<String?, String?, Dns?>>;
+String _$currentBrightnessHash() => r'ab56c47af4fcae773c8f9f81c91800c1e1890b70';
+
+/// See also [currentBrightness].
+@ProviderFor(currentBrightness)
+final currentBrightnessProvider = AutoDisposeProvider<Brightness>.internal(
+  currentBrightness,
+  name: r'currentBrightnessProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$currentBrightnessHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef CurrentBrightnessRef = AutoDisposeProviderRef<Brightness>;
 String _$autoSetSystemDnsStateHash() =>
     r'2e0976e079100325b1ca797285df48a94c2c066c';
 
