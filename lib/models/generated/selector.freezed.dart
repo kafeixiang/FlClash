@@ -1569,43 +1569,46 @@ abstract class _TrayState implements TrayState {
 }
 
 /// @nodoc
-mixin _$HomeState {
+mixin _$NavigationState {
   PageLabel get pageLabel => throw _privateConstructorUsedError;
   List<NavigationItem> get navigationItems =>
       throw _privateConstructorUsedError;
   ViewMode get viewMode => throw _privateConstructorUsedError;
   String? get locale => throw _privateConstructorUsedError;
+  int get currentIndex => throw _privateConstructorUsedError;
 
-  /// Create a copy of HomeState
+  /// Create a copy of NavigationState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $HomeStateCopyWith<HomeState> get copyWith =>
+  $NavigationStateCopyWith<NavigationState> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $HomeStateCopyWith<$Res> {
-  factory $HomeStateCopyWith(HomeState value, $Res Function(HomeState) then) =
-      _$HomeStateCopyWithImpl<$Res, HomeState>;
+abstract class $NavigationStateCopyWith<$Res> {
+  factory $NavigationStateCopyWith(
+          NavigationState value, $Res Function(NavigationState) then) =
+      _$NavigationStateCopyWithImpl<$Res, NavigationState>;
   @useResult
   $Res call(
       {PageLabel pageLabel,
       List<NavigationItem> navigationItems,
       ViewMode viewMode,
-      String? locale});
+      String? locale,
+      int currentIndex});
 }
 
 /// @nodoc
-class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
-    implements $HomeStateCopyWith<$Res> {
-  _$HomeStateCopyWithImpl(this._value, this._then);
+class _$NavigationStateCopyWithImpl<$Res, $Val extends NavigationState>
+    implements $NavigationStateCopyWith<$Res> {
+  _$NavigationStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of HomeState
+  /// Create a copy of NavigationState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -1614,6 +1617,7 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
     Object? navigationItems = null,
     Object? viewMode = null,
     Object? locale = freezed,
+    Object? currentIndex = null,
   }) {
     return _then(_value.copyWith(
       pageLabel: null == pageLabel
@@ -1632,34 +1636,39 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
           ? _value.locale
           : locale // ignore: cast_nullable_to_non_nullable
               as String?,
+      currentIndex: null == currentIndex
+          ? _value.currentIndex
+          : currentIndex // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$HomeStateImplCopyWith<$Res>
-    implements $HomeStateCopyWith<$Res> {
-  factory _$$HomeStateImplCopyWith(
-          _$HomeStateImpl value, $Res Function(_$HomeStateImpl) then) =
-      __$$HomeStateImplCopyWithImpl<$Res>;
+abstract class _$$NavigationStateImplCopyWith<$Res>
+    implements $NavigationStateCopyWith<$Res> {
+  factory _$$NavigationStateImplCopyWith(_$NavigationStateImpl value,
+          $Res Function(_$NavigationStateImpl) then) =
+      __$$NavigationStateImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
       {PageLabel pageLabel,
       List<NavigationItem> navigationItems,
       ViewMode viewMode,
-      String? locale});
+      String? locale,
+      int currentIndex});
 }
 
 /// @nodoc
-class __$$HomeStateImplCopyWithImpl<$Res>
-    extends _$HomeStateCopyWithImpl<$Res, _$HomeStateImpl>
-    implements _$$HomeStateImplCopyWith<$Res> {
-  __$$HomeStateImplCopyWithImpl(
-      _$HomeStateImpl _value, $Res Function(_$HomeStateImpl) _then)
+class __$$NavigationStateImplCopyWithImpl<$Res>
+    extends _$NavigationStateCopyWithImpl<$Res, _$NavigationStateImpl>
+    implements _$$NavigationStateImplCopyWith<$Res> {
+  __$$NavigationStateImplCopyWithImpl(
+      _$NavigationStateImpl _value, $Res Function(_$NavigationStateImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of HomeState
+  /// Create a copy of NavigationState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -1668,8 +1677,9 @@ class __$$HomeStateImplCopyWithImpl<$Res>
     Object? navigationItems = null,
     Object? viewMode = null,
     Object? locale = freezed,
+    Object? currentIndex = null,
   }) {
-    return _then(_$HomeStateImpl(
+    return _then(_$NavigationStateImpl(
       pageLabel: null == pageLabel
           ? _value.pageLabel
           : pageLabel // ignore: cast_nullable_to_non_nullable
@@ -1686,18 +1696,23 @@ class __$$HomeStateImplCopyWithImpl<$Res>
           ? _value.locale
           : locale // ignore: cast_nullable_to_non_nullable
               as String?,
+      currentIndex: null == currentIndex
+          ? _value.currentIndex
+          : currentIndex // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
 
 /// @nodoc
 
-class _$HomeStateImpl implements _HomeState {
-  const _$HomeStateImpl(
+class _$NavigationStateImpl implements _NavigationState {
+  const _$NavigationStateImpl(
       {required this.pageLabel,
       required final List<NavigationItem> navigationItems,
       required this.viewMode,
-      required this.locale})
+      required this.locale,
+      required this.currentIndex})
       : _navigationItems = navigationItems;
 
   @override
@@ -1714,45 +1729,56 @@ class _$HomeStateImpl implements _HomeState {
   final ViewMode viewMode;
   @override
   final String? locale;
+  @override
+  final int currentIndex;
 
   @override
   String toString() {
-    return 'HomeState(pageLabel: $pageLabel, navigationItems: $navigationItems, viewMode: $viewMode, locale: $locale)';
+    return 'NavigationState(pageLabel: $pageLabel, navigationItems: $navigationItems, viewMode: $viewMode, locale: $locale, currentIndex: $currentIndex)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$HomeStateImpl &&
+            other is _$NavigationStateImpl &&
             (identical(other.pageLabel, pageLabel) ||
                 other.pageLabel == pageLabel) &&
             const DeepCollectionEquality()
                 .equals(other._navigationItems, _navigationItems) &&
             (identical(other.viewMode, viewMode) ||
                 other.viewMode == viewMode) &&
-            (identical(other.locale, locale) || other.locale == locale));
+            (identical(other.locale, locale) || other.locale == locale) &&
+            (identical(other.currentIndex, currentIndex) ||
+                other.currentIndex == currentIndex));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, pageLabel,
-      const DeepCollectionEquality().hash(_navigationItems), viewMode, locale);
+  int get hashCode => Object.hash(
+      runtimeType,
+      pageLabel,
+      const DeepCollectionEquality().hash(_navigationItems),
+      viewMode,
+      locale,
+      currentIndex);
 
-  /// Create a copy of HomeState
+  /// Create a copy of NavigationState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$HomeStateImplCopyWith<_$HomeStateImpl> get copyWith =>
-      __$$HomeStateImplCopyWithImpl<_$HomeStateImpl>(this, _$identity);
+  _$$NavigationStateImplCopyWith<_$NavigationStateImpl> get copyWith =>
+      __$$NavigationStateImplCopyWithImpl<_$NavigationStateImpl>(
+          this, _$identity);
 }
 
-abstract class _HomeState implements HomeState {
-  const factory _HomeState(
+abstract class _NavigationState implements NavigationState {
+  const factory _NavigationState(
       {required final PageLabel pageLabel,
       required final List<NavigationItem> navigationItems,
       required final ViewMode viewMode,
-      required final String? locale}) = _$HomeStateImpl;
+      required final String? locale,
+      required final int currentIndex}) = _$NavigationStateImpl;
 
   @override
   PageLabel get pageLabel;
@@ -1762,12 +1788,14 @@ abstract class _HomeState implements HomeState {
   ViewMode get viewMode;
   @override
   String? get locale;
+  @override
+  int get currentIndex;
 
-  /// Create a copy of HomeState
+  /// Create a copy of NavigationState
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$HomeStateImplCopyWith<_$HomeStateImpl> get copyWith =>
+  _$$NavigationStateImplCopyWith<_$NavigationStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 

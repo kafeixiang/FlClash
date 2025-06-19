@@ -40,43 +40,44 @@ final currentGroupsStateProvider = AutoDisposeProvider<GroupsState>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef CurrentGroupsStateRef = AutoDisposeProviderRef<GroupsState>;
-String _$navigationsStateHash() => r'802ae70cc8b7d7f5620b340911da89d74960bfbd';
+String _$navigationItemsStateHash() =>
+    r'86590cfcac54b31ee30a9eca4d66afcd9edd5403';
 
-/// See also [navigationsState].
-@ProviderFor(navigationsState)
-final navigationsStateProvider =
+/// See also [navigationItemsState].
+@ProviderFor(navigationItemsState)
+final navigationItemsStateProvider =
     AutoDisposeProvider<NavigationItemsState>.internal(
-  navigationsState,
-  name: r'navigationsStateProvider',
+  navigationItemsState,
+  name: r'navigationItemsStateProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$navigationsStateHash,
+      : _$navigationItemsStateHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef NavigationsStateRef = AutoDisposeProviderRef<NavigationItemsState>;
-String _$currentNavigationsStateHash() =>
-    r'0eecc0ffef6e000ae45e069d1ad79f4da4a8f082';
+typedef NavigationItemsStateRef = AutoDisposeProviderRef<NavigationItemsState>;
+String _$currentNavigationItemsStateHash() =>
+    r'06fbdc194f4527b945695fe3b72b16e0585fa440';
 
-/// See also [currentNavigationsState].
-@ProviderFor(currentNavigationsState)
-final currentNavigationsStateProvider =
+/// See also [currentNavigationItemsState].
+@ProviderFor(currentNavigationItemsState)
+final currentNavigationItemsStateProvider =
     AutoDisposeProvider<NavigationItemsState>.internal(
-  currentNavigationsState,
-  name: r'currentNavigationsStateProvider',
+  currentNavigationItemsState,
+  name: r'currentNavigationItemsStateProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$currentNavigationsStateHash,
+      : _$currentNavigationItemsStateHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef CurrentNavigationsStateRef
+typedef CurrentNavigationItemsStateRef
     = AutoDisposeProviderRef<NavigationItemsState>;
 String _$coreStateHash() => r'33f01ee9173525862c89522bf73b3174beb63daa';
 
@@ -158,22 +159,23 @@ final vpnStateProvider = AutoDisposeProvider<VpnState>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef VpnStateRef = AutoDisposeProviderRef<VpnState>;
-String _$homeStateHash() => r'2829f5d6a8548f8a97253a5437bf5c498b17c9ba';
+String _$navigationStateHash() => r'657dc47ecc35ba0807b58cb37e7f1baa14f6c2f9';
 
-/// See also [homeState].
-@ProviderFor(homeState)
-final homeStateProvider = AutoDisposeProvider<HomeState>.internal(
-  homeState,
-  name: r'homeStateProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$homeStateHash,
+/// See also [navigationState].
+@ProviderFor(navigationState)
+final navigationStateProvider = AutoDisposeProvider<NavigationState>.internal(
+  navigationState,
+  name: r'navigationStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$navigationStateHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef HomeStateRef = AutoDisposeProviderRef<HomeState>;
+typedef NavigationStateRef = AutoDisposeProviderRef<NavigationState>;
 String _$dashboardStateHash() => r'4434206df2753d7df9eb5223c07ddead4ed170fa';
 
 /// See also [dashboardState].
@@ -484,7 +486,7 @@ final packageListSelectorStateProvider =
 typedef PackageListSelectorStateRef
     = AutoDisposeProviderRef<PackageListSelectorState>;
 String _$moreToolsSelectorStateHash() =>
-    r'd27e3eceec2422ad6b6231cf52b892e63c67e365';
+    r'6329d92652135e2af009dddeac590b4369d2fa04';
 
 /// See also [moreToolsSelectorState].
 @ProviderFor(moreToolsSelectorState)

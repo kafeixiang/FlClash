@@ -62,7 +62,7 @@ GroupsState currentGroupsState(Ref ref) {
 }
 
 @riverpod
-NavigationItemsState navigationsState(Ref ref) {
+NavigationItemsState navigationItemsState(Ref ref) {
   final openLogs = ref.watch(appSettingProvider).openLogs;
   final hasProxies = ref.watch(
       currentGroupsStateProvider.select((state) => state.value.isNotEmpty));
@@ -75,9 +75,9 @@ NavigationItemsState navigationsState(Ref ref) {
 }
 
 @riverpod
-NavigationItemsState currentNavigationsState(Ref ref) {
+NavigationItemsState currentNavigationItemsState(Ref ref) {
   final viewWidth = ref.watch(viewWidthProvider);
-  final navigationItemsState = ref.watch(navigationsStateProvider);
+  final navigationItemsState = ref.watch(navigationItemsStateProvider);
   final navigationItemMode = switch (viewWidth <= maxMobileWidth) {
     true => NavigationItemMode.mobile,
     false => NavigationItemMode.desktop,
@@ -197,16 +197,21 @@ VpnState vpnState(Ref ref) {
 }
 
 @riverpod
-HomeState homeState(Ref ref) {
+NavigationState navigationState(Ref ref) {
   final pageLabel = ref.watch(currentPageLabelProvider);
-  final navigationItems = ref.watch(currentNavigationsStateProvider).value;
+  final navigationItems = ref.watch(currentNavigationItemsStateProvider).value;
   final viewMode = ref.watch(viewModeProvider);
   final locale = ref.watch(appSettingProvider).locale;
-  return HomeState(
+  final index = navigationItems.lastIndexWhere(
+    (element) => element.label == pageLabel,
+  );
+  final currentIndex = index == -1 ? 0 : index;
+  return NavigationState(
     pageLabel: pageLabel,
     navigationItems: navigationItems,
     viewMode: viewMode,
     locale: locale,
+    currentIndex: currentIndex,
   );
 }
 
@@ -363,7 +368,8 @@ PackageListSelectorState packageListSelectorState(Ref ref) {
 @riverpod
 MoreToolsSelectorState moreToolsSelectorState(Ref ref) {
   final viewMode = ref.watch(viewModeProvider);
-  final navigationItems = ref.watch(navigationsStateProvider.select((state) {
+  final navigationItems =
+      ref.watch(navigationItemsStateProvider.select((state) {
     return state.value.where((element) {
       final isMore = element.modes.contains(NavigationItemMode.more);
       final isDesktop = element.modes.contains(NavigationItemMode.desktop);

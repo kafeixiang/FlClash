@@ -13,7 +13,6 @@ class CommonScaffold extends StatefulWidget {
   final AppBar? appBar;
   final Widget body;
   final Widget? bottomNavigationBar;
-  final Widget? sideNavigationBar;
   final Color? backgroundColor;
   final String? title;
   final Widget? leading;
@@ -27,7 +26,6 @@ class CommonScaffold extends StatefulWidget {
     super.key,
     this.appBar,
     required this.body,
-    this.sideNavigationBar,
     this.backgroundColor,
     this.bottomNavigationBar,
     this.leading,
@@ -72,8 +70,6 @@ class CommonScaffoldState extends State<CommonScaffold> {
   final _textController = TextEditingController();
 
   Function(List<String>)? _onKeywordsUpdate;
-
-  Widget? get _sideNavigationBar => widget.sideNavigationBar;
 
   set actions(List<Widget> actions) {
     _appBarState.value = _appBarState.value.copyWith(actions: actions);
@@ -434,7 +430,7 @@ class CommonScaffoldState extends State<CommonScaffold> {
         ],
       ),
     );
-    final scaffold = Scaffold(
+    return Scaffold(
       appBar: _buildAppBar(),
       body: body,
       resizeToAvoidBottomInset: true,
@@ -454,18 +450,6 @@ class CommonScaffoldState extends State<CommonScaffold> {
           ),
       bottomNavigationBar: widget.bottomNavigationBar,
     );
-    return _sideNavigationBar != null
-        ? Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _sideNavigationBar!,
-              Expanded(
-                flex: 1,
-                child: scaffold,
-              ),
-            ],
-          )
-        : scaffold;
   }
 }
 

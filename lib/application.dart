@@ -153,8 +153,12 @@ class ApplicationState extends ConsumerState<Application> {
               ],
               builder: (_, child) {
                 return AppEnvManager(
-                  child: _buildPlatformApp(
-                    _buildApp(child!),
+                  child: _buildApp(
+                    AppSidebarContainer(
+                      child: _buildPlatformApp(
+                        child!,
+                      ),
+                    ),
                   ),
                 );
               },

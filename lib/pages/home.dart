@@ -2,12 +2,10 @@ import 'dart:io';
 
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_acrylic/widgets/transparent_macos_sidebar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -20,42 +18,72 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return HomeBackScope(
       child: Consumer(
-        builder: (_, ref, child) {
-          final state = ref.watch(homeStateProvider);
-          final viewMode = state.viewMode;
+        builder: (_, ref, __) {
+          final state = ref.watch(navigationStateProvider);
+          final isMobile = state.viewMode == ViewMode.mobile;
           final navigationItems = state.navigationItems;
-          final pageLabel = state.pageLabel;
-          final index = navigationItems.lastIndexWhere(
-            (element) => element.label == pageLabel,
-          );
-          final currentIndex = index == -1 ? 0 : index;
-          final navigationBar = CommonNavigationBar(
-            viewMode: viewMode,
-            navigationItems: navigationItems,
-            currentIndex: currentIndex,
-          );
-          final bottomNavigationBar =
-              viewMode == ViewMode.mobile ? navigationBar : null;
-          final sideNavigationBar =
-              viewMode != ViewMode.mobile ? navigationBar : null;
-          return CommonScaffold(
-            key: globalState.homeScaffoldKey,
-            title: Intl.message(
-              pageLabel.name,
-            ),
-            sideNavigationBar: sideNavigationBar,
-            body: child!,
-            bottomNavigationBar: bottomNavigationBar,
-          );
+          final pageView = _HomePageView(pageBuilder: (_, index) {
+            final navigationItem = state.navigationItems[index];
+            if (isMobile) {
+              return navigationItem.view;
+            }
+            return Navigator(
+              onGenerateRoute: (_) {
+                return CommonDesktopRoute(
+                  builder: (_) => CommonScaffold(
+                    title: Intl.message(
+                      navigationItem.label.name,
+                    ),
+                    body: navigationItem.view,
+                  ),
+                );
+              },
+            );
+          });
+          if (isMobile) {
+            final pageLabel = state.pageLabel;
+            final currentIndex = state.currentIndex;
+            final bottomNavigationBar = NavigationBarTheme(
+              data: _NavigationBarDefaultsM3(context),
+              child: NavigationBar(
+                destinations: navigationItems
+                    .map(
+                      (e) => NavigationDestination(
+                        icon: e.icon,
+                        label: Intl.message(e.label.name),
+                      ),
+                    )
+                    .toList(),
+                onDestinationSelected: (index) {
+                  globalState.appController
+                      .toPage(navigationItems[index].label);
+                },
+                selectedIndex: currentIndex,
+              ),
+            );
+            return CommonScaffold(
+              key: globalState.homeScaffoldKey,
+              title: Intl.message(
+                pageLabel.name,
+              ),
+              body: pageView,
+              bottomNavigationBar: bottomNavigationBar,
+            );
+          } else {
+            return pageView;
+          }
         },
-        child: _HomePageView(),
       ),
     );
   }
 }
 
 class _HomePageView extends ConsumerStatefulWidget {
-  const _HomePageView();
+  final IndexedWidgetBuilder pageBuilder;
+
+  const _HomePageView({
+    required this.pageBuilder,
+  });
 
   @override
   ConsumerState createState() => _HomePageViewState();
@@ -76,16 +104,15 @@ class _HomePageViewState extends ConsumerState<_HomePageView> {
         _toPage(next);
       }
     });
-    ref.listenManual(currentNavigationsStateProvider, (prev, next) {
+    ref.listenManual(currentNavigationItemsStateProvider, (prev, next) {
       if (prev?.value.length != next.value.length) {
         _updatePageController();
       }
     });
-    // acrylic.Window.setEffect(effect: WindowEffect.transparent);
   }
 
   int get _pageIndex {
-    final navigationItems = ref.read(currentNavigationsStateProvider).value;
+    final navigationItems = ref.read(currentNavigationItemsStateProvider).value;
     return navigationItems.indexWhere(
       (item) => item.label == globalState.appState.pageLabel,
     );
@@ -95,7 +122,7 @@ class _HomePageViewState extends ConsumerState<_HomePageView> {
     if (!mounted) {
       return;
     }
-    final navigationItems = ref.read(currentNavigationsStateProvider).value;
+    final navigationItems = ref.read(currentNavigationItemsStateProvider).value;
     final index = navigationItems.indexWhere((item) => item.label == pageLabel);
     if (index == -1) {
       return;
@@ -126,139 +153,19 @@ class _HomePageViewState extends ConsumerState<_HomePageView> {
 
   @override
   Widget build(BuildContext context) {
-    final navigationItems = ref.watch(currentNavigationsStateProvider).value;
+    final navigationItems =
+        ref.watch(currentNavigationItemsStateProvider).value;
     return PageView.builder(
       controller: _pageController,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: navigationItems.length,
-      // onPageChanged: (index) {
-      //   debouncer.call(DebounceTag.pageChange, () {
-      //     WidgetsBinding.instance.addPostFrameCallback((_) {
-      //       if (_pageIndex != index) {
-      //         final pageLabel = navigationItems[index].label;
-      //         _toPage(pageLabel, true);
-      //       }
-      //     });
-      //   });
-      // },
-      itemBuilder: (_, index) {
-        final navigationItem = navigationItems[index];
+      itemBuilder: (context, index) {
         return KeepScope(
-          keep: navigationItem.keep,
-          key: Key(navigationItem.label.name),
-          child: navigationItem.view,
+          key: Key(navigationItems[index].label.name),
+          keep: navigationItems[index].keep,
+          child: widget.pageBuilder(context, index),
         );
       },
-    );
-  }
-}
-
-class CommonNavigationBar extends ConsumerWidget {
-  final ViewMode viewMode;
-  final List<NavigationItem> navigationItems;
-  final int currentIndex;
-
-  const CommonNavigationBar({
-    super.key,
-    required this.viewMode,
-    required this.navigationItems,
-    required this.currentIndex,
-  });
-
-  @override
-  Widget build(BuildContext context, ref) {
-    if (viewMode == ViewMode.mobile) {
-      return NavigationBarTheme(
-        data: _NavigationBarDefaultsM3(context),
-        child: NavigationBar(
-          destinations: navigationItems
-              .map(
-                (e) => NavigationDestination(
-                  icon: e.icon,
-                  label: Intl.message(e.label.name),
-                ),
-              )
-              .toList(),
-          onDestinationSelected: (index) {
-            globalState.appController.toPage(navigationItems[index].label);
-          },
-          selectedIndex: currentIndex,
-        ),
-      );
-    }
-    final showLabel = ref.watch(appSettingProvider).showLabel;
-    final version = ref.watch(versionProvider);
-    final backgroundColor = Colors.transparent;
-    return TransparentMacOSSidebar(
-      child: Material(
-        color: backgroundColor,
-        child: Column(
-          children: [
-            if (version > 10 && Platform.isMacOS)
-              SizedBox(
-                height: 36,
-              ),
-            Expanded(
-              child: ScrollConfiguration(
-                behavior: HiddenBarScrollBehavior(),
-                child: SingleChildScrollView(
-                  child: IntrinsicHeight(
-                    child: NavigationRail(
-                      backgroundColor: backgroundColor,
-                      selectedLabelTextStyle:
-                          context.textTheme.labelLarge!.copyWith(
-                        color: context.colorScheme.onSurface,
-                      ),
-                      unselectedLabelTextStyle:
-                          context.textTheme.labelLarge!.copyWith(
-                        color: context.colorScheme.onSurface,
-                      ),
-                      destinations: navigationItems
-                          .map(
-                            (e) => NavigationRailDestination(
-                              icon: e.icon,
-                              label: Text(
-                                Intl.message(e.label.name),
-                              ),
-                            ),
-                          )
-                          .toList(),
-                      onDestinationSelected: (index) {
-                        globalState.appController
-                            .toPage(navigationItems[index].label);
-                      },
-                      extended: false,
-                      selectedIndex: currentIndex,
-                      labelType: showLabel
-                          ? NavigationRailLabelType.all
-                          : NavigationRailLabelType.none,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            IconButton(
-              onPressed: () {
-                ref.read(appSettingProvider.notifier).updateState(
-                      (state) => state.copyWith(
-                        showLabel: !state.showLabel,
-                      ),
-                    );
-              },
-              icon: Icon(
-                Icons.menu,
-                color: context.colorScheme.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
