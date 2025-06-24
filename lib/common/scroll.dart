@@ -88,6 +88,53 @@ class NextClampingScrollPhysics extends ClampingScrollPhysics {
   }
 }
 
+final Map<String, double> scrollPositionCache = {};
+
+class CachePositionController extends ScrollController {
+  final String key;
+
+  CachePositionController({
+    required this.key,
+    double initialScrollOffset = 0.0,
+    super.keepScrollOffset = true,
+    super.debugLabel,
+    super.onAttach,
+    super.onDetach,
+  });
+
+  @override
+  ScrollPosition createScrollPosition(
+    ScrollPhysics physics,
+    ScrollContext context,
+    ScrollPosition? oldPosition,
+  ) {
+    return ScrollPositionWithSingleContext(
+      physics: physics,
+      context: context,
+      initialPixels: scrollPositionCache[key] ?? initialScrollOffset,
+      keepScrollOffset: keepScrollOffset,
+      oldPosition: oldPosition,
+      debugLabel: debugLabel,
+    );
+  }
+
+  _handleScroll() {
+    scrollPositionCache[key] = position.pixels;
+  }
+
+  @override
+  void attach(ScrollPosition position) {
+    super.attach(position);
+    addListener(_handleScroll);
+  }
+
+  @override
+  void detach(ScrollPosition position) {
+    removeListener(_handleScroll);
+    super.detach(position);
+  }
+}
+
 class ReverseScrollController extends ScrollController {
   ReverseScrollController({
     super.initialScrollOffset,

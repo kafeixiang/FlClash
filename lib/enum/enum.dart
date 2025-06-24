@@ -493,6 +493,7 @@ enum CacheTag {
   logs,
   rules,
   requests,
+  proxiesList,
 }
 
 enum Language {

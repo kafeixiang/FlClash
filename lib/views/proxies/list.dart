@@ -24,7 +24,7 @@ class ProxiesListView extends StatefulWidget {
 }
 
 class _ProxiesListViewState extends State<ProxiesListView> {
-  final _controller = ScrollController();
+  final _controller = CachePositionController(key: "proxiesList");
   final _headerStateNotifier = ValueNotifier<ProxiesListHeaderSelectorState>(
     const ProxiesListHeaderSelectorState(
       offset: 0,
@@ -38,6 +38,9 @@ class _ProxiesListViewState extends State<ProxiesListView> {
   void initState() {
     super.initState();
     _controller.addListener(_adjustHeader);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _adjustHeader();
+    });
   }
 
   _adjustHeader() {
@@ -131,8 +134,7 @@ class _ProxiesListViewState extends State<ProxiesListView> {
       items.addAll([
         ListHeader(
           onScrollToSelected: _scrollToGroupSelected,
-          key: Key(groupName),
-          isExpand: isExpand,
+          isExpand: false,
           group: group,
           onChange: (String groupName) {
             _handleChange(currentUnfoldSet, groupName);
@@ -541,30 +543,30 @@ class _ListHeaderState extends State<ListHeader> {
             ),
             Row(
               children: [
-                if (isExpand) ...[
-                  IconButton(
-                    visualDensity: VisualDensity.standard,
-                    onPressed: () {
-                      widget.onScrollToSelected(groupName);
-                    },
-                    icon: const Icon(
-                      Icons.adjust,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: _delayTest,
-                    visualDensity: VisualDensity.standard,
-                    icon: const Icon(
-                      Icons.network_ping,
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 6,
-                  ),
-                ] else
-                  SizedBox(
-                    width: 4,
-                  ),
+                // if (isExpand) ...[
+                //   IconButton(
+                //     visualDensity: VisualDensity.standard,
+                //     onPressed: () {
+                //       widget.onScrollToSelected(groupName);
+                //     },
+                //     icon: const Icon(
+                //       Icons.adjust,
+                //     ),
+                //   ),
+                //   IconButton(
+                //     onPressed: _delayTest,
+                //     visualDensity: VisualDensity.standard,
+                //     icon: const Icon(
+                //       Icons.network_ping,
+                //     ),
+                //   ),
+                //   const SizedBox(
+                //     width: 6,
+                //   ),
+                // ] else
+                //   SizedBox(
+                //     width: 4,
+                //   ),
                 IconButton.filledTonal(
                   onPressed: () {
                     _handleChange(groupName);

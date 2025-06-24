@@ -110,6 +110,7 @@ class _ToolViewState extends ConsumerState<ToolsView> {
       ..._getOtherList(vm2.b),
     ];
     return ListView.builder(
+      controller: CachePositionController(key: "tools"),
       itemCount: items.length,
       itemBuilder: (_, index) => items[index],
       padding: const EdgeInsets.only(bottom: 20),
