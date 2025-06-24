@@ -78,7 +78,7 @@ const viewModeColumnsMap = {
   ViewMode.desktop: [4, 3],
 };
 
-// const proxiesStoreKey = PageStorageKey<String>('proxies');
+// const proxiesListStoreKey = PageStorageKey<String>('proxies');
 // const toolsStoreKey = PageStorageKey<String>('tools');
 // const profilesStoreKey = PageStorageKey<String>('profiles');
 

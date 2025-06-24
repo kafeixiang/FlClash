@@ -35,7 +35,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> with PageMixin {
       },
       fireImmediately: true,
     );
-    return super.initState();
+    super.initState();
   }
 
   @override

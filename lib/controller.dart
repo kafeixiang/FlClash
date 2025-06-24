@@ -249,11 +249,12 @@ class AppController {
   }
 
   Future<void> updateClashConfig() async {
-    final commonScaffoldState = globalState.homeScaffoldKey.currentState;
-    if (commonScaffoldState?.mounted != true) return;
-    await commonScaffoldState?.loadingRun(() async {
-      await _updateClashConfig();
-    });
+    await safeRun(
+      () async {
+        await _updateClashConfig();
+      },
+      needLoading: true,
+    );
   }
 
   Future<void> _updateClashConfig() async {
@@ -291,11 +292,12 @@ class AppController {
   }
 
   Future<void> setupClashConfig() async {
-    final commonScaffoldState = globalState.homeScaffoldKey.currentState;
-    if (commonScaffoldState?.mounted != true) return;
-    await commonScaffoldState?.loadingRun(() async {
-      await _setupClashConfig();
-    });
+    await safeRun(
+      () async {
+        await _setupClashConfig();
+      },
+      needLoading: true,
+    );
   }
 
   _setupClashConfig() async {
@@ -332,11 +334,12 @@ class AppController {
     if (silence) {
       await _applyProfile();
     } else {
-      final commonScaffoldState = globalState.homeScaffoldKey.currentState;
-      if (commonScaffoldState?.mounted != true) return;
-      await commonScaffoldState?.loadingRun(() async {
-        await _applyProfile();
-      });
+      await safeRun(
+        () async {
+          await _applyProfile();
+        },
+        needLoading: true,
+      );
     }
     addCheckIpNumDebounce();
   }
@@ -671,14 +674,14 @@ class AppController {
       globalState.navigatorKey.currentState?.popUntil((route) => route.isFirst);
     }
     toProfiles();
-    final commonScaffoldState = globalState.homeScaffoldKey.currentState;
-    if (commonScaffoldState?.mounted != true) return;
-    final profile = await commonScaffoldState?.loadingRun<Profile>(
+
+    final profile = await safeRun(
       () async {
         return await Profile.normal(
           url: url,
         ).update();
       },
+      needLoading: true,
       title: "${appLocalizations.add}${appLocalizations.profile}",
     );
     if (profile != null) {
@@ -687,7 +690,7 @@ class AppController {
   }
 
   addProfileFormFile() async {
-    final platformFile = await globalState.safeRun(picker.pickerFile);
+    final platformFile = await safeRun(picker.pickerFile);
     final bytes = platformFile?.bytes;
     if (bytes == null) {
       return null;
@@ -695,13 +698,13 @@ class AppController {
     if (!context.mounted) return;
     globalState.navigatorKey.currentState?.popUntil((route) => route.isFirst);
     toProfiles();
-    final commonScaffoldState = globalState.homeScaffoldKey.currentState;
-    if (commonScaffoldState?.mounted != true) return;
-    final profile = await commonScaffoldState?.loadingRun<Profile?>(
+
+    final profile = await safeRun(
       () async {
         await Future.delayed(const Duration(milliseconds: 300));
         return await Profile.normal(label: platformFile?.name).saveFile(bytes);
       },
+      needLoading: true,
       title: "${appLocalizations.add}${appLocalizations.profile}",
     );
     if (profile != null) {
@@ -710,7 +713,9 @@ class AppController {
   }
 
   addProfileFormQrCode() async {
-    final url = await globalState.safeRun(picker.pickerConfigQRCode);
+    final url = await safeRun(
+      picker.pickerConfigQRCode,
+    );
     if (url == null) return;
     addProfileFormURL(url);
   }
@@ -1041,6 +1046,35 @@ class AppController {
     final currentProfile = _ref.read(currentProfileProvider);
     if (currentProfile == null) {
       _ref.read(currentProfileIdProvider.notifier).value = profiles.first.id;
+    }
+  }
+
+  Future<T?> safeRun<T>(
+    FutureOr<T> Function() futureFunction, {
+    String? title,
+    bool needLoading = false,
+    bool silence = true,
+  }) async {
+    final realSilence = needLoading == true ? true : silence;
+    try {
+      _ref.read(loadingProvider.notifier).value = true;
+      final res = await futureFunction();
+      return res;
+    } catch (e) {
+      commonPrint.log("$e");
+      if (realSilence) {
+        globalState.showNotifier(e.toString());
+      } else {
+        globalState.showMessage(
+          title: title ?? appLocalizations.tip,
+          message: TextSpan(
+            text: e.toString(),
+          ),
+        );
+      }
+      return null;
+    } finally {
+      _ref.read(loadingProvider.notifier).value = false;
     }
   }
 }

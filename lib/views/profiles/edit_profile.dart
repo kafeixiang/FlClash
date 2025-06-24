@@ -83,7 +83,7 @@ class _EditProfileViewState extends State<EditProfileView> {
     } else if (!hasUpdate) {
       appController.setProfileAndAutoApply(profile);
     } else {
-      globalState.homeScaffoldKey.currentState?.loadingRun(
+      globalState.appController.safeRun(
         () async {
           await Future.delayed(
             commonDuration,
@@ -120,7 +120,7 @@ class _EditProfileViewState extends State<EditProfileView> {
   }
 
   _handleSaveEdit(BuildContext context, String data) async {
-    final message = await globalState.safeRun<String>(
+    final message = await globalState.appController.safeRun<String>(
       () async {
         final message = await clashCore.validateConfig(data);
         return message;
@@ -174,7 +174,7 @@ class _EditProfileViewState extends State<EditProfileView> {
       },
     );
     final data = await BaseNavigator.modal<String>(
-      globalState.homeScaffoldKey.currentContext!,
+      globalState.navigatorKey.currentContext!,
       editorPage,
     );
     if (data == null) {
@@ -189,7 +189,8 @@ class _EditProfileViewState extends State<EditProfileView> {
   }
 
   _uploadProfileFile() async {
-    final platformFile = await globalState.safeRun(picker.pickerFile);
+    final platformFile =
+        await globalState.appController.safeRun(picker.pickerFile);
     if (platformFile?.bytes == null) return;
     fileData = platformFile?.bytes;
     fileInfoNotifier.value = fileInfoNotifier.value?.copyWith(

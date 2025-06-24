@@ -306,6 +306,20 @@ final backBlockProvider = AutoDisposeNotifierProvider<BackBlock, bool>.internal(
 );
 
 typedef _$BackBlock = AutoDisposeNotifier<bool>;
+String _$loadingHash() => r'a0a09132a78495616785461cdc2a8b412c19b51b';
+
+/// See also [Loading].
+@ProviderFor(Loading)
+final loadingProvider = AutoDisposeNotifierProvider<Loading, bool>.internal(
+  Loading.new,
+  name: r'loadingProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$loadingHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$Loading = AutoDisposeNotifier<bool>;
 String _$versionHash() => r'8c0ee019d20df3f112c38ae4dc4abd61148d3809';
 
 /// See also [Version].

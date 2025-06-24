@@ -11,7 +11,6 @@ import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/plugins/service.dart';
 import 'package:fl_clash/widgets/dialog.dart';
-import 'package:fl_clash/widgets/scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_js/flutter_js.dart';
 import 'package:material_color_utilities/palettes/core_palette.dart';
@@ -45,7 +44,7 @@ class GlobalState {
   UpdateTasks tasks = [];
   final navigatorKey = GlobalKey<NavigatorState>();
   AppController? _appController;
-  GlobalKey<CommonScaffoldState> homeScaffoldKey = GlobalKey();
+  // GlobalKey<CommonScaffoldState> homeScaffoldKey = GlobalKey();
   bool isInit = false;
 
   bool get isStart => startTime != null && startTime!.isBeforeNow;
@@ -226,30 +225,6 @@ class GlobalState {
       builder: (_) => child,
       filter: commonFilter,
     );
-  }
-
-  Future<T?> safeRun<T>(
-    FutureOr<T> Function() futureFunction, {
-    String? title,
-    bool silence = true,
-  }) async {
-    try {
-      final res = await futureFunction();
-      return res;
-    } catch (e) {
-      commonPrint.log("$e");
-      if (silence) {
-        showNotifier(e.toString());
-      } else {
-        showMessage(
-          title: title ?? appLocalizations.tip,
-          message: TextSpan(
-            text: e.toString(),
-          ),
-        );
-      }
-      return null;
-    }
   }
 
   showNotifier(String text) {

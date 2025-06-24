@@ -25,7 +25,6 @@ class ProvidersView extends ConsumerStatefulWidget {
 }
 
 class _ProvidersViewState extends ConsumerState<ProvidersView> {
-
   _updateProviders() async {
     final providers = ref.read(providersProvider);
     final providersNotifier = ref.read(providersProvider.notifier);
@@ -118,7 +117,7 @@ class ProviderItem extends StatelessWidget {
   _handleUpdateProvider() async {
     final appController = globalState.appController;
     if (provider.vehicleType != "HTTP") return;
-    await globalState.safeRun(
+    await globalState.appController.safeRun(
       () async {
         appController.setProvider(
           provider.copyWith(
@@ -139,7 +138,7 @@ class ProviderItem extends StatelessWidget {
   }
 
   _handleSideLoadProvider() async {
-    await globalState.safeRun<void>(() async {
+    await globalState.appController.safeRun<void>(() async {
       final platformFile = await picker.pickerFile();
       final bytes = platformFile?.bytes;
       if (bytes == null || provider.path == null) return;

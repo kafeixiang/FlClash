@@ -199,7 +199,7 @@ class _GeoDataListItemState extends State<GeoDataListItem> {
   }
 
   _handleUpdateGeoDataItem() async {
-    await globalState.safeRun<void>(
+    await globalState.appController.safeRun<void>(
       () async {
         await updateGeoDateItem();
       },
@@ -267,8 +267,12 @@ class UpdateGeoUrlFormDialog extends StatefulWidget {
   final String url;
   final String? defaultValue;
 
-  const UpdateGeoUrlFormDialog(
-      {super.key, required this.title, required this.url, this.defaultValue});
+  const UpdateGeoUrlFormDialog({
+    super.key,
+    required this.title,
+    required this.url,
+    this.defaultValue,
+  });
 
   @override
   State<UpdateGeoUrlFormDialog> createState() => _UpdateGeoUrlFormDialogState();

@@ -1,11 +1,13 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
+import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/fade_box.dart';
 import 'package:fl_clash/widgets/pop_scope.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'chip.dart';
 
@@ -370,10 +372,10 @@ class CommonScaffoldState extends State<CommonScaffold> {
                     );
                   },
                 ),
-            ValueListenableBuilder(
-              valueListenable: _loading,
-              builder: (_, value, __) {
-                return value == true
+            Consumer(
+              builder: (_, ref, __) {
+                final loading = ref.watch(loadingProvider);
+                return loading == true
                     ? const LinearProgressIndicator()
                     : Container();
               },

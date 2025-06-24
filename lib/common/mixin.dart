@@ -1,6 +1,7 @@
 import 'package:fl_clash/models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod/riverpod.dart';
+
 import 'context.dart';
 
 mixin AutoDisposeNotifierMixin<T> on AutoDisposeNotifier<T> {

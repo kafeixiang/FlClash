@@ -716,7 +716,7 @@ class _AccessControlPanelState extends ConsumerState<AccessControlPanel> {
   }
 
   _copyToClipboard() async {
-    await globalState.safeRun(() {
+    await globalState.appController.safeRun(() {
       final data = globalState.config.vpnProps.accessControl.toJson();
       Clipboard.setData(
         ClipboardData(
@@ -729,7 +729,7 @@ class _AccessControlPanelState extends ConsumerState<AccessControlPanel> {
   }
 
   _pasteToClipboard() async {
-    await globalState.safeRun(
+    await globalState.appController.safeRun(
       () async {
         final data = await Clipboard.getData('text/plain');
         final text = data?.text;

@@ -24,20 +24,23 @@ class HomePage extends StatelessWidget {
           final navigationItems = state.navigationItems;
           final pageView = _HomePageView(pageBuilder: (_, index) {
             final navigationItem = state.navigationItems[index];
-            if (isMobile) {
-              return navigationItem.view;
-            }
-            return Navigator(
-              onGenerateRoute: (_) {
-                return CommonDesktopRoute(
-                  builder: (_) => CommonScaffold(
-                    title: Intl.message(
-                      navigationItem.label.name,
-                    ),
-                    body: navigationItem.view,
-                  ),
-                );
-              },
+            final view = isMobile
+                ? navigationItem.view
+                : Navigator(
+                    onGenerateRoute: (_) {
+                      return CommonDesktopRoute(
+                        builder: (_) => CommonScaffold(
+                          title: Intl.message(
+                            navigationItem.label.name,
+                          ),
+                          body: navigationItem.view,
+                        ),
+                      );
+                    },
+                  );
+            return KeepScope(
+              keep: navigationItem.keep,
+              child: view,
             );
           });
           if (isMobile) {
@@ -62,7 +65,6 @@ class HomePage extends StatelessWidget {
               ),
             );
             return CommonScaffold(
-              key: globalState.homeScaffoldKey,
               title: Intl.message(
                 pageLabel.name,
               ),
@@ -97,7 +99,6 @@ class _HomePageViewState extends ConsumerState<_HomePageView> {
     super.initState();
     _pageController = PageController(
       initialPage: _pageIndex,
-      keepPage: true,
     );
     ref.listenManual(currentPageLabelProvider, (prev, next) {
       if (prev != next) {
@@ -153,18 +154,14 @@ class _HomePageViewState extends ConsumerState<_HomePageView> {
 
   @override
   Widget build(BuildContext context) {
-    final navigationItems =
-        ref.watch(currentNavigationItemsStateProvider).value;
+    final itemCount = ref.watch(currentNavigationItemsStateProvider
+        .select((state) => state.value.length));
     return PageView.builder(
       controller: _pageController,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: navigationItems.length,
+      itemCount: itemCount,
       itemBuilder: (context, index) {
-        return KeepScope(
-          key: Key(navigationItems[index].label.name),
-          keep: navigationItems[index].keep,
-          child: widget.pageBuilder(context, index),
-        );
+        return widget.pageBuilder(context, index);
       },
     );
   }

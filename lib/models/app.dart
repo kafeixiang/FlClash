@@ -33,6 +33,7 @@ class AppState with _$AppState {
     required Traffic totalTraffic,
     @Default("") String proxiesQuery,
     @Default(false) bool realTunEnable,
+    @Default(false) bool loading,
   }) = _AppState;
 }
 

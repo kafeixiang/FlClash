@@ -24,10 +24,10 @@ class ToolsView extends ConsumerStatefulWidget {
   const ToolsView({super.key});
 
   @override
-  ConsumerState<ToolsView> createState() => _ToolboxViewState();
+  ConsumerState<ToolsView> createState() => _ToolViewState();
 }
 
-class _ToolboxViewState extends ConsumerState<ToolsView> {
+class _ToolViewState extends ConsumerState<ToolsView> {
   _buildNavigationMenuItem(NavigationItem navigationItem) {
     return ListItem.open(
       leading: navigationItem.icon,

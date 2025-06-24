@@ -318,6 +318,21 @@ class BackBlock extends _$BackBlock with AutoDisposeNotifierMixin {
 }
 
 @riverpod
+class Loading extends _$Loading with AutoDisposeNotifierMixin {
+  @override
+  bool build() {
+    return globalState.appState.loading;
+  }
+
+  @override
+  onUpdate(value) {
+    globalState.appState = globalState.appState.copyWith(
+      loading: value,
+    );
+  }
+}
+
+@riverpod
 class Version extends _$Version with AutoDisposeNotifierMixin {
   @override
   int build() {
