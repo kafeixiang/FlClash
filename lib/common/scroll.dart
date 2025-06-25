@@ -90,10 +90,10 @@ class NextClampingScrollPhysics extends ClampingScrollPhysics {
 
 final Map<String, double> scrollPositionCache = {};
 
-class CachePositionController extends ScrollController {
+class CacheScrollPositionController extends ScrollController {
   final String key;
 
-  CachePositionController({
+  CacheScrollPositionController({
     required this.key,
     double initialScrollOffset = 0.0,
     super.keepScrollOffset = true,
@@ -117,6 +117,8 @@ class CachePositionController extends ScrollController {
       debugLabel: debugLabel,
     );
   }
+
+  double? get cacheOffset => scrollPositionCache[key];
 
   _handleScroll() {
     scrollPositionCache[key] = position.pixels;

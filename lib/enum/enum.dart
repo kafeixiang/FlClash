@@ -505,3 +505,10 @@ enum ImportOption {
   file,
   url,
 }
+
+enum CacheScrollPositionKeys {
+  tools,
+  profiles,
+  proxiesList,
+  proxiesTabList,
+}

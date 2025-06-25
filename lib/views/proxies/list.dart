@@ -24,13 +24,11 @@ class ProxiesListView extends StatefulWidget {
 }
 
 class _ProxiesListViewState extends State<ProxiesListView> {
-  final _controller = CachePositionController(key: "proxiesList");
-  final _headerStateNotifier = ValueNotifier<ProxiesListHeaderSelectorState>(
-    const ProxiesListHeaderSelectorState(
-      offset: 0,
-      currentIndex: 0,
-    ),
+  final _controller = CacheScrollPositionController(
+    key: CacheScrollPositionKeys.proxiesList.name,
   );
+  final _headerStateNotifier =
+      ValueNotifier<ProxiesListHeaderSelectorState?>(null);
   List<double> _headerOffset = [];
   GroupNameProxiesMap _lastGroupNameProxiesMap = {};
 
@@ -43,21 +41,20 @@ class _ProxiesListViewState extends State<ProxiesListView> {
     });
   }
 
-  _adjustHeader() {
-    final offset = _controller.offset;
-    final index = _headerOffset.findInterval(offset);
+  ProxiesListHeaderSelectorState _getProxiesListHeaderSelectorState(
+      double initOffset) {
+    final index = _headerOffset.findInterval(initOffset);
     final currentIndex = index;
     double headerOffset = 0.0;
-    if (index + 1 <= _headerOffset.length - 1) {
-      final endOffset = _headerOffset[index + 1];
-      final startOffset = endOffset - listHeaderHeight - 8;
-      if (offset > startOffset && offset < endOffset) {
-        headerOffset = offset - startOffset;
-      }
-    }
-    _headerStateNotifier.value = _headerStateNotifier.value.copyWith(
-      currentIndex: currentIndex,
+    return ProxiesListHeaderSelectorState(
       offset: max(headerOffset, 0),
+      currentIndex: currentIndex,
+    );
+  }
+
+  _adjustHeader() {
+    _headerStateNotifier.value = _getProxiesListHeaderSelectorState(
+      _controller.offset,
     );
   }
 
@@ -297,6 +294,9 @@ class _ProxiesListViewState extends State<ProxiesListView> {
                 return ValueListenableBuilder(
                   valueListenable: _headerStateNotifier,
                   builder: (_, headerState, ___) {
+                    if (headerState == null) {
+                      return SizedBox();
+                    }
                     final index =
                         headerState.currentIndex > state.groupNames.length - 1
                             ? 0
@@ -543,30 +543,30 @@ class _ListHeaderState extends State<ListHeader> {
             ),
             Row(
               children: [
-                // if (isExpand) ...[
-                //   IconButton(
-                //     visualDensity: VisualDensity.standard,
-                //     onPressed: () {
-                //       widget.onScrollToSelected(groupName);
-                //     },
-                //     icon: const Icon(
-                //       Icons.adjust,
-                //     ),
-                //   ),
-                //   IconButton(
-                //     onPressed: _delayTest,
-                //     visualDensity: VisualDensity.standard,
-                //     icon: const Icon(
-                //       Icons.network_ping,
-                //     ),
-                //   ),
-                //   const SizedBox(
-                //     width: 6,
-                //   ),
-                // ] else
-                //   SizedBox(
-                //     width: 4,
-                //   ),
+                if (isExpand) ...[
+                  IconButton(
+                    visualDensity: VisualDensity.standard,
+                    onPressed: () {
+                      widget.onScrollToSelected(groupName);
+                    },
+                    icon: const Icon(
+                      Icons.adjust,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: _delayTest,
+                    visualDensity: VisualDensity.standard,
+                    icon: const Icon(
+                      Icons.network_ping,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 6,
+                  ),
+                ] else
+                  SizedBox(
+                    width: 4,
+                  ),
                 IconButton.filledTonal(
                   onPressed: () {
                     _handleChange(groupName);

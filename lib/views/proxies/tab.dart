@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
@@ -193,11 +194,9 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
     final GroupNameKeyMap keyMap = {};
     final children = groupNames.map((groupName) {
       keyMap[groupName] = GlobalObjectKey(groupName);
-      return KeepScope(
-        child: ProxyGroupView(
-          key: keyMap[groupName],
-          groupName: groupName,
-        ),
+      return ProxyGroupView(
+        key: keyMap[groupName],
+        groupName: groupName,
       );
     }).toList();
     _keyMap = keyMap;
@@ -285,12 +284,20 @@ class ProxyGroupView extends ConsumerStatefulWidget {
 }
 
 class ProxyGroupViewState extends ConsumerState<ProxyGroupView> {
-  final _controller = ScrollController();
+  late final CacheScrollPositionController _controller;
 
   List<Proxy> proxies = [];
   String? testUrl;
 
   String get groupName => widget.groupName;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = CacheScrollPositionController(
+      key: "${CacheScrollPositionKeys.proxiesTabList.name}_${widget.groupName}",
+    );
+  }
 
   @override
   void dispose() {
