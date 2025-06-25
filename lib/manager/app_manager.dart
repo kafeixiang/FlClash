@@ -32,7 +32,7 @@ class _AppStateManagerState extends ConsumerState<AppStateManager>
     ref.listenManual(layoutChangeProvider, (prev, next) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (prev != next) {
-          globalState.cacheHeightMap = {};
+          globalState.computeHeightMapCache = {};
         }
       });
     });

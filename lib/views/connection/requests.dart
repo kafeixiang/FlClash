@@ -45,7 +45,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> with PageMixin {
   @override
   void initState() {
     super.initState();
-    final preOffset = globalState.cacheScrollPosition[_tag] ?? -1;
+    final preOffset = globalState.computeScrollPositionCache[_tag] ?? -1;
     _scrollController = ScrollController(
       initialScrollOffset: preOffset > 0 ? preOffset : double.maxFinite,
     );
@@ -142,7 +142,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> with PageMixin {
         await Future.delayed(Duration(milliseconds: 300));
       }
       final parts = _requests.batch(10);
-      globalState.cacheHeightMap[_tag] ??= FixedMap(
+      globalState.computeHeightMapCache[_tag] ??= FixedMap(
         _requests.length,
       );
       for (int i = 0; i < parts.length; i++) {
@@ -150,7 +150,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> with PageMixin {
         await Future(
           () {
             for (final request in part) {
-              globalState.cacheHeightMap[_tag]?.updateCacheValue(
+              globalState.computeHeightMapCache[_tag]?.updateCacheValue(
                 request.id,
                 () => _calcCacheHeight(request),
               );
@@ -252,7 +252,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> with PageMixin {
               },
             ),
             onNotification: (_) {
-              globalState.cacheHeightMap[_tag]?.clear();
+              globalState.computeHeightMapCache[_tag]?.clear();
             },
           ),
         );

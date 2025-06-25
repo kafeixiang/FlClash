@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/models/config.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
@@ -295,8 +296,13 @@ class ProxyGroupViewState extends ConsumerState<ProxyGroupView> {
   void initState() {
     super.initState();
     _controller = CacheScrollPositionController(
-      key: "${CacheScrollPositionKeys.proxiesTabList.name}_${widget.groupName}",
+      key: _getCacheScrollPositionKey(),
     );
+  }
+
+  String _getCacheScrollPositionKey() {
+    final profile = globalState.config.currentProfile;
+    return "${profile?.id}_${ScrollPositionCacheKeys.proxiesTabList.name}_${widget.groupName}_${profile?.lastUpdateDate?.microsecond}";
   }
 
   @override

@@ -73,7 +73,8 @@ class _ScrollToEndBoxState<T> extends State<ScrollToEndBox<T>> {
 
   _handleTryToEnd() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final double offset = globalState.cacheScrollPosition[widget.tag] ?? -1;
+      final double offset =
+          globalState.computeScrollPositionCache[widget.tag] ?? -1;
       if (offset < 0) {
         widget.controller.animateTo(
           duration: kThemeAnimationDuration,
@@ -96,7 +97,7 @@ class _ScrollToEndBoxState<T> extends State<ScrollToEndBox<T>> {
   Widget build(BuildContext context) {
     return NotificationListener<UserScrollNotification>(
       onNotification: (details) {
-        globalState.cacheScrollPosition[widget.tag] =
+        globalState.computeScrollPositionCache[widget.tag] =
             details.metrics.pixels == details.metrics.maxScrollExtent
                 ? -1
                 : details.metrics.pixels;
@@ -144,8 +145,10 @@ class CacheItemExtentListViewState extends State<CacheItemExtentListView> {
   }
 
   _updateCacheHeightMap() {
-    globalState.cacheHeightMap[widget.tag]?.updateMaxLength(widget.itemCount);
-    globalState.cacheHeightMap[widget.tag] ??= FixedMap(widget.itemCount);
+    globalState.computeHeightMapCache[widget.tag]
+        ?.updateMaxLength(widget.itemCount);
+    globalState.computeHeightMapCache[widget.tag] ??=
+        FixedMap(widget.itemCount);
   }
 
   @override
@@ -159,7 +162,7 @@ class CacheItemExtentListViewState extends State<CacheItemExtentListView> {
       controller: widget.controller,
       itemExtentBuilder: (index, __) {
         _updateCacheHeightMap();
-        return globalState.cacheHeightMap[widget.tag]?.updateCacheValue(
+        return globalState.computeHeightMapCache[widget.tag]?.updateCacheValue(
           widget.keyBuilder(index),
           () => widget.itemExtentBuilder(index),
         );
@@ -198,18 +201,21 @@ class CacheItemExtentSliverReorderableListState
   @override
   void initState() {
     super.initState();
-    globalState.cacheHeightMap[widget.tag]?.updateMaxLength(widget.itemCount);
-    globalState.cacheHeightMap[widget.tag] ??= FixedMap(widget.itemCount);
+    globalState.computeHeightMapCache[widget.tag]
+        ?.updateMaxLength(widget.itemCount);
+    globalState.computeHeightMapCache[widget.tag] ??=
+        FixedMap(widget.itemCount);
   }
 
   @override
   Widget build(BuildContext context) {
-    globalState.cacheHeightMap[widget.tag]?.updateMaxLength(widget.itemCount);
+    globalState.computeHeightMapCache[widget.tag]
+        ?.updateMaxLength(widget.itemCount);
     return SliverReorderableList(
       itemBuilder: widget.itemBuilder,
       itemCount: widget.itemCount,
       itemExtentBuilder: (index, __) {
-        return globalState.cacheHeightMap[widget.tag]?.updateCacheValue(
+        return globalState.computeHeightMapCache[widget.tag]?.updateCacheValue(
           widget.keyBuilder(index),
           () => widget.itemExtentBuilder(index),
         );

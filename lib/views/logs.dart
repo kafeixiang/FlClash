@@ -32,7 +32,7 @@ class _LogsViewState extends ConsumerState<LogsView> with PageMixin {
   @override
   void initState() {
     super.initState();
-    final position = globalState.cacheScrollPosition[_tag] ?? -1;
+    final position = globalState.computeScrollPositionCache[_tag] ?? -1;
     _scrollController = ScrollController(
       initialScrollOffset: position > 0 ? position : double.maxFinite,
     );
@@ -163,7 +163,7 @@ class _LogsViewState extends ConsumerState<LogsView> with PageMixin {
         await Future.delayed(Duration(milliseconds: 300));
       }
       final parts = _logs.batch(10);
-      globalState.cacheHeightMap[_tag] ??= FixedMap(
+      globalState.computeHeightMapCache[_tag] ??= FixedMap(
         _logs.length,
       );
       for (int i = 0; i < parts.length; i++) {
@@ -171,7 +171,7 @@ class _LogsViewState extends ConsumerState<LogsView> with PageMixin {
         await Future(
           () {
             for (final log in part) {
-              globalState.cacheHeightMap[_tag]?.updateCacheValue(
+              globalState.computeHeightMapCache[_tag]?.updateCacheValue(
                 log.payload,
                 () => _getItemHeight(log),
               );

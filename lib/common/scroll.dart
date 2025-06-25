@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/scroll.dart';
 import 'package:flutter/material.dart';
 
@@ -88,8 +89,6 @@ class NextClampingScrollPhysics extends ClampingScrollPhysics {
   }
 }
 
-final Map<String, double> scrollPositionCache = {};
-
 class CacheScrollPositionController extends ScrollController {
   final String key;
 
@@ -111,17 +110,18 @@ class CacheScrollPositionController extends ScrollController {
     return ScrollPositionWithSingleContext(
       physics: physics,
       context: context,
-      initialPixels: scrollPositionCache[key] ?? initialScrollOffset,
+      initialPixels:
+          globalState.scrollPositionCache[key] ?? initialScrollOffset,
       keepScrollOffset: keepScrollOffset,
       oldPosition: oldPosition,
       debugLabel: debugLabel,
     );
   }
 
-  double? get cacheOffset => scrollPositionCache[key];
+  double? get cacheOffset => globalState.scrollPositionCache[key];
 
   _handleScroll() {
-    scrollPositionCache[key] = position.pixels;
+    globalState.scrollPositionCache[key] = position.pixels;
   }
 
   @override

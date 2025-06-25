@@ -112,7 +112,7 @@ class _ToolViewState extends ConsumerState<ToolsView> {
     ];
     return ListView.builder(
       controller: CacheScrollPositionController(
-        key: CacheScrollPositionKeys.tools.name,
+        key: ScrollPositionCacheKeys.tools.name,
       ),
       itemCount: items.length,
       itemBuilder: (_, index) => items[index],

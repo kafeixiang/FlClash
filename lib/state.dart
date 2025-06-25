@@ -25,8 +25,9 @@ typedef UpdateTasks = List<FutureOr Function()>;
 
 class GlobalState {
   static GlobalState? _instance;
-  Map<CacheTag, double> cacheScrollPosition = {};
-  Map<CacheTag, FixedMap<String, double>> cacheHeightMap = {};
+  Map<CacheTag, double> computeScrollPositionCache = {};
+  Map<CacheTag, FixedMap<String, double>> computeHeightMapCache = {};
+  final Map<String, double> scrollPositionCache = {};
   bool isService = false;
   Timer? timer;
   Timer? groupsUpdateTimer;
@@ -44,6 +45,7 @@ class GlobalState {
   UpdateTasks tasks = [];
   final navigatorKey = GlobalKey<NavigatorState>();
   AppController? _appController;
+
   // GlobalKey<CommonScaffoldState> homeScaffoldKey = GlobalKey();
   bool isInit = false;
 

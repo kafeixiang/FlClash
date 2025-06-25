@@ -153,7 +153,7 @@ class _ProfilesViewState extends State<ProfilesView> with PageMixin {
           alignment: Alignment.topCenter,
           child: SingleChildScrollView(
             controller: CacheScrollPositionController(
-              key: CacheScrollPositionKeys.profiles.name,
+              key: ScrollPositionCacheKeys.profiles.name,
             ),
             padding: const EdgeInsets.only(
               left: 16,

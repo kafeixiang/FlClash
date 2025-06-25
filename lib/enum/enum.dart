@@ -506,7 +506,7 @@ enum ImportOption {
   url,
 }
 
-enum CacheScrollPositionKeys {
+enum ScrollPositionCacheKeys {
   tools,
   profiles,
   proxiesList,

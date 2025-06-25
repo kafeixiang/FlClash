@@ -25,7 +25,7 @@ class ProxiesListView extends StatefulWidget {
 
 class _ProxiesListViewState extends State<ProxiesListView> {
   final _controller = CacheScrollPositionController(
-    key: CacheScrollPositionKeys.proxiesList.name,
+    key: ScrollPositionCacheKeys.proxiesList.name,
   );
   final _headerStateNotifier =
       ValueNotifier<ProxiesListHeaderSelectorState?>(null);
