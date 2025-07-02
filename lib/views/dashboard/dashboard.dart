@@ -26,15 +26,17 @@ class _DashboardViewState extends ConsumerState<DashboardView> with PageMixin {
 
   @override
   initState() {
-    ref.listenManual(
-      isCurrentPageProvider(PageLabel.dashboard),
-      (prev, next) {
-        if (prev != next && next == true) {
-          initPageState();
-        }
-      },
-      fireImmediately: true,
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.listenManual(
+        isCurrentPageProvider(PageLabel.dashboard),
+        (prev, next) {
+          if (prev != next && next == true) {
+            initPageState();
+          }
+        },
+        fireImmediately: true,
+      );
+    });
     super.initState();
   }
 

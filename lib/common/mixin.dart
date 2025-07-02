@@ -22,9 +22,9 @@ mixin AutoDisposeNotifierMixin<T> on AutoDisposeNotifier<T> {
 }
 
 mixin PageMixin<T extends StatefulWidget> on State<T> {
-  void onPageShow() {
-    initPageState();
-  }
+  // void onPageShow() {
+  //   initPageState();
+  // }
 
   initPageState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -42,7 +42,7 @@ mixin PageMixin<T extends StatefulWidget> on State<T> {
     });
   }
 
-  void onPageHidden() {}
+  // void onPageHidden() {}
 
   List<Widget> get actions => [];
 
