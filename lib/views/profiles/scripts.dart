@@ -202,7 +202,7 @@ class _ScriptsViewState extends ConsumerState<ScriptsView> {
   _handleToEditor({Script? script}) {
     final title = script?.label ?? "";
     final raw = script?.content ?? scriptTemplate;
-    BaseNavigator.modal(
+    BaseNavigator.push(
       context,
       EditorPage(
         titleEditable: true,

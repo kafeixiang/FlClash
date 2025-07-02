@@ -173,8 +173,8 @@ class _EditProfileViewState extends State<EditProfileView> {
         return false;
       },
     );
-    final data = await BaseNavigator.modal<String>(
-      globalState.navigatorKey.currentContext!,
+    final data = await BaseNavigator.push<String>(
+      context,
       editorPage,
     );
     if (data == null) {

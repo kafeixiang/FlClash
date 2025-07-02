@@ -311,7 +311,7 @@ class ProfileItem extends StatelessWidget {
     final overrideProfileView = OverrideProfileView(
       profileId: id,
     );
-    BaseNavigator.modal(
+    BaseNavigator.push(
       context,
       overrideProfileView,
     );
