@@ -18,6 +18,8 @@ typedef GroupNameKeyMap = Map<String, GlobalObjectKey<ProxyGroupViewState>>;
 class ProxiesTabView extends ConsumerStatefulWidget {
   const ProxiesTabView({super.key});
 
+  static Map<String, PageStorageKey> pageListStoreMap = {};
+
   @override
   ConsumerState<ProxiesTabView> createState() => ProxiesTabViewState();
 }
@@ -285,7 +287,7 @@ class ProxyGroupView extends ConsumerStatefulWidget {
 }
 
 class ProxyGroupViewState extends ConsumerState<ProxyGroupView> {
-  late final CacheScrollPositionController _controller;
+  late final ScrollController _controller;
 
   List<Proxy> proxies = [];
   String? testUrl;
@@ -295,14 +297,17 @@ class ProxyGroupViewState extends ConsumerState<ProxyGroupView> {
   @override
   void initState() {
     super.initState();
-    _controller = CacheScrollPositionController(
-      key: _getCacheScrollPositionKey(),
-    );
+    _controller = ScrollController();
   }
 
-  String _getCacheScrollPositionKey() {
+  PageStorageKey _getPageStorageKey() {
     final profile = globalState.config.currentProfile;
-    return "${profile?.id}_${ScrollPositionCacheKeys.proxiesTabList.name}_${widget.groupName}_${profile?.lastUpdateDate?.microsecond}";
+    final key =
+        "${profile?.id}_${ScrollPositionCacheKeys.proxiesTabList.name}_${widget.groupName}_${profile?.lastUpdateDate?.microsecond}";
+    return ProxiesTabView.pageListStoreMap.updateCacheValue(
+      key,
+      () => PageStorageKey(key),
+    );
   }
 
   @override
@@ -347,6 +352,7 @@ class ProxyGroupViewState extends ConsumerState<ProxyGroupView> {
       child: CommonAutoHiddenScrollBar(
         controller: _controller,
         child: GridView.builder(
+          key: _getPageStorageKey(),
           controller: _controller,
           padding: const EdgeInsets.only(
             top: 16,

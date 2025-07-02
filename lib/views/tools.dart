@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
@@ -111,9 +110,7 @@ class _ToolViewState extends ConsumerState<ToolsView> {
       ..._getOtherList(vm2.b),
     ];
     return ListView.builder(
-      controller: CacheScrollPositionController(
-        key: ScrollPositionCacheKeys.tools.name,
-      ),
+      key: toolsStoreKey,
       itemCount: items.length,
       itemBuilder: (_, index) => items[index],
       padding: const EdgeInsets.only(bottom: 20),

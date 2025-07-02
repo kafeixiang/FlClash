@@ -24,9 +24,7 @@ class ProxiesListView extends StatefulWidget {
 }
 
 class _ProxiesListViewState extends State<ProxiesListView> {
-  final _controller = CacheScrollPositionController(
-    key: ScrollPositionCacheKeys.proxiesList.name,
-  );
+  final _controller = ScrollController();
   final _headerStateNotifier =
       ValueNotifier<ProxiesListHeaderSelectorState?>(null);
   List<double> _headerOffset = [];
@@ -278,6 +276,7 @@ class _ProxiesListViewState extends State<ProxiesListView> {
                 child: ScrollConfiguration(
                   behavior: HiddenBarScrollBehavior(),
                   child: ListView.builder(
+                    key: proxiesListStoreKey,
                     padding: const EdgeInsets.all(16),
                     controller: _controller,
                     itemExtentBuilder: (index, __) {

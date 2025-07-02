@@ -2,7 +2,6 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/scroll.dart';
 import 'package:flutter/material.dart';
 
@@ -89,53 +88,53 @@ class NextClampingScrollPhysics extends ClampingScrollPhysics {
   }
 }
 
-class CacheScrollPositionController extends ScrollController {
-  final String key;
-
-  CacheScrollPositionController({
-    required this.key,
-    double initialScrollOffset = 0.0,
-    super.keepScrollOffset = true,
-    super.debugLabel,
-    super.onAttach,
-    super.onDetach,
-  });
-
-  @override
-  ScrollPosition createScrollPosition(
-    ScrollPhysics physics,
-    ScrollContext context,
-    ScrollPosition? oldPosition,
-  ) {
-    return ScrollPositionWithSingleContext(
-      physics: physics,
-      context: context,
-      initialPixels:
-          globalState.scrollPositionCache[key] ?? initialScrollOffset,
-      keepScrollOffset: keepScrollOffset,
-      oldPosition: oldPosition,
-      debugLabel: debugLabel,
-    );
-  }
-
-  double? get cacheOffset => globalState.scrollPositionCache[key];
-
-  _handleScroll() {
-    globalState.scrollPositionCache[key] = position.pixels;
-  }
-
-  @override
-  void attach(ScrollPosition position) {
-    super.attach(position);
-    addListener(_handleScroll);
-  }
-
-  @override
-  void detach(ScrollPosition position) {
-    removeListener(_handleScroll);
-    super.detach(position);
-  }
-}
+// class CacheScrollPositionController extends ScrollController {
+//   final String key;
+//
+//   CacheScrollPositionController({
+//     required this.key,
+//     double initialScrollOffset = 0.0,
+//     super.keepScrollOffset = true,
+//     super.debugLabel,
+//     super.onAttach,
+//     super.onDetach,
+//   });
+//
+//   @override
+//   ScrollPosition createScrollPosition(
+//     ScrollPhysics physics,
+//     ScrollContext context,
+//     ScrollPosition? oldPosition,
+//   ) {
+//     return ScrollPositionWithSingleContext(
+//       physics: physics,
+//       context: context,
+//       initialPixels:
+//           globalState.scrollPositionCache[key] ?? initialScrollOffset,
+//       keepScrollOffset: keepScrollOffset,
+//       oldPosition: oldPosition,
+//       debugLabel: debugLabel,
+//     );
+//   }
+//
+//   double? get cacheOffset => globalState.scrollPositionCache[key];
+//
+//   _handleScroll() {
+//     globalState.scrollPositionCache[key] = position.pixels;
+//   }
+//
+//   @override
+//   void attach(ScrollPosition position) {
+//     super.attach(position);
+//     addListener(_handleScroll);
+//   }
+//
+//   @override
+//   void detach(ScrollPosition position) {
+//     removeListener(_handleScroll);
+//     super.detach(position);
+//   }
+// }
 
 class ReverseScrollController extends ScrollController {
   ReverseScrollController({

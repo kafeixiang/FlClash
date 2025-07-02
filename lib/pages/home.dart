@@ -11,8 +11,6 @@ import 'package:intl/intl.dart';
 
 typedef OnSelected = void Function(int index);
 
-final bucket = PageStorageBucket();
-
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -28,27 +26,20 @@ class HomePage extends StatelessWidget {
             final navigationItem = state.navigationItems[index];
             final view = isMobile
                 ? navigationItem.view
-                : Navigator(
-                    // pages: [
-                    //   MaterialPage(
-                    //     child: CommonScaffold(
-                    //       title: Intl.message(
-                    //         navigationItem.label.name,
-                    //       ),
-                    //       body: navigationItem.view,
-                    //     ),
-                    //   )
-                    // ],
-                    onGenerateRoute: (_) {
-                      return MaterialPageRoute(
-                        builder: (_) => CommonScaffold(
-                          title: Intl.message(
-                            navigationItem.label.name,
+                : KeepScope(
+                    keep: navigationItem.keep,
+                    child: Navigator(
+                      onGenerateRoute: (_) {
+                        return CommonRoute(
+                          builder: (_) => CommonScaffold(
+                            title: Intl.message(
+                              navigationItem.label.name,
+                            ),
+                            body: navigationItem.view,
                           ),
-                          body: navigationItem.view,
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   );
             return view;
           });
