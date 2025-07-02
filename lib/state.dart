@@ -511,6 +511,7 @@ class DetectionState {
       isTesting: true,
     );
     final res = await request.checkIp(cancelToken: cancelToken);
+    print("sadadda===>${res}");
     if (res.isError) {
       state.value = state.value.copyWith(
         isLoading: true,

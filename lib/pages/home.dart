@@ -25,7 +25,12 @@ class HomePage extends StatelessWidget {
           final pageView = _HomePageView(pageBuilder: (_, index) {
             final navigationItem = state.navigationItems[index];
             final view = isMobile
-                ? navigationItem.view
+                ? CommonScaffold(
+                    title: Intl.message(
+                      navigationItem.label.name,
+                    ),
+                    body: navigationItem.view,
+                  )
                 : KeepScope(
                     keep: navigationItem.keep,
                     child: Navigator(
@@ -64,12 +69,14 @@ class HomePage extends StatelessWidget {
                 selectedIndex: currentIndex,
               ),
             );
-            return CommonScaffold(
-              title: Intl.message(
-                pageLabel.name,
-              ),
-              body: pageView,
-              bottomNavigationBar: bottomNavigationBar,
+            return Column(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: pageView,
+                ),
+                bottomNavigationBar,
+              ],
             );
           } else {
             return pageView;

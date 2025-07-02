@@ -95,6 +95,12 @@ class Request {
     var failureCount = 0;
     final futures = _ipInfoSources.entries.map((source) async {
       final Completer<Result<IpInfo?>> completer = Completer();
+      handleFailRes() {
+        if (!completer.isCompleted && failureCount == _ipInfoSources.length) {
+          completer.complete(Result.success(null));
+        }
+      }
+
       final future = Dio().get<Map<String, dynamic>>(
         source.key,
         cancelToken: cancelToken,
@@ -107,15 +113,14 @@ class Request {
           completer.complete(Result.success(source.value(res.data!)));
         } else {
           failureCount++;
-          if (failureCount == _ipInfoSources.length) {
-            completer.complete(Result.success(null));
-          }
+          handleFailRes();
         }
       }).catchError((e) {
         failureCount++;
         if (e == DioExceptionType.cancel) {
           completer.complete(Result.error("cancelled"));
         }
+        handleFailRes();
       });
       return completer.future;
     });
