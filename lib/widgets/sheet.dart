@@ -148,11 +148,9 @@ class _AdaptiveSheetScaffoldState extends State<AdaptiveSheetScaffold> {
       final handleSize = Size(32, 4);
       return Container(
         clipBehavior: Clip.hardEdge,
-        decoration: ShapeDecoration(
+        decoration: BoxDecoration(
           color: backgroundColor,
-          shape: RoundedSuperellipseBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(28.0)),
-          ),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28.0)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -163,10 +161,8 @@ class _AdaptiveSheetScaffoldState extends State<AdaptiveSheetScaffold> {
                 alignment: Alignment.center,
                 height: handleSize.height,
                 width: handleSize.width,
-                decoration: ShapeDecoration(
-                  shape: RoundedSuperellipseBorder(
-                    borderRadius: BorderRadius.circular(handleSize.height / 2),
-                  ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(handleSize.height / 2),
                   color: context.colorScheme.onSurfaceVariant,
                 ),
               ),
