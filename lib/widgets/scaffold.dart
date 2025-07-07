@@ -378,7 +378,9 @@ class CommonScaffoldState extends State<CommonScaffold> {
             valueListenable: _keywordsNotifier,
             builder: (_, keywords, __) {
               if (widget.onKeywordsUpdate != null) {
-                widget.onKeywordsUpdate!(keywords);
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  widget.onKeywordsUpdate!(keywords);
+                });
               }
               if (keywords.isEmpty) {
                 return SizedBox();

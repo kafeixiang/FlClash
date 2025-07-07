@@ -108,7 +108,7 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView> {
             controller: _scrollController,
             child: ListView.separated(
               controller: _scrollController,
-              itemBuilder: (_, index) {
+              itemBuilder: (context, index) {
                 final connection = connections[index];
                 return ConnectionItem(
                   key: Key(connection.id),

@@ -172,7 +172,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
             child: TextScaleNotification(
               child: ValueListenableBuilder<ConnectionsState>(
                 valueListenable: _requestsStateNotifier,
-                builder: (_, state, __) {
+                builder: (context, state, __) {
                   _preLoad();
                   final connections = state.list;
                   final items = connections

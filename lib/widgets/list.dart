@@ -52,7 +52,6 @@ class OpenDelegate extends Delegate {
   final double? maxWidth;
   final Widget? action;
   final bool blur;
-  final bool wrap;
 
   const OpenDelegate({
     required this.title,
@@ -60,7 +59,6 @@ class OpenDelegate extends Delegate {
     this.maxWidth,
     this.action,
     this.blur = true,
-    this.wrap = true,
   });
 }
 
@@ -279,7 +277,6 @@ class ListItem<T> extends StatelessWidget {
         child: openDelegate.widget,
       );
       return OpenContainer(
-        useRootNavigator: true,
         closedBuilder: (_, action) {
           openAction() {
             final isMobile = globalState.appState.viewMode == ViewMode.mobile;
@@ -311,9 +308,6 @@ class ListItem<T> extends StatelessWidget {
           );
         },
         openBuilder: (_, action) {
-          if (!openDelegate.wrap) {
-            return child;
-          }
           return CommonScaffold.open(
             key: Key(openDelegate.title),
             onBack: action,

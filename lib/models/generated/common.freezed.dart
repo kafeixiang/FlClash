@@ -19,7 +19,7 @@ mixin _$NavigationItem {
   Icon get icon => throw _privateConstructorUsedError;
   PageLabel get label => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
-  Widget get view => throw _privateConstructorUsedError;
+  WidgetBuilder get builder => throw _privateConstructorUsedError;
   bool get keep => throw _privateConstructorUsedError;
   String? get path => throw _privateConstructorUsedError;
   List<NavigationItemMode> get modes => throw _privateConstructorUsedError;
@@ -41,7 +41,7 @@ abstract class $NavigationItemCopyWith<$Res> {
       {Icon icon,
       PageLabel label,
       String? description,
-      Widget view,
+      WidgetBuilder builder,
       bool keep,
       String? path,
       List<NavigationItemMode> modes});
@@ -65,7 +65,7 @@ class _$NavigationItemCopyWithImpl<$Res, $Val extends NavigationItem>
     Object? icon = null,
     Object? label = null,
     Object? description = freezed,
-    Object? view = null,
+    Object? builder = null,
     Object? keep = null,
     Object? path = freezed,
     Object? modes = null,
@@ -83,10 +83,10 @@ class _$NavigationItemCopyWithImpl<$Res, $Val extends NavigationItem>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String?,
-      view: null == view
-          ? _value.view
-          : view // ignore: cast_nullable_to_non_nullable
-              as Widget,
+      builder: null == builder
+          ? _value.builder
+          : builder // ignore: cast_nullable_to_non_nullable
+              as WidgetBuilder,
       keep: null == keep
           ? _value.keep
           : keep // ignore: cast_nullable_to_non_nullable
@@ -115,7 +115,7 @@ abstract class _$$NavigationItemImplCopyWith<$Res>
       {Icon icon,
       PageLabel label,
       String? description,
-      Widget view,
+      WidgetBuilder builder,
       bool keep,
       String? path,
       List<NavigationItemMode> modes});
@@ -137,7 +137,7 @@ class __$$NavigationItemImplCopyWithImpl<$Res>
     Object? icon = null,
     Object? label = null,
     Object? description = freezed,
-    Object? view = null,
+    Object? builder = null,
     Object? keep = null,
     Object? path = freezed,
     Object? modes = null,
@@ -155,10 +155,10 @@ class __$$NavigationItemImplCopyWithImpl<$Res>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String?,
-      view: null == view
-          ? _value.view
-          : view // ignore: cast_nullable_to_non_nullable
-              as Widget,
+      builder: null == builder
+          ? _value.builder
+          : builder // ignore: cast_nullable_to_non_nullable
+              as WidgetBuilder,
       keep: null == keep
           ? _value.keep
           : keep // ignore: cast_nullable_to_non_nullable
@@ -182,7 +182,7 @@ class _$NavigationItemImpl implements _NavigationItem {
       {required this.icon,
       required this.label,
       this.description,
-      required this.view,
+      required this.builder,
       this.keep = true,
       this.path,
       final List<NavigationItemMode> modes = const [
@@ -198,7 +198,7 @@ class _$NavigationItemImpl implements _NavigationItem {
   @override
   final String? description;
   @override
-  final Widget view;
+  final WidgetBuilder builder;
   @override
   @JsonKey()
   final bool keep;
@@ -215,7 +215,7 @@ class _$NavigationItemImpl implements _NavigationItem {
 
   @override
   String toString() {
-    return 'NavigationItem(icon: $icon, label: $label, description: $description, view: $view, keep: $keep, path: $path, modes: $modes)';
+    return 'NavigationItem(icon: $icon, label: $label, description: $description, builder: $builder, keep: $keep, path: $path, modes: $modes)';
   }
 
   @override
@@ -227,15 +227,15 @@ class _$NavigationItemImpl implements _NavigationItem {
             (identical(other.label, label) || other.label == label) &&
             (identical(other.description, description) ||
                 other.description == description) &&
-            (identical(other.view, view) || other.view == view) &&
+            (identical(other.builder, builder) || other.builder == builder) &&
             (identical(other.keep, keep) || other.keep == keep) &&
             (identical(other.path, path) || other.path == path) &&
             const DeepCollectionEquality().equals(other._modes, _modes));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, icon, label, description, view,
-      keep, path, const DeepCollectionEquality().hash(_modes));
+  int get hashCode => Object.hash(runtimeType, icon, label, description,
+      builder, keep, path, const DeepCollectionEquality().hash(_modes));
 
   /// Create a copy of NavigationItem
   /// with the given fields replaced by the non-null parameter values.
@@ -252,7 +252,7 @@ abstract class _NavigationItem implements NavigationItem {
       {required final Icon icon,
       required final PageLabel label,
       final String? description,
-      required final Widget view,
+      required final WidgetBuilder builder,
       final bool keep,
       final String? path,
       final List<NavigationItemMode> modes}) = _$NavigationItemImpl;
@@ -264,7 +264,7 @@ abstract class _NavigationItem implements NavigationItem {
   @override
   String? get description;
   @override
-  Widget get view;
+  WidgetBuilder get builder;
   @override
   bool get keep;
   @override

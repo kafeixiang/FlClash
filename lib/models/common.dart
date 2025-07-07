@@ -16,7 +16,7 @@ class NavigationItem with _$NavigationItem {
     required Icon icon,
     required PageLabel label,
     final String? description,
-    required Widget view,
+    required WidgetBuilder builder,
     @Default(true) bool keep,
     String? path,
     @Default([NavigationItemMode.mobile, NavigationItemMode.desktop])

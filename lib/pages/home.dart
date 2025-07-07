@@ -18,20 +18,21 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return HomeBackScope(
       child: Consumer(
-        builder: (_, ref, __) {
+        builder: (context, ref, __) {
           final state = ref.watch(navigationStateProvider);
           final isMobile = state.viewMode == ViewMode.mobile;
           final navigationItems = state.navigationItems;
           final pageView = _HomePageView(pageBuilder: (_, index) {
             final navigationItem = state.navigationItems[index];
+            final navigationView = navigationItem.builder(context);
             final view = isMobile
-                ? navigationItem.view
+                ? navigationView
                 : KeepScope(
                     keep: navigationItem.keep,
                     child: Navigator(
                       onGenerateRoute: (_) {
                         return CommonRoute(
-                          builder: (_) => navigationItem.view,
+                          builder: (_) => navigationView,
                         );
                       },
                     ),

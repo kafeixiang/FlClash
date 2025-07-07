@@ -11,18 +11,18 @@ class Navigation {
     bool hasProxies = false,
   }) {
     return [
-      const NavigationItem(
+      NavigationItem(
         keep: false,
         icon: Icon(Icons.space_dashboard),
         label: PageLabel.dashboard,
-        view: DashboardView(
+        builder: (_) => const DashboardView(
           key: GlobalObjectKey(PageLabel.dashboard),
         ),
       ),
       NavigationItem(
         icon: const Icon(Icons.article),
         label: PageLabel.proxies,
-        view: const ProxiesView(
+        builder: (_) => const ProxiesView(
           key: GlobalObjectKey(
             PageLabel.proxies,
           ),
@@ -31,19 +31,19 @@ class Navigation {
             ? [NavigationItemMode.mobile, NavigationItemMode.desktop]
             : [],
       ),
-      const NavigationItem(
+      NavigationItem(
         icon: Icon(Icons.folder),
         label: PageLabel.profiles,
-        view: ProfilesView(
+        builder: (_) => const ProfilesView(
           key: GlobalObjectKey(
             PageLabel.profiles,
           ),
         ),
       ),
-      const NavigationItem(
+      NavigationItem(
         icon: Icon(Icons.view_timeline),
         label: PageLabel.requests,
-        view: RequestsView(
+        builder: (_) => const RequestsView(
           key: GlobalObjectKey(
             PageLabel.requests,
           ),
@@ -51,10 +51,10 @@ class Navigation {
         description: "requestsDesc",
         modes: [NavigationItemMode.desktop, NavigationItemMode.more],
       ),
-      const NavigationItem(
+      NavigationItem(
         icon: Icon(Icons.ballot),
         label: PageLabel.connections,
-        view: ConnectionsView(
+        builder: (_) => const ConnectionsView(
           key: GlobalObjectKey(
             PageLabel.connections,
           ),
@@ -62,11 +62,11 @@ class Navigation {
         description: "connectionsDesc",
         modes: [NavigationItemMode.desktop, NavigationItemMode.more],
       ),
-      const NavigationItem(
+      NavigationItem(
         icon: Icon(Icons.storage),
         label: PageLabel.resources,
         description: "resourcesDesc",
-        view: ResourcesView(
+        builder: (_) => const ResourcesView(
           key: GlobalObjectKey(
             PageLabel.resources,
           ),
@@ -76,7 +76,7 @@ class Navigation {
       NavigationItem(
         icon: const Icon(Icons.adb),
         label: PageLabel.logs,
-        view: const LogsView(
+        builder: (_) => const LogsView(
           key: GlobalObjectKey(
             PageLabel.logs,
           ),
@@ -86,10 +86,10 @@ class Navigation {
             ? [NavigationItemMode.desktop, NavigationItemMode.more]
             : [],
       ),
-      const NavigationItem(
+      NavigationItem(
         icon: Icon(Icons.construction),
         label: PageLabel.tools,
-        view: ToolsView(
+        builder: (_) => const ToolsView(
           key: GlobalObjectKey(
             PageLabel.tools,
           ),

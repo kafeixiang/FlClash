@@ -196,7 +196,7 @@ class _LogsViewState extends ConsumerState<LogsView> {
           _currentMaxWidth = constraints.maxWidth - 40;
           return ValueListenableBuilder<LogsState>(
             valueListenable: _logsStateNotifier,
-            builder: (_, state, __) {
+            builder: (context, state, __) {
               _preLoad();
               final logs = state.list;
               final items = logs

@@ -36,9 +36,8 @@ class _ToolViewState extends ConsumerState<ToolsView> {
           ? Text(Intl.message(navigationItem.description!))
           : null,
       delegate: OpenDelegate(
-        wrap: false,
         title: Intl.message(navigationItem.label.name),
-        widget: navigationItem.view,
+        widget: navigationItem.builder(context),
       ),
     );
   }
