@@ -108,7 +108,7 @@ class _StartButtonState extends ConsumerState<StartButton>
               handleSwitchStart();
             },
             child: Row(
-              mainAxisSize: MainAxisSize.max,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
                   height: 56,

@@ -18,7 +18,7 @@ class RequestsView extends ConsumerStatefulWidget {
   ConsumerState<RequestsView> createState() => _RequestsViewState();
 }
 
-class _RequestsViewState extends ConsumerState<RequestsView> with PageMixin {
+class _RequestsViewState extends ConsumerState<RequestsView> {
   final _requestsStateNotifier = ValueNotifier<ConnectionsState>(
     const ConnectionsState(loading: true),
   );
@@ -29,18 +29,16 @@ class _RequestsViewState extends ConsumerState<RequestsView> with PageMixin {
 
   double _currentMaxWidth = 0;
 
-  @override
-  get onSearch => (value) {
-        _requestsStateNotifier.value = _requestsStateNotifier.value.copyWith(
-          query: value,
-        );
-      };
+  _onSearch(String value) {
+    _requestsStateNotifier.value = _requestsStateNotifier.value.copyWith(
+      query: value,
+    );
+  }
 
-  @override
-  get onKeywordsUpdate => (keywords) {
-        _requestsStateNotifier.value =
-            _requestsStateNotifier.value.copyWith(keywords: keywords);
-      };
+  _onKeywordsUpdate(List<String> keywords) {
+    _requestsStateNotifier.value =
+        _requestsStateNotifier.value.copyWith(keywords: keywords);
+  }
 
   @override
   void initState() {
@@ -52,19 +50,6 @@ class _RequestsViewState extends ConsumerState<RequestsView> with PageMixin {
     _requests = globalState.appState.requests.list;
     _requestsStateNotifier.value = _requestsStateNotifier.value.copyWith(
       connections: _requests,
-    );
-    ref.listenManual(
-      isCurrentPageProvider(
-        PageLabel.requests,
-        handler: (pageLabel, viewMode) =>
-            pageLabel == PageLabel.tools && viewMode == ViewMode.mobile,
-      ),
-      (prev, next) {
-        if (prev != next && next == true) {
-          initPageState();
-        }
-      },
-      fireImmediately: true,
     );
     ref.listenManual(
       requestsProvider.select((state) => state.list),
@@ -166,97 +151,102 @@ class _RequestsViewState extends ConsumerState<RequestsView> with PageMixin {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (_, constraints) {
-        return Consumer(
-          builder: (_, ref, child) {
-            final value = ref.watch(
-              patchClashConfigProvider.select(
-                (state) =>
-                    state.findProcessMode == FindProcessMode.always &&
-                    Platform.isAndroid,
-              ),
-            );
-            _currentMaxWidth = constraints.maxWidth - 40 - (value ? 60 : 0);
-            return child!;
-          },
-          child: TextScaleNotification(
-            child: ValueListenableBuilder<ConnectionsState>(
-              valueListenable: _requestsStateNotifier,
-              builder: (_, state, __) {
-                _preLoad();
-                final connections = state.list;
-                final items = connections
-                    .map<Widget>(
-                      (connection) => ConnectionItem(
-                        key: Key(connection.id),
-                        connection: connection,
-                        onClickKeyword: (value) {
-                          context.commonScaffoldState?.addKeyword(value);
-                        },
-                      ),
-                    )
-                    .separated(
-                      const Divider(
-                        height: 0,
-                      ),
-                    )
-                    .toList();
-                final content = connections.isEmpty
-                    ? NullStatus(
-                        label:
-                            appLocalizations.nullTip(appLocalizations.requests),
+    return CommonScaffold(
+      title: appLocalizations.requests,
+      onSearch: _onSearch,
+      onKeywordsUpdate: _onKeywordsUpdate,
+      body: LayoutBuilder(
+        builder: (_, constraints) {
+          return Consumer(
+            builder: (_, ref, child) {
+              final value = ref.watch(
+                patchClashConfigProvider.select(
+                  (state) =>
+                      state.findProcessMode == FindProcessMode.always &&
+                      Platform.isAndroid,
+                ),
+              );
+              _currentMaxWidth = constraints.maxWidth - 40 - (value ? 60 : 0);
+              return child!;
+            },
+            child: TextScaleNotification(
+              child: ValueListenableBuilder<ConnectionsState>(
+                valueListenable: _requestsStateNotifier,
+                builder: (_, state, __) {
+                  _preLoad();
+                  final connections = state.list;
+                  final items = connections
+                      .map<Widget>(
+                        (connection) => ConnectionItem(
+                          key: Key(connection.id),
+                          connection: connection,
+                          onClickKeyword: (value) {
+                            context.commonScaffoldState?.addKeyword(value);
+                          },
+                        ),
                       )
-                    : Align(
-                        alignment: Alignment.topCenter,
-                        child: ScrollToEndBox(
-                          controller: _scrollController,
-                          tag: _tag,
-                          dataSource: connections,
-                          child: CommonScrollBar(
+                      .separated(
+                        const Divider(
+                          height: 0,
+                        ),
+                      )
+                      .toList();
+                  final content = connections.isEmpty
+                      ? NullStatus(
+                          label: appLocalizations
+                              .nullTip(appLocalizations.requests),
+                        )
+                      : Align(
+                          alignment: Alignment.topCenter,
+                          child: ScrollToEndBox(
                             controller: _scrollController,
-                            child: CacheItemExtentListView(
-                              tag: _tag,
-                              reverse: true,
-                              shrinkWrap: true,
-                              physics: NextClampingScrollPhysics(),
+                            tag: _tag,
+                            dataSource: connections,
+                            child: CommonScrollBar(
                               controller: _scrollController,
-                              itemExtentBuilder: (index) {
-                                if (index.isOdd) {
-                                  return 0;
-                                }
-                                return _calcCacheHeight(
-                                    connections[index ~/ 2]);
-                              },
-                              itemBuilder: (_, index) {
-                                return items[index];
-                              },
-                              itemCount: items.length,
-                              keyBuilder: (int index) {
-                                if (index.isOdd) {
-                                  return "divider";
-                                }
-                                return connections[index ~/ 2].id;
-                              },
+                              child: CacheItemExtentListView(
+                                tag: _tag,
+                                reverse: true,
+                                shrinkWrap: true,
+                                physics: NextClampingScrollPhysics(),
+                                controller: _scrollController,
+                                itemExtentBuilder: (index) {
+                                  if (index.isOdd) {
+                                    return 0;
+                                  }
+                                  return _calcCacheHeight(
+                                      connections[index ~/ 2]);
+                                },
+                                itemBuilder: (_, index) {
+                                  return items[index];
+                                },
+                                itemCount: items.length,
+                                keyBuilder: (int index) {
+                                  if (index.isOdd) {
+                                    return "divider";
+                                  }
+                                  return connections[index ~/ 2].id;
+                                },
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                return FadeBox(
-                  child: state.loading
-                      ? Center(
-                          child: CircularProgressIndicator(),
-                        )
-                      : content,
-                );
+                        );
+                  return FadeBox(
+                    child: state.loading
+                        ? Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : content,
+                  );
+                },
+              ),
+              onNotification: (_) {
+                globalState.computeHeightMapCache[_tag]?.clear();
               },
             ),
-            onNotification: (_) {
-              globalState.computeHeightMapCache[_tag]?.clear();
-            },
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

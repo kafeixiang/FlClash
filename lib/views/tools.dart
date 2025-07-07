@@ -36,6 +36,7 @@ class _ToolViewState extends ConsumerState<ToolsView> {
           ? Text(Intl.message(navigationItem.description!))
           : null,
       delegate: OpenDelegate(
+        wrap: false,
         title: Intl.message(navigationItem.label.name),
         widget: navigationItem.view,
       ),
@@ -109,11 +110,14 @@ class _ToolViewState extends ConsumerState<ToolsView> {
       ..._getSettingList(),
       ..._getOtherList(vm2.b),
     ];
-    return ListView.builder(
-      key: toolsStoreKey,
-      itemCount: items.length,
-      itemBuilder: (_, index) => items[index],
-      padding: const EdgeInsets.only(bottom: 20),
+    return CommonScaffold(
+      title: appLocalizations.tools,
+      body: ListView.builder(
+        key: toolsStoreKey,
+        itemCount: items.length,
+        itemBuilder: (_, index) => items[index],
+        padding: const EdgeInsets.only(bottom: 20),
+      ),
     );
   }
 }
@@ -248,7 +252,7 @@ class _ConfigItem extends StatelessWidget {
       title: Text(appLocalizations.basicConfig),
       subtitle: Text(appLocalizations.basicConfigDesc),
       delegate: OpenDelegate(
-        title: appLocalizations.override,
+        title: appLocalizations.basicConfig,
         widget: const ConfigView(),
       ),
     );

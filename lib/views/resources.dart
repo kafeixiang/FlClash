@@ -51,19 +51,22 @@ class ResourcesView extends StatelessWidget {
       ),
     ];
 
-    return ListView.separated(
-      itemBuilder: (_, index) {
-        final geoItem = geoItems[index];
-        return GeoDataListItem(
-          geoItem: geoItem,
-        );
-      },
-      separatorBuilder: (BuildContext context, int index) {
-        return const Divider(
-          height: 0,
-        );
-      },
-      itemCount: geoItems.length,
+    return CommonScaffold(
+      title: appLocalizations.resources,
+      body: ListView.separated(
+        itemBuilder: (_, index) {
+          final geoItem = geoItems[index];
+          return GeoDataListItem(
+            geoItem: geoItem,
+          );
+        },
+        separatorBuilder: (BuildContext context, int index) {
+          return const Divider(
+            height: 0,
+          );
+        },
+        itemCount: geoItems.length,
+      ),
     );
   }
 }

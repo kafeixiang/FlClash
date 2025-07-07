@@ -18,98 +18,108 @@ class ProxiesView extends ConsumerStatefulWidget {
   ConsumerState<ProxiesView> createState() => _ProxiesViewState();
 }
 
-class _ProxiesViewState extends ConsumerState<ProxiesView> with PageMixin {
+class _ProxiesViewState extends ConsumerState<ProxiesView> {
   final GlobalKey<ProxiesTabViewState> _proxiesTabKey = GlobalKey();
   bool _hasProviders = false;
   bool _isTab = false;
 
-  @override
-  get actions => [
-        if (_isTab)
-          IconButton(
+  List<Widget> _buildActions() {
+    return [
+      if (_isTab)
+        IconButton(
+          onPressed: () {
+            _proxiesTabKey.currentState?.scrollToGroupSelected();
+          },
+          icon: Icon(
+            Icons.adjust,
+            weight: 1,
+          ),
+        ),
+      CommonPopupBox(
+        targetBuilder: (open) {
+          return IconButton(
             onPressed: () {
-              _proxiesTabKey.currentState?.scrollToGroupSelected();
+              open(
+                offset: Offset(0, 20),
+              );
             },
             icon: Icon(
-              Icons.adjust,
-              weight: 1,
+              Icons.more_vert,
             ),
-          ),
-        CommonPopupBox(
-          targetBuilder: (open) {
-            return IconButton(
+          );
+        },
+        popup: CommonPopupMenu(
+          items: [
+            PopupMenuItemData(
+              icon: Icons.tune,
+              label: appLocalizations.settings,
               onPressed: () {
-                open(
-                  offset: Offset(0, 20),
+                showSheet(
+                  context: context,
+                  props: SheetProps(
+                    isScrollControlled: true,
+                  ),
+                  builder: (_, type) {
+                    return AdaptiveSheetScaffold(
+                      type: type,
+                      body: const ProxiesSetting(),
+                      title: appLocalizations.settings,
+                    );
+                  },
                 );
               },
-              icon: Icon(
-                Icons.more_vert,
-              ),
-            );
-          },
-          popup: CommonPopupMenu(
-            items: [
+            ),
+            if (_hasProviders)
               PopupMenuItemData(
-                icon: Icons.tune,
-                label: appLocalizations.settings,
+                icon: Icons.poll_outlined,
+                label: appLocalizations.providers,
                 onPressed: () {
-                  showSheet(
-                    context: context,
-                    props: SheetProps(
-                      isScrollControlled: true,
-                    ),
+                  showExtend(
+                    context,
                     builder: (_, type) {
-                      return AdaptiveSheetScaffold(
+                      return ProvidersView(
                         type: type,
-                        body: const ProxiesSetting(),
-                        title: appLocalizations.settings,
                       );
                     },
                   );
                 },
               ),
-              if (_hasProviders)
-                PopupMenuItemData(
-                  icon: Icons.poll_outlined,
-                  label: appLocalizations.providers,
-                  onPressed: () {
-                    showExtend(
-                      context,
-                      builder: (_, type) {
-                        return ProvidersView(
-                          type: type,
-                        );
-                      },
-                    );
-                  },
-                ),
-              if (!_isTab)
-                PopupMenuItemData(
-                  icon: Icons.style_outlined,
-                  label: appLocalizations.iconConfiguration,
-                  onPressed: () {
-                    showExtend(
-                      context,
-                      builder: (_, type) {
-                        return AdaptiveSheetScaffold(
-                          type: type,
-                          body: const _IconConfigView(),
-                          title: appLocalizations.iconConfiguration,
-                        );
-                      },
-                    );
-                  },
-                ),
-            ],
-          ),
-        )
-      ];
+            if (!_isTab)
+              PopupMenuItemData(
+                icon: Icons.style_outlined,
+                label: appLocalizations.iconConfiguration,
+                onPressed: () {
+                  showExtend(
+                    context,
+                    builder: (_, type) {
+                      return AdaptiveSheetScaffold(
+                        type: type,
+                        body: const _IconConfigView(),
+                        title: appLocalizations.iconConfiguration,
+                      );
+                    },
+                  );
+                },
+              ),
+          ],
+        ),
+      )
+    ];
+  }
 
-  @override
-  get onSearch => (value) {
-        ref.read(proxiesQueryProvider.notifier).value = value;
-      };
+  Widget? _buildFAB() {
+    return _isTab
+        ? DelayTestButton(
+            onClick: () async {
+              await _proxiesTabKey.currentState?.delayTestCurrentGroup();
+            },
+          )
+        : null;
+  }
+
+  onSearch(String value) {
+    ref.read(proxiesQueryProvider.notifier).value = value;
+  }
 
   @override
   void dispose() {
@@ -120,15 +130,6 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> with PageMixin {
       }
     });
   }
-
-  @override
-  get floatingActionButton => _isTab
-      ? DelayTestButton(
-          onClick: () async {
-            await _proxiesTabKey.currentState?.delayTestCurrentGroup();
-          },
-        )
-      : null;
 
   @override
   void initState() {
@@ -196,27 +197,27 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> with PageMixin {
         ),
       )
     ];
-    ref.listenManual(
-      proxiesActionsStateProvider,
-      fireImmediately: true,
-      (prev, next) {
-        if (prev == next) {
-          return;
-        }
-        if (next.pageLabel == PageLabel.proxies) {
-          _hasProviders = next.hasProviders;
-          _isTab = next.type == ProxiesType.tab;
-          initPageState();
-          return;
-        } else {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) {
-              ref.read(proxiesQueryProvider.notifier).value = "";
-            }
-          });
-        }
-      },
-    );
+    // ref.listenManual(
+    //   proxiesActionsStateProvider,
+    //   fireImmediately: true,
+    //   (prev, next) {
+    //     if (prev == next) {
+    //       return;
+    //     }
+    //     if (next.pageLabel == PageLabel.proxies) {
+    //       _hasProviders = next.hasProviders;
+    //       _isTab = next.type == ProxiesType.tab;
+    //       initPageState();
+    //       return;
+    //     } else {
+    //       WidgetsBinding.instance.addPostFrameCallback((_) {
+    //         if (mounted) {
+    //           ref.read(proxiesQueryProvider.notifier).value = "";
+    //         }
+    //       });
+    //     }
+    //   },
+    // );
     super.initState();
   }
 
@@ -227,12 +228,18 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> with PageMixin {
         (state) => state.type,
       ),
     );
-    return switch (proxiesType) {
-      ProxiesType.tab => ProxiesTabView(
-          key: _proxiesTabKey,
-        ),
-      ProxiesType.list => const ProxiesListView(),
-    };
+    return CommonScaffold(
+      floatingActionButton: _buildFAB(),
+      actions: _buildActions(),
+      title: appLocalizations.proxies,
+      onSearch: onSearch,
+      body: switch (proxiesType) {
+        ProxiesType.tab => ProxiesTabView(
+            key: _proxiesTabKey,
+          ),
+        ProxiesType.list => const ProxiesListView(),
+      },
+    );
   }
 }
 

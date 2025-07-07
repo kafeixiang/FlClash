@@ -21,7 +21,7 @@ class ProfilesView extends StatefulWidget {
   State<ProfilesView> createState() => _ProfilesViewState();
 }
 
-class _ProfilesViewState extends State<ProfilesView> with PageMixin {
+class _ProfilesViewState extends State<ProfilesView> {
   Function? applyConfigDebounce;
 
   _handleShowAddExtendPage() {
@@ -75,112 +75,113 @@ class _ProfilesViewState extends State<ProfilesView> with PageMixin {
     }
   }
 
-  @override
-  List<Widget> get actions => [
-        IconButton(
-          onPressed: () {
-            _updateProfiles();
-          },
-          icon: const Icon(Icons.sync),
-        ),
-        IconButton(
-          onPressed: () {
-            showExtend(
-              context,
-              builder: (_, type) {
-                return ScriptsView();
-              },
+  List<Widget> _buildActions() {
+    return [
+      IconButton(
+        onPressed: () {
+          _updateProfiles();
+        },
+        icon: const Icon(Icons.sync),
+      ),
+      IconButton(
+        onPressed: () {
+          showExtend(
+            context,
+            builder: (_, type) {
+              return ScriptsView();
+            },
+          );
+        },
+        icon: Consumer(
+          builder: (context, ref, __) {
+            final isScriptMode = ref.watch(
+                scriptStateProvider.select((state) => state.realId != null));
+            return Icon(
+              Icons.functions,
+              color: isScriptMode ? context.colorScheme.primary : null,
             );
           },
-          icon: Consumer(
-            builder: (context, ref, __) {
-              final isScriptMode = ref.watch(
-                  scriptStateProvider.select((state) => state.realId != null));
-              return Icon(
-                Icons.functions,
-                color: isScriptMode ? context.colorScheme.primary : null,
+        ),
+      ),
+      IconButton(
+        onPressed: () {
+          final profiles = globalState.config.profiles;
+          showSheet(
+            context: context,
+            builder: (_, type) {
+              return ReorderableProfilesSheet(
+                type: type,
+                profiles: profiles,
               );
             },
-          ),
-        ),
-        IconButton(
-          onPressed: () {
-            final profiles = globalState.config.profiles;
-            showSheet(
-              context: context,
-              builder: (_, type) {
-                return ReorderableProfilesSheet(
-                  type: type,
-                  profiles: profiles,
-                );
-              },
-            );
-          },
-          icon: const Icon(Icons.sort),
-          iconSize: 26,
-        ),
-      ];
+          );
+        },
+        icon: const Icon(Icons.sort),
+        iconSize: 26,
+      ),
+    ];
+  }
 
-  @override
-  Widget? get floatingActionButton => FloatingActionButton(
-        heroTag: null,
-        onPressed: _handleShowAddExtendPage,
-        child: const Icon(
-          Icons.add,
-        ),
-      );
+  Widget _buildFAB() {
+    return FloatingActionButton(
+      heroTag: null,
+      onPressed: _handleShowAddExtendPage,
+      child: const Icon(
+        Icons.add,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(
-      builder: (_, ref, __) {
-        ref.listenManual(
-          isCurrentPageProvider(PageLabel.profiles),
-          (prev, next) {
-            if (prev != next && next == true) {
-              initPageState();
-            }
-          },
-          fireImmediately: true,
-        );
-        final profilesSelectorState = ref.watch(profilesSelectorStateProvider);
-        if (profilesSelectorState.profiles.isEmpty) {
-          return NullStatus(
-            label: appLocalizations.nullProfileDesc,
-          );
-        }
-        return Align(
-          alignment: Alignment.topCenter,
-          child: SingleChildScrollView(
-            key: profilesStoreKey,
-            padding: const EdgeInsets.only(
-              left: 16,
-              right: 16,
-              top: 16,
-              bottom: 88,
-            ),
-            child: Grid(
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 16,
-              crossAxisCount: profilesSelectorState.columns,
-              children: [
-                for (int i = 0; i < profilesSelectorState.profiles.length; i++)
-                  GridItem(
-                    child: ProfileItem(
-                      key: Key(profilesSelectorState.profiles[i].id),
-                      profile: profilesSelectorState.profiles[i],
-                      groupValue: profilesSelectorState.currentProfileId,
-                      onChanged: (profileId) {
-                        ref.read(currentProfileIdProvider.notifier).value =
-                            profileId;
-                      },
+    return CommonScaffold(
+      title: appLocalizations.profiles,
+      floatingActionButton: _buildFAB(),
+      actions: _buildActions(),
+      body: Consumer(
+        builder: (_, ref, __) {
+          final profilesSelectorState =
+              ref.watch(profilesSelectorStateProvider);
+          if (profilesSelectorState.profiles.isEmpty) {
+            return NullStatus(
+              label: appLocalizations.nullProfileDesc,
+            );
+          }
+          return Align(
+            alignment: Alignment.topCenter,
+            child: SingleChildScrollView(
+              key: profilesStoreKey,
+              padding: const EdgeInsets.only(
+                left: 16,
+                right: 16,
+                top: 16,
+                bottom: 88,
+              ),
+              child: Grid(
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 16,
+                crossAxisCount: profilesSelectorState.columns,
+                children: [
+                  for (int i = 0;
+                      i < profilesSelectorState.profiles.length;
+                      i++)
+                    GridItem(
+                      child: ProfileItem(
+                        key: Key(profilesSelectorState.profiles[i].id),
+                        profile: profilesSelectorState.profiles[i],
+                        groupValue: profilesSelectorState.currentProfileId,
+                        onChanged: (profileId) {
+                          ref.read(currentProfileIdProvider.notifier).value =
+                              profileId;
+                        },
+                      ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

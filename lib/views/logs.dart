@@ -17,7 +17,7 @@ class LogsView extends ConsumerStatefulWidget {
   ConsumerState<LogsView> createState() => _LogsViewState();
 }
 
-class _LogsViewState extends ConsumerState<LogsView> with PageMixin {
+class _LogsViewState extends ConsumerState<LogsView> {
   final _logsStateNotifier = ValueNotifier<LogsState>(
     LogsState(loading: true),
   );
@@ -40,19 +40,19 @@ class _LogsViewState extends ConsumerState<LogsView> with PageMixin {
     _logsStateNotifier.value = _logsStateNotifier.value.copyWith(
       logs: _logs,
     );
-    ref.listenManual(
-      isCurrentPageProvider(
-        PageLabel.logs,
-        handler: (pageLabel, viewMode) =>
-            pageLabel == PageLabel.tools && viewMode == ViewMode.mobile,
-      ),
-      (prev, next) {
-        if (prev != next && next == true) {
-          initPageState();
-        }
-      },
-      fireImmediately: true,
-    );
+    // ref.listenManual(
+    //   isCurrentPageProvider(
+    //     PageLabel.logs,
+    //     handler: (pageLabel, viewMode) =>
+    //         pageLabel == PageLabel.tools && viewMode == ViewMode.mobile,
+    //   ),
+    //   (prev, next) {
+    //     if (prev != next && next == true) {
+    //       initPageState();
+    //     }
+    //   },
+    //   fireImmediately: true,
+    // );
     ref.listenManual(
       logsProvider.select((state) => state.list),
       (prev, next) {
@@ -67,30 +67,29 @@ class _LogsViewState extends ConsumerState<LogsView> with PageMixin {
     );
   }
 
-  @override
-  List<Widget> get actions => [
-        IconButton(
-          onPressed: () {
-            _handleExport();
-          },
-          icon: const Icon(
-            Icons.file_download_outlined,
-          ),
+  List<Widget> _buildActions() {
+    return [
+      IconButton(
+        onPressed: () {
+          _handleExport();
+        },
+        icon: const Icon(
+          Icons.file_download_outlined,
         ),
-      ];
+      ),
+    ];
+  }
 
-  @override
-  get onSearch => (value) {
-        _logsStateNotifier.value = _logsStateNotifier.value.copyWith(
-          query: value,
-        );
-      };
+  void _onSearch(String value) {
+    _logsStateNotifier.value = _logsStateNotifier.value.copyWith(
+      query: value,
+    );
+  }
 
-  @override
-  get onKeywordsUpdate => (keywords) {
-        _logsStateNotifier.value =
-            _logsStateNotifier.value.copyWith(keywords: keywords);
-      };
+  void _onKeywordsUpdate(List<String> keywords) {
+    _logsStateNotifier.value =
+        _logsStateNotifier.value.copyWith(keywords: keywords);
+  }
 
   @override
   void dispose() {
@@ -187,80 +186,86 @@ class _LogsViewState extends ConsumerState<LogsView> with PageMixin {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (_, constraints) {
-        _currentMaxWidth = constraints.maxWidth - 40;
-        return ValueListenableBuilder<LogsState>(
-          valueListenable: _logsStateNotifier,
-          builder: (_, state, __) {
-            _preLoad();
-            final logs = state.list;
-            final items = logs
-                .map<Widget>(
-                  (log) => LogItem(
-                    key: Key(log.dateTime),
-                    log: log,
-                    onClick: (value) {
-                      context.commonScaffoldState?.addKeyword(value);
-                    },
-                  ),
-                )
-                .separated(
-                  const Divider(
-                    height: 0,
-                  ),
-                )
-                .toList();
-            final content = logs.isEmpty
-                ? NullStatus(
-                    label: appLocalizations.nullTip(
-                      appLocalizations.logs,
+    return CommonScaffold(
+      actions: _buildActions(),
+      onKeywordsUpdate: _onKeywordsUpdate,
+      onSearch: _onSearch,
+      title: appLocalizations.logs,
+      body: LayoutBuilder(
+        builder: (_, constraints) {
+          _currentMaxWidth = constraints.maxWidth - 40;
+          return ValueListenableBuilder<LogsState>(
+            valueListenable: _logsStateNotifier,
+            builder: (_, state, __) {
+              _preLoad();
+              final logs = state.list;
+              final items = logs
+                  .map<Widget>(
+                    (log) => LogItem(
+                      key: Key(log.dateTime),
+                      log: log,
+                      onClick: (value) {
+                        context.commonScaffoldState?.addKeyword(value);
+                      },
                     ),
                   )
-                : Align(
-                    alignment: Alignment.topCenter,
-                    child: CommonScrollBar(
-                      controller: _scrollController,
-                      child: ScrollToEndBox(
+                  .separated(
+                    const Divider(
+                      height: 0,
+                    ),
+                  )
+                  .toList();
+              final content = logs.isEmpty
+                  ? NullStatus(
+                      label: appLocalizations.nullTip(
+                        appLocalizations.logs,
+                      ),
+                    )
+                  : Align(
+                      alignment: Alignment.topCenter,
+                      child: CommonScrollBar(
                         controller: _scrollController,
-                        tag: _tag,
-                        dataSource: logs,
-                        child: CacheItemExtentListView(
-                          tag: _tag,
-                          reverse: true,
-                          shrinkWrap: true,
-                          physics: NextClampingScrollPhysics(),
+                        child: ScrollToEndBox(
                           controller: _scrollController,
-                          itemBuilder: (_, index) {
-                            return items[index];
-                          },
-                          itemExtentBuilder: (index) {
-                            if (index.isOdd) {
-                              return 0;
-                            }
-                            return _getItemHeight(logs[index ~/ 2]);
-                          },
-                          itemCount: items.length,
-                          keyBuilder: (int index) {
-                            if (index.isOdd) {
-                              return "divider";
-                            }
-                            return logs[index ~/ 2].payload;
-                          },
+                          tag: _tag,
+                          dataSource: logs,
+                          child: CacheItemExtentListView(
+                            tag: _tag,
+                            reverse: true,
+                            shrinkWrap: true,
+                            physics: NextClampingScrollPhysics(),
+                            controller: _scrollController,
+                            itemBuilder: (_, index) {
+                              return items[index];
+                            },
+                            itemExtentBuilder: (index) {
+                              if (index.isOdd) {
+                                return 0;
+                              }
+                              return _getItemHeight(logs[index ~/ 2]);
+                            },
+                            itemCount: items.length,
+                            keyBuilder: (int index) {
+                              if (index.isOdd) {
+                                return "divider";
+                              }
+                              return logs[index ~/ 2].payload;
+                            },
+                          ),
                         ),
                       ),
-                    ),
-                  );
-            return FadeBox(
-              child: state.loading
-                  ? Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : content,
-            );
-          },
-        );
-      },
+                    );
+              return FadeBox(
+                child: state.loading
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : content,
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

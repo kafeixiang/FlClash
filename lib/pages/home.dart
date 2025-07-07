@@ -25,23 +25,13 @@ class HomePage extends StatelessWidget {
           final pageView = _HomePageView(pageBuilder: (_, index) {
             final navigationItem = state.navigationItems[index];
             final view = isMobile
-                ? CommonScaffold(
-                    title: Intl.message(
-                      navigationItem.label.name,
-                    ),
-                    body: navigationItem.view,
-                  )
+                ? navigationItem.view
                 : KeepScope(
                     keep: navigationItem.keep,
                     child: Navigator(
                       onGenerateRoute: (_) {
                         return CommonRoute(
-                          builder: (_) => CommonScaffold(
-                            title: Intl.message(
-                              navigationItem.label.name,
-                            ),
-                            body: navigationItem.view,
-                          ),
+                          builder: (_) => navigationItem.view,
                         );
                       },
                     ),
@@ -49,7 +39,6 @@ class HomePage extends StatelessWidget {
             return view;
           });
           if (isMobile) {
-            final pageLabel = state.pageLabel;
             final currentIndex = state.currentIndex;
             final bottomNavigationBar = NavigationBarTheme(
               data: _NavigationBarDefaultsM3(context),

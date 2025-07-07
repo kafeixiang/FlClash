@@ -1,6 +1,7 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/models/clash_config.dart';
-import 'package:fl_clash/providers/config.dart' show patchClashConfigProvider;
+import 'package:fl_clash/models/config.dart';
+import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/config/dns.dart';
 import 'package:fl_clash/views/config/general.dart';
@@ -39,6 +40,35 @@ class _ConfigViewState extends State<ConfigView> {
         delegate: OpenDelegate(
           title: appLocalizations.network,
           blur: false,
+          action: Consumer(builder: (_, ref, __) {
+            return IconButton(
+              onPressed: () async {
+                final res = await globalState.showMessage(
+                  title: appLocalizations.reset,
+                  message: TextSpan(
+                    text: appLocalizations.resetTip,
+                  ),
+                );
+                if (res != true) {
+                  return;
+                }
+                ref.read(vpnSettingProvider.notifier).updateState(
+                      (state) => defaultVpnProps.copyWith(
+                        accessControl: state.accessControl,
+                      ),
+                    );
+                ref.read(patchClashConfigProvider.notifier).updateState(
+                      (state) => state.copyWith(
+                        tun: defaultTun,
+                      ),
+                    );
+              },
+              tooltip: appLocalizations.reset,
+              icon: const Icon(
+                Icons.replay,
+              ),
+            );
+          }),
           widget: const NetworkListView(),
         ),
       ),

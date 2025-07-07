@@ -40,19 +40,25 @@ class ThemeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        spacing: 24,
-        children: [
-          _ThemeModeItem(),
-          _PrimaryColorItem(),
-          _PrueBlackItem(),
-          _TextScaleFactorItem(),
-          const SizedBox(
-            height: 64,
-          ),
-        ],
+    final items = [
+      _ThemeModeItem(),
+      _PrimaryColorItem(),
+      _PrueBlackItem(),
+      _TextScaleFactorItem(),
+      const SizedBox(
+        height: 64,
       ),
+    ];
+    return ListView.separated(
+      itemCount: items.length,
+      itemBuilder: (_, index) {
+        return items[index];
+      },
+      separatorBuilder: (_, __) {
+        return SizedBox(
+          height: 24,
+        );
+      },
     );
   }
 }

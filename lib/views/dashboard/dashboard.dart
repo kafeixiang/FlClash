@@ -19,35 +19,17 @@ class DashboardView extends ConsumerStatefulWidget {
   ConsumerState<DashboardView> createState() => _DashboardViewState();
 }
 
-class _DashboardViewState extends ConsumerState<DashboardView> with PageMixin {
+class _DashboardViewState extends ConsumerState<DashboardView> {
   final key = GlobalKey<SuperGridState>();
   final _isEditNotifier = ValueNotifier<bool>(false);
   final _addedWidgetsNotifier = ValueNotifier<List<GridItem>>([]);
 
   @override
-  initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.listenManual(
-        isCurrentPageProvider(PageLabel.dashboard),
-        (prev, next) {
-          if (prev != next && next == true) {
-            initPageState();
-          }
-        },
-        fireImmediately: true,
-      );
-    });
-    super.initState();
-  }
-
-  @override
   dispose() {
     _isEditNotifier.dispose();
+    _addedWidgetsNotifier.dispose();
     super.dispose();
   }
-
-  @override
-  Widget? get floatingActionButton => const StartButton();
 
   Widget _buildIsEdit(_IsEditWidgetBuilder builder) {
     return ValueListenableBuilder(
@@ -58,40 +40,41 @@ class _DashboardViewState extends ConsumerState<DashboardView> with PageMixin {
     );
   }
 
-  @override
-  List<Widget> get actions => [
-        _buildIsEdit((isEdit) {
-          return isEdit
-              ? ValueListenableBuilder(
-                  valueListenable: _addedWidgetsNotifier,
-                  builder: (_, addedChildren, child) {
-                    if (addedChildren.isEmpty) {
-                      return Container();
-                    }
-                    return child!;
+  List<Widget> _buildActions() {
+    return [
+      _buildIsEdit((isEdit) {
+        return isEdit
+            ? ValueListenableBuilder(
+                valueListenable: _addedWidgetsNotifier,
+                builder: (_, addedChildren, child) {
+                  if (addedChildren.isEmpty) {
+                    return Container();
+                  }
+                  return child!;
+                },
+                child: IconButton(
+                  onPressed: () {
+                    _showAddWidgetsModal();
                   },
-                  child: IconButton(
-                    onPressed: () {
-                      _showAddWidgetsModal();
-                    },
-                    icon: Icon(
-                      Icons.add_circle,
-                    ),
+                  icon: Icon(
+                    Icons.add_circle,
                   ),
-                )
-              : SizedBox();
+                ),
+              )
+            : SizedBox();
+      }),
+      IconButton(
+        icon: _buildIsEdit((isEdit) {
+          return isEdit
+              ? Icon(Icons.save)
+              : Icon(
+                  Icons.edit,
+                );
         }),
-        IconButton(
-          icon: _buildIsEdit((isEdit) {
-            return isEdit
-                ? Icon(Icons.save)
-                : Icon(
-                    Icons.edit,
-                  );
-          }),
-          onPressed: _handleUpdateIsEdit,
-        ),
-      ];
+        onPressed: _handleUpdateIsEdit,
+      ),
+    ];
+  }
 
   _showAddWidgetsModal() {
     showSheet(
@@ -168,49 +151,54 @@ class _DashboardViewState extends ConsumerState<DashboardView> with PageMixin {
           .map((item) => item.widget)
           .toList();
     });
-    return Align(
-      alignment: Alignment.topCenter,
-      child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16).copyWith(
-            bottom: 88,
-          ),
-          child: _buildIsEdit((isEdit) {
-            return isEdit
-                ? SystemBackBlock(
-                    child: CommonPopScope(
-                      child: SuperGrid(
-                        key: key,
-                        crossAxisCount: columns,
-                        crossAxisSpacing: spacing,
-                        mainAxisSpacing: spacing,
-                        children: [
-                          ...dashboardState.dashboardWidgets
-                              .where(
-                                (item) => item.platforms.contains(
-                                  SupportPlatform.currentPlatform,
+    return CommonScaffold(
+      title: appLocalizations.dashboard,
+      actions: _buildActions(),
+      floatingActionButton: const StartButton(),
+      body: Align(
+        alignment: Alignment.topCenter,
+        child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16).copyWith(
+              bottom: 88,
+            ),
+            child: _buildIsEdit((isEdit) {
+              return isEdit
+                  ? SystemBackBlock(
+                      child: CommonPopScope(
+                        child: SuperGrid(
+                          key: key,
+                          crossAxisCount: columns,
+                          crossAxisSpacing: spacing,
+                          mainAxisSpacing: spacing,
+                          children: [
+                            ...dashboardState.dashboardWidgets
+                                .where(
+                                  (item) => item.platforms.contains(
+                                    SupportPlatform.currentPlatform,
+                                  ),
+                                )
+                                .map(
+                                  (item) => item.widget,
                                 ),
-                              )
-                              .map(
-                                (item) => item.widget,
-                              ),
-                        ],
-                        onUpdate: () {
-                          _handleSave();
+                          ],
+                          onUpdate: () {
+                            _handleSave();
+                          },
+                        ),
+                        onPop: () {
+                          _handleUpdateIsEdit();
+                          return false;
                         },
                       ),
-                      onPop: () {
-                        _handleUpdateIsEdit();
-                        return false;
-                      },
-                    ),
-                  )
-                : Grid(
-                    crossAxisCount: columns,
-                    crossAxisSpacing: spacing,
-                    mainAxisSpacing: spacing,
-                    children: children,
-                  );
-          })),
+                    )
+                  : Grid(
+                      crossAxisCount: columns,
+                      crossAxisSpacing: spacing,
+                      mainAxisSpacing: spacing,
+                      children: children,
+                    );
+            })),
+      ),
     );
   }
 }

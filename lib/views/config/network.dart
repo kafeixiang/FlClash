@@ -212,35 +212,6 @@ class TunStackItem extends ConsumerWidget {
 class BypassDomainItem extends StatelessWidget {
   const BypassDomainItem({super.key});
 
-  _initActions(BuildContext context, WidgetRef ref) {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      context.commonScaffoldState?.actions = [
-        IconButton(
-          onPressed: () async {
-            final res = await globalState.showMessage(
-              title: appLocalizations.reset,
-              message: TextSpan(
-                text: appLocalizations.resetTip,
-              ),
-            );
-            if (res != true) {
-              return;
-            }
-            ref.read(networkSettingProvider.notifier).updateState(
-                  (state) => state.copyWith(
-                    bypassDomain: defaultBypassDomain,
-                  ),
-                );
-          },
-          tooltip: appLocalizations.reset,
-          icon: const Icon(
-            Icons.replay,
-          ),
-        )
-      ];
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return ListItem.open(
@@ -248,10 +219,33 @@ class BypassDomainItem extends StatelessWidget {
       subtitle: Text(appLocalizations.bypassDomainDesc),
       delegate: OpenDelegate(
         blur: false,
+        action: Consumer(builder: (_, ref, __) {
+          return IconButton(
+            onPressed: () async {
+              final res = await globalState.showMessage(
+                title: appLocalizations.reset,
+                message: TextSpan(
+                  text: appLocalizations.resetTip,
+                ),
+              );
+              if (res != true) {
+                return;
+              }
+              ref.read(networkSettingProvider.notifier).updateState(
+                    (state) => state.copyWith(
+                      bypassDomain: defaultBypassDomain,
+                    ),
+                  );
+            },
+            tooltip: appLocalizations.reset,
+            icon: const Icon(
+              Icons.replay,
+            ),
+          );
+        }),
         title: appLocalizations.bypassDomain,
         widget: Consumer(
           builder: (_, ref, __) {
-            _initActions(context, ref);
             final bypassDomain = ref.watch(
                 networkSettingProvider.select((state) => state.bypassDomain));
             return ListInputPage(
@@ -382,46 +376,11 @@ final networkItems = [
   ),
 ];
 
-class NetworkListView extends ConsumerWidget {
+class NetworkListView extends StatelessWidget {
   const NetworkListView({super.key});
 
-  _initActions(BuildContext context, WidgetRef ref) {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      context.commonScaffoldState?.actions = [
-        IconButton(
-          onPressed: () async {
-            final res = await globalState.showMessage(
-              title: appLocalizations.reset,
-              message: TextSpan(
-                text: appLocalizations.resetTip,
-              ),
-            );
-            if (res != true) {
-              return;
-            }
-            ref.read(vpnSettingProvider.notifier).updateState(
-                  (state) => defaultVpnProps.copyWith(
-                    accessControl: state.accessControl,
-                  ),
-                );
-            ref.read(patchClashConfigProvider.notifier).updateState(
-                  (state) => state.copyWith(
-                    tun: defaultTun,
-                  ),
-                );
-          },
-          tooltip: appLocalizations.reset,
-          icon: const Icon(
-            Icons.replay,
-          ),
-        )
-      ];
-    });
-  }
-
   @override
-  Widget build(BuildContext context, ref) {
-    _initActions(context, ref);
+  Widget build(BuildContext context) {
     return generateListView(
       networkItems,
     );
