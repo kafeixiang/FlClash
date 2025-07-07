@@ -50,14 +50,14 @@ class OpenDelegate extends Delegate {
   final Widget widget;
   final String title;
   final double? maxWidth;
-  final Widget? action;
+  final List<Widget> actions;
   final bool blur;
 
   const OpenDelegate({
     required this.title,
     required this.widget,
     this.maxWidth,
-    this.action,
+    this.actions = const [],
     this.blur = true,
   });
 }
@@ -66,14 +66,14 @@ class NextDelegate extends Delegate {
   final Widget widget;
   final String title;
   final double? maxWidth;
-  final Widget? action;
+  final List<Widget> actions;
   final bool blur;
 
   const NextDelegate({
     required this.title,
     required this.widget,
     this.maxWidth,
-    this.action,
+    this.actions = const [],
     this.blur = true,
   });
 }
@@ -289,9 +289,7 @@ class ListItem<T> extends StatelessWidget {
                 ),
                 builder: (_, type) {
                   return AdaptiveSheetScaffold(
-                    actions: [
-                      if (openDelegate.action != null) openDelegate.action!,
-                    ],
+                    actions: openDelegate.actions,
                     type: type,
                     body: child,
                     title: openDelegate.title,
@@ -313,9 +311,7 @@ class ListItem<T> extends StatelessWidget {
             onBack: action,
             title: openDelegate.title,
             body: child,
-            actions: [
-              if (openDelegate.action != null) openDelegate.action!,
-            ],
+            actions: openDelegate.actions,
           );
         },
       );
@@ -336,9 +332,7 @@ class ListItem<T> extends StatelessWidget {
             ),
             builder: (_, type) {
               return AdaptiveSheetScaffold(
-                actions: [
-                  if (nextDelegate.action != null) nextDelegate.action!,
-                ],
+                actions: nextDelegate.actions,
                 type: type,
                 body: child,
                 title: nextDelegate.title,

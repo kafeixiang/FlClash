@@ -219,30 +219,32 @@ class BypassDomainItem extends StatelessWidget {
       subtitle: Text(appLocalizations.bypassDomainDesc),
       delegate: OpenDelegate(
         blur: false,
-        action: Consumer(builder: (_, ref, __) {
-          return IconButton(
-            onPressed: () async {
-              final res = await globalState.showMessage(
-                title: appLocalizations.reset,
-                message: TextSpan(
-                  text: appLocalizations.resetTip,
-                ),
-              );
-              if (res != true) {
-                return;
-              }
-              ref.read(networkSettingProvider.notifier).updateState(
-                    (state) => state.copyWith(
-                      bypassDomain: defaultBypassDomain,
-                    ),
-                  );
-            },
-            tooltip: appLocalizations.reset,
-            icon: const Icon(
-              Icons.replay,
-            ),
-          );
-        }),
+        actions: [
+          Consumer(builder: (_, ref, __) {
+            return IconButton(
+              onPressed: () async {
+                final res = await globalState.showMessage(
+                  title: appLocalizations.reset,
+                  message: TextSpan(
+                    text: appLocalizations.resetTip,
+                  ),
+                );
+                if (res != true) {
+                  return;
+                }
+                ref.read(networkSettingProvider.notifier).updateState(
+                      (state) => state.copyWith(
+                        bypassDomain: defaultBypassDomain,
+                      ),
+                    );
+              },
+              tooltip: appLocalizations.reset,
+              icon: const Icon(
+                Icons.replay,
+              ),
+            );
+          })
+        ],
         title: appLocalizations.bypassDomain,
         widget: Consumer(
           builder: (_, ref, __) {
