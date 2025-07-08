@@ -6,6 +6,7 @@ import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -17,61 +18,90 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return HomeBackScope(
-      child: Consumer(
-        builder: (context, ref, __) {
-          final state = ref.watch(navigationStateProvider);
-          final isMobile = state.viewMode == ViewMode.mobile;
-          final navigationItems = state.navigationItems;
-          final pageView = _HomePageView(pageBuilder: (_, index) {
-            final navigationItem = state.navigationItems[index];
-            final navigationView = navigationItem.builder(context);
-            final view = isMobile
-                ? navigationView
-                : KeepScope(
-                    keep: navigationItem.keep,
-                    child: Navigator(
-                      onGenerateRoute: (_) {
-                        return CommonRoute(
-                          builder: (_) => navigationView,
-                        );
-                      },
-                    ),
-                  );
-            return view;
-          });
-          if (isMobile) {
-            final currentIndex = state.currentIndex;
-            final bottomNavigationBar = NavigationBarTheme(
-              data: _NavigationBarDefaultsM3(context),
-              child: NavigationBar(
-                destinations: navigationItems
-                    .map(
-                      (e) => NavigationDestination(
-                        icon: e.icon,
-                        label: Intl.message(e.label.name),
+      child: Material(
+        color: context.colorScheme.surface,
+        child: Consumer(
+          builder: (context, ref, __) {
+            final state = ref.watch(navigationStateProvider);
+            final isMobile = state.viewMode == ViewMode.mobile;
+            final navigationItems = state.navigationItems;
+            final pageView = _HomePageView(pageBuilder: (_, index) {
+              final navigationItem = state.navigationItems[index];
+              final navigationView = navigationItem.builder(context);
+              final view = isMobile
+                  ? navigationView
+                  : KeepScope(
+                      keep: navigationItem.keep,
+                      child: Navigator(
+                        onGenerateRoute: (_) {
+                          return CommonRoute(
+                            builder: (_) => navigationView,
+                          );
+                        },
                       ),
-                    )
-                    .toList(),
-                onDestinationSelected: (index) {
-                  globalState.appController
-                      .toPage(navigationItems[index].label);
-                },
-                selectedIndex: currentIndex,
-              ),
-            );
-            return Column(
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: pageView,
+                    );
+              return view;
+            });
+            if (isMobile) {
+              final currentIndex = state.currentIndex;
+              final bottomNavigationBar = NavigationBarTheme(
+                data: _NavigationBarDefaultsM3(context),
+                child: NavigationBar(
+                  destinations: navigationItems
+                      .map(
+                        (e) => NavigationDestination(
+                          icon: e.icon,
+                          label: Intl.message(e.label.name),
+                        ),
+                      )
+                      .toList(),
+                  onDestinationSelected: (index) {
+                    globalState.appController
+                        .toPage(navigationItems[index].label);
+                  },
+                  selectedIndex: currentIndex,
                 ),
-                bottomNavigationBar,
-              ],
-            );
-          } else {
-            return pageView;
-          }
-        },
+              );
+              return Theme(
+                  data: Theme.of(context).copyWith(
+                    appBarTheme: Theme.of(context).appBarTheme.copyWith(
+                          systemOverlayStyle: SystemUiOverlayStyle(
+                            statusBarColor: Colors.transparent,
+                            statusBarIconBrightness:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Brightness.light
+                                    : Brightness.dark,
+                            systemNavigationBarIconBrightness:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Brightness.light
+                                    : Brightness.dark,
+                            systemNavigationBarColor:
+                                context.colorScheme.surfaceContainer,
+                            systemNavigationBarDividerColor: Colors.transparent,
+                          ),
+                        ),
+                  ),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: pageView,
+                      ),
+                      MediaQuery(
+                        data: MediaQuery.of(context).copyWith(
+                          padding: MediaQuery.of(context).padding.copyWith(
+                                top: 0,
+                              ),
+                        ),
+                        child: bottomNavigationBar,
+                      ),
+                    ],
+                  ));
+            } else {
+              return pageView;
+            }
+          },
+        ),
       ),
     );
   }

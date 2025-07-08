@@ -52,6 +52,7 @@ class OpenDelegate extends Delegate {
   final double? maxWidth;
   final List<Widget> actions;
   final bool blur;
+  final bool wrap;
 
   const OpenDelegate({
     required this.title,
@@ -59,6 +60,7 @@ class OpenDelegate extends Delegate {
     this.maxWidth,
     this.actions = const [],
     this.blur = true,
+    this.wrap = true,
   });
 }
 
@@ -68,6 +70,7 @@ class NextDelegate extends Delegate {
   final double? maxWidth;
   final List<Widget> actions;
   final bool blur;
+  final bool wrap;
 
   const NextDelegate({
     required this.title,
@@ -75,6 +78,7 @@ class NextDelegate extends Delegate {
     this.maxWidth,
     this.actions = const [],
     this.blur = true,
+    this.wrap = true,
   });
 }
 
@@ -273,9 +277,7 @@ class ListItem<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     if (delegate is OpenDelegate) {
       final openDelegate = delegate as OpenDelegate;
-      final child = SafeArea(
-        child: openDelegate.widget,
-      );
+      final child = openDelegate.widget;
       return OpenContainer(
         closedBuilder: (_, action) {
           openAction() {
@@ -288,12 +290,14 @@ class ListItem<T> extends StatelessWidget {
                   maxWidth: openDelegate.maxWidth,
                 ),
                 builder: (_, type) {
-                  return AdaptiveSheetScaffold(
-                    actions: openDelegate.actions,
-                    type: type,
-                    body: child,
-                    title: openDelegate.title,
-                  );
+                  return openDelegate.wrap
+                      ? AdaptiveSheetScaffold(
+                          actions: openDelegate.actions,
+                          type: type,
+                          body: child,
+                          title: openDelegate.title,
+                        )
+                      : child;
                 },
               );
               return;
@@ -306,21 +310,23 @@ class ListItem<T> extends StatelessWidget {
           );
         },
         openBuilder: (_, action) {
-          return CommonScaffold.open(
-            key: Key(openDelegate.title),
-            onBack: action,
-            title: openDelegate.title,
-            body: child,
-            actions: openDelegate.actions,
+          return BackHandleInherited(
+            handleBack: action,
+            child: openDelegate.wrap
+                ? CommonScaffold(
+                    key: Key(openDelegate.title),
+                    title: openDelegate.title,
+                    body: child,
+                    actions: openDelegate.actions,
+                  )
+                : child,
           );
         },
       );
     }
     if (delegate is NextDelegate) {
       final nextDelegate = delegate as NextDelegate;
-      final child = SafeArea(
-        child: nextDelegate.widget,
-      );
+      final child = nextDelegate.widget;
 
       return _buildListTile(
         onTap: () {
@@ -331,12 +337,14 @@ class ListItem<T> extends StatelessWidget {
               maxWidth: nextDelegate.maxWidth,
             ),
             builder: (_, type) {
-              return AdaptiveSheetScaffold(
-                actions: nextDelegate.actions,
-                type: type,
-                body: child,
-                title: nextDelegate.title,
-              );
+              return nextDelegate.wrap
+                  ? AdaptiveSheetScaffold(
+                      actions: nextDelegate.actions,
+                      type: type,
+                      body: child,
+                      title: nextDelegate.title,
+                    )
+                  : child;
             },
           );
         },

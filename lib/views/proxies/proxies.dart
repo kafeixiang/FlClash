@@ -133,92 +133,24 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
 
   @override
   void initState() {
-    [
-      if (_hasProviders)
-        IconButton(
-          onPressed: () {
-            showExtend(
-              context,
-              builder: (_, type) {
-                return ProvidersView(
-                  type: type,
-                );
-              },
-            );
-          },
-          icon: const Icon(
-            Icons.poll_outlined,
-          ),
-        ),
-      _isTab
-          ? IconButton(
-              onPressed: () {
-                _proxiesTabKey.currentState?.scrollToGroupSelected();
-              },
-              icon: const Icon(
-                Icons.adjust_outlined,
-              ),
-            )
-          : IconButton(
-              onPressed: () {
-                showExtend(
-                  context,
-                  builder: (_, type) {
-                    return AdaptiveSheetScaffold(
-                      type: type,
-                      body: const _IconConfigView(),
-                      title: appLocalizations.iconConfiguration,
-                    );
-                  },
-                );
-              },
-              icon: const Icon(
-                Icons.style_outlined,
-              ),
-            ),
-      IconButton(
-        onPressed: () {
-          showSheet(
-            context: context,
-            props: SheetProps(
-              isScrollControlled: true,
-            ),
-            builder: (_, type) {
-              return AdaptiveSheetScaffold(
-                type: type,
-                body: const ProxiesSetting(),
-                title: appLocalizations.settings,
-              );
-            },
-          );
-        },
-        icon: const Icon(
-          Icons.tune,
-        ),
-      )
-    ];
-    // ref.listenManual(
-    //   proxiesActionsStateProvider,
-    //   fireImmediately: true,
-    //   (prev, next) {
-    //     if (prev == next) {
-    //       return;
-    //     }
-    //     if (next.pageLabel == PageLabel.proxies) {
-    //       _hasProviders = next.hasProviders;
-    //       _isTab = next.type == ProxiesType.tab;
-    //       initPageState();
-    //       return;
-    //     } else {
-    //       WidgetsBinding.instance.addPostFrameCallback((_) {
-    //         if (mounted) {
-    //           ref.read(proxiesQueryProvider.notifier).value = "";
-    //         }
-    //       });
-    //     }
-    //   },
-    // );
     super.initState();
+    ref.listenManual(providersProvider.select((state) => state.isNotEmpty),
+        (prev, next) {
+      if (prev != next) {
+        setState(() {
+          _hasProviders = next;
+        });
+      }
+    }, fireImmediately: true);
+    ref.listenManual(
+        proxiesStyleSettingProvider
+            .select((state) => state.type == ProxiesType.tab), (prev, next) {
+      if (prev != next) {
+        setState(() {
+          _isTab = next;
+        });
+      }
+    }, fireImmediately: true);
   }
 
   @override

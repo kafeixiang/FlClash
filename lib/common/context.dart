@@ -72,3 +72,18 @@ extension BuildContextExtension on BuildContext {
     return state;
   }
 }
+
+class BackHandleInherited extends InheritedWidget {
+  final Function handleBack;
+
+  const BackHandleInherited(
+      {super.key, required this.handleBack, required super.child});
+
+  static BackHandleInherited? of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<BackHandleInherited>();
+
+  @override
+  bool updateShouldNotify(BackHandleInherited oldWidget) {
+    return handleBack != oldWidget.handleBack;
+  }
+}
