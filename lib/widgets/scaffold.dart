@@ -20,7 +20,6 @@ class CommonScaffold extends StatefulWidget {
   final String? title;
   final Widget? leading;
   final List<Widget>? actions;
-  final bool automaticallyImplyLeading;
   final bool? centerTitle;
   final AppBarEditState? appBarEditState;
   final Widget? floatingActionButton;
@@ -35,7 +34,6 @@ class CommonScaffold extends StatefulWidget {
     this.leading,
     this.title,
     this.actions,
-    this.automaticallyImplyLeading = true,
     this.centerTitle,
     this.appBarEditState,
     this.onSearch,
@@ -52,7 +50,6 @@ class CommonScaffoldState extends State<CommonScaffold> {
   final ValueNotifier<Widget?> _floatingActionButton = ValueNotifier(null);
   final ValueNotifier<List<String>> _keywordsNotifier = ValueNotifier([]);
   final ValueNotifier<bool> _loading = ValueNotifier(false);
-
   final _textController = TextEditingController();
 
   bool get _isSearch {
@@ -199,7 +196,7 @@ class CommonScaffoldState extends State<CommonScaffold> {
     _keywordsNotifier.value = keywords;
   }
 
-  Widget? _buildLeading(bool automaticallyImplyLeading) {
+  Widget? _buildLeading() {
     if (_isEdit) {
       return IconButton(
         onPressed: _appBarState.value.editState?.onExit,
@@ -212,12 +209,13 @@ class CommonScaffoldState extends State<CommonScaffold> {
         icon: Icon(Icons.arrow_back),
       );
     }
+    final backHandleInherited = BackHandleInherited.of(context);
     return widget.leading ??
-        (Navigator.of(context).canPop() && !automaticallyImplyLeading
+        (Navigator.of(context).canPop() && backHandleInherited != null
             ? BackButton(
                 onPressed: () {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    BackHandleInherited.of(context)?.handleBack();
+                    backHandleInherited.handleBack();
                   });
                 },
               )
@@ -308,13 +306,10 @@ class CommonScaffoldState extends State<CommonScaffold> {
               ValueListenableBuilder<AppBarState>(
                 valueListenable: _appBarState,
                 builder: (_, state, __) {
-                  final automaticallyImplyLeading =
-                      BackHandleInherited.of(context) == null;
                   return _buildAppBarWrap(
                     AppBar(
                       centerTitle: widget.centerTitle ?? false,
-                      automaticallyImplyLeading: automaticallyImplyLeading,
-                      leading: _buildLeading(automaticallyImplyLeading),
+                      leading: _buildLeading(),
                       title: _buildTitle(state.searchState),
                       actions: _buildActions(
                         state.searchState != null,

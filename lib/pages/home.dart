@@ -6,7 +6,6 @@ import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -62,41 +61,22 @@ class HomePage extends StatelessWidget {
                   selectedIndex: currentIndex,
                 ),
               );
-              return Theme(
-                  data: Theme.of(context).copyWith(
-                    appBarTheme: Theme.of(context).appBarTheme.copyWith(
-                          systemOverlayStyle: SystemUiOverlayStyle(
-                            statusBarColor: Colors.transparent,
-                            statusBarIconBrightness:
-                                Theme.of(context).brightness == Brightness.dark
-                                    ? Brightness.light
-                                    : Brightness.dark,
-                            systemNavigationBarIconBrightness:
-                                Theme.of(context).brightness == Brightness.dark
-                                    ? Brightness.light
-                                    : Brightness.dark,
-                            systemNavigationBarColor:
-                                context.colorScheme.surfaceContainer,
-                            systemNavigationBarDividerColor: Colors.transparent,
-                          ),
-                        ),
+              return Column(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: pageView,
                   ),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: pageView,
-                      ),
-                      MediaQuery(
-                        data: MediaQuery.of(context).copyWith(
-                          padding: MediaQuery.of(context).padding.copyWith(
-                                top: 0,
-                              ),
-                        ),
-                        child: bottomNavigationBar,
-                      ),
-                    ],
-                  ));
+                  MediaQuery(
+                    data: MediaQuery.of(context).copyWith(
+                      padding: MediaQuery.of(context).padding.copyWith(
+                            top: 0,
+                          ),
+                    ),
+                    child: bottomNavigationBar,
+                  ),
+                ],
+              );
             } else {
               return pageView;
             }
