@@ -21,7 +21,7 @@ class ThemeManager extends ConsumerWidget {
 
   _buildSystemUi(Widget child) {
     if (!Platform.isAndroid) {
-      return;
+      return child;
     }
     return AnnotatedRegion<SystemUiMode>(
       sized: false,
