@@ -1,6 +1,6 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'common.dart';
@@ -34,6 +34,7 @@ class AppState with _$AppState {
     @Default("") String proxiesQuery,
     @Default(false) bool realTunEnable,
     @Default(false) bool loading,
+    required SystemUiOverlayStyle systemUiOverlayStyle,
   }) = _AppState;
 }
 

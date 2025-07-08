@@ -32,14 +32,17 @@ class ThemeManager extends ConsumerWidget {
           final iconBrightness = brightness == Brightness.light
               ? Brightness.dark
               : Brightness.light;
-          return AnnotatedRegion<SystemUiOverlayStyle>(
-            value: SystemUiOverlayStyle(
+          globalState.appState = globalState.appState.copyWith(
+            systemUiOverlayStyle: SystemUiOverlayStyle(
               statusBarColor: Colors.transparent,
               statusBarIconBrightness: iconBrightness,
               systemNavigationBarIconBrightness: iconBrightness,
-              systemNavigationBarColor: context.colorScheme.surfaceContainer,
+              systemNavigationBarColor: context.colorScheme.surface,
               systemNavigationBarDividerColor: Colors.transparent,
             ),
+          );
+          return AnnotatedRegion<SystemUiOverlayStyle>(
+            value: globalState.appState.systemUiOverlayStyle,
             sized: false,
             child: child,
           );

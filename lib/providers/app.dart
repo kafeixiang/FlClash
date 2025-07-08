@@ -2,7 +2,7 @@ import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/state.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -399,6 +399,22 @@ class ProxiesQuery extends _$ProxiesQuery with AutoDisposeNotifierMixin {
   onUpdate(value) {
     globalState.appState = globalState.appState.copyWith(
       proxiesQuery: value,
+    );
+  }
+}
+
+@riverpod
+class SystemUiOverlayStyleState extends _$SystemUiOverlayStyleState
+    with AutoDisposeNotifierMixin {
+  @override
+  SystemUiOverlayStyle build() {
+    return globalState.appState.systemUiOverlayStyle;
+  }
+
+  @override
+  onUpdate(value) {
+    globalState.appState = globalState.appState.copyWith(
+      systemUiOverlayStyle: value,
     );
   }
 }

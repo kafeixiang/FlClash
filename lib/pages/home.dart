@@ -6,6 +6,7 @@ import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -73,7 +74,13 @@ class HomePage extends StatelessWidget {
                             top: 0,
                           ),
                     ),
-                    child: bottomNavigationBar,
+                    child: AnnotatedRegion<SystemUiOverlayStyle>(
+                      value: globalState.appState.systemUiOverlayStyle.copyWith(
+                        systemNavigationBarColor:
+                            context.colorScheme.surfaceContainer,
+                      ),
+                      child: bottomNavigationBar,
+                    ),
                   ),
                 ],
               );

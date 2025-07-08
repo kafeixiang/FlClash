@@ -12,6 +12,7 @@ import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/plugins/service.dart';
 import 'package:fl_clash/widgets/dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_js/flutter_js.dart';
 import 'package:material_color_utilities/palettes/core_palette.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -77,6 +78,7 @@ class GlobalState {
       logs: FixedList(maxLength),
       traffics: FixedList(30),
       totalTraffic: Traffic(),
+      systemUiOverlayStyle: const SystemUiOverlayStyle(),
     );
     await _initDynamicColor();
     await init();
