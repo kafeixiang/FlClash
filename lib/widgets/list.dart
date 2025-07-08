@@ -313,17 +313,14 @@ class ListItem<T> extends StatelessWidget {
           );
         },
         openBuilder: (_, action) {
-          return BackHandleInherited(
-            handleBack: action,
-            child: openDelegate.wrap
-                ? CommonScaffold(
-                    key: Key(openDelegate.title),
-                    title: openDelegate.title,
-                    body: child,
-                    actions: openDelegate.actions,
-                  )
-                : child,
-          );
+          return openDelegate.wrap
+              ? CommonScaffold(
+                  key: Key(openDelegate.title),
+                  title: openDelegate.title,
+                  body: child,
+                  actions: openDelegate.actions,
+                )
+              : child;
         },
       );
     }

@@ -209,17 +209,7 @@ class CommonScaffoldState extends State<CommonScaffold> {
         icon: Icon(Icons.arrow_back),
       );
     }
-    final backHandleInherited = BackHandleInherited.of(context);
-    return widget.leading ??
-        (Navigator.of(context).canPop() && backHandleInherited != null
-            ? BackButton(
-                onPressed: () {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    backHandleInherited.handleBack();
-                  });
-                },
-              )
-            : null);
+    return widget.leading;
   }
 
   Widget _buildTitle(AppBarSearchState? startState) {

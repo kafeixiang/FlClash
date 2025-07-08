@@ -47,7 +47,9 @@ extension IterableExt<T> on Iterable<T> {
 
 extension ListExt<T> on List<T> {
   void truncate(int maxLength) {
-    assert(maxLength > 0);
+    if (maxLength == 0) {
+      return;
+    }
     if (length > maxLength) {
       removeRange(0, length - maxLength);
     }
