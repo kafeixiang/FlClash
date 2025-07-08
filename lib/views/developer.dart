@@ -70,7 +70,13 @@ class DeveloperView extends ConsumerWidget {
           onTap: () async {
             await globalState.appController.handleClear();
           },
-        )
+        ),
+        ListItem(
+          title: Text("loading"),
+          onTap: () {
+            ref.read(loadingProvider.notifier).value = true;
+          },
+        ),
       ],
     );
   }

@@ -53,6 +53,7 @@ class OpenDelegate extends Delegate {
   final List<Widget> actions;
   final bool blur;
   final bool wrap;
+  final bool forceFull;
 
   const OpenDelegate({
     required this.title,
@@ -61,6 +62,7 @@ class OpenDelegate extends Delegate {
     this.actions = const [],
     this.blur = true,
     this.wrap = true,
+    this.forceFull = true,
   });
 }
 
@@ -288,6 +290,7 @@ class ListItem<T> extends StatelessWidget {
                 props: ExtendProps(
                   blur: openDelegate.blur,
                   maxWidth: openDelegate.maxWidth,
+                  forceFull: openDelegate.forceFull,
                 ),
                 builder: (_, type) {
                   return openDelegate.wrap

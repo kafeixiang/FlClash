@@ -29,11 +29,13 @@ class ExtendProps {
   final double? maxWidth;
   final bool useSafeArea;
   final bool blur;
+  final bool forceFull;
 
   const ExtendProps({
     this.maxWidth,
     this.useSafeArea = true,
     this.blur = true,
+    this.forceFull = false,
   });
 }
 
@@ -84,7 +86,7 @@ Future<T?> showExtend<T>(
   ExtendProps props = const ExtendProps(),
 }) {
   final isMobile = globalState.appState.viewMode == ViewMode.mobile;
-  return switch (isMobile) {
+  return switch (isMobile || props.forceFull) {
     true => BaseNavigator.push(
         context,
         builder(context, SheetType.page),
