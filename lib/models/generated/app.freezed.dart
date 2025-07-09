@@ -38,6 +38,8 @@ mixin _$AppState {
   String get proxiesQuery => throw _privateConstructorUsedError;
   bool get realTunEnable => throw _privateConstructorUsedError;
   bool get loading => throw _privateConstructorUsedError;
+  SystemUiOverlayStyle get systemUiOverlayStyle =>
+      throw _privateConstructorUsedError;
 
   /// Create a copy of AppState
   /// with the given fields replaced by the non-null parameter values.
@@ -72,7 +74,8 @@ abstract class $AppStateCopyWith<$Res> {
       Traffic totalTraffic,
       String proxiesQuery,
       bool realTunEnable,
-      bool loading});
+      bool loading,
+      SystemUiOverlayStyle systemUiOverlayStyle});
 }
 
 /// @nodoc
@@ -111,6 +114,7 @@ class _$AppStateCopyWithImpl<$Res, $Val extends AppState>
     Object? proxiesQuery = null,
     Object? realTunEnable = null,
     Object? loading = null,
+    Object? systemUiOverlayStyle = null,
   }) {
     return _then(_value.copyWith(
       isInit: null == isInit
@@ -197,6 +201,10 @@ class _$AppStateCopyWithImpl<$Res, $Val extends AppState>
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
               as bool,
+      systemUiOverlayStyle: null == systemUiOverlayStyle
+          ? _value.systemUiOverlayStyle
+          : systemUiOverlayStyle // ignore: cast_nullable_to_non_nullable
+              as SystemUiOverlayStyle,
     ) as $Val);
   }
 }
@@ -230,7 +238,8 @@ abstract class _$$AppStateImplCopyWith<$Res>
       Traffic totalTraffic,
       String proxiesQuery,
       bool realTunEnable,
-      bool loading});
+      bool loading,
+      SystemUiOverlayStyle systemUiOverlayStyle});
 }
 
 /// @nodoc
@@ -267,6 +276,7 @@ class __$$AppStateImplCopyWithImpl<$Res>
     Object? proxiesQuery = null,
     Object? realTunEnable = null,
     Object? loading = null,
+    Object? systemUiOverlayStyle = null,
   }) {
     return _then(_$AppStateImpl(
       isInit: null == isInit
@@ -353,6 +363,10 @@ class __$$AppStateImplCopyWithImpl<$Res>
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
               as bool,
+      systemUiOverlayStyle: null == systemUiOverlayStyle
+          ? _value.systemUiOverlayStyle
+          : systemUiOverlayStyle // ignore: cast_nullable_to_non_nullable
+              as SystemUiOverlayStyle,
     ));
   }
 }
@@ -381,7 +395,8 @@ class _$AppStateImpl implements _AppState {
       required this.totalTraffic,
       this.proxiesQuery = "",
       this.realTunEnable = false,
-      this.loading = false})
+      this.loading = false,
+      required this.systemUiOverlayStyle})
       : _packages = packages,
         _delayMap = delayMap,
         _groups = groups,
@@ -465,10 +480,12 @@ class _$AppStateImpl implements _AppState {
   @override
   @JsonKey()
   final bool loading;
+  @override
+  final SystemUiOverlayStyle systemUiOverlayStyle;
 
   @override
   String toString() {
-    return 'AppState(isInit: $isInit, backBlock: $backBlock, pageLabel: $pageLabel, packages: $packages, sortNum: $sortNum, viewSize: $viewSize, delayMap: $delayMap, groups: $groups, checkIpNum: $checkIpNum, brightness: $brightness, runTime: $runTime, providers: $providers, localIp: $localIp, requests: $requests, version: $version, logs: $logs, traffics: $traffics, totalTraffic: $totalTraffic, proxiesQuery: $proxiesQuery, realTunEnable: $realTunEnable, loading: $loading)';
+    return 'AppState(isInit: $isInit, backBlock: $backBlock, pageLabel: $pageLabel, packages: $packages, sortNum: $sortNum, viewSize: $viewSize, delayMap: $delayMap, groups: $groups, checkIpNum: $checkIpNum, brightness: $brightness, runTime: $runTime, providers: $providers, localIp: $localIp, requests: $requests, version: $version, logs: $logs, traffics: $traffics, totalTraffic: $totalTraffic, proxiesQuery: $proxiesQuery, realTunEnable: $realTunEnable, loading: $loading, systemUiOverlayStyle: $systemUiOverlayStyle)';
   }
 
   @override
@@ -507,7 +524,9 @@ class _$AppStateImpl implements _AppState {
                 other.proxiesQuery == proxiesQuery) &&
             (identical(other.realTunEnable, realTunEnable) ||
                 other.realTunEnable == realTunEnable) &&
-            (identical(other.loading, loading) || other.loading == loading));
+            (identical(other.loading, loading) || other.loading == loading) &&
+            (identical(other.systemUiOverlayStyle, systemUiOverlayStyle) ||
+                other.systemUiOverlayStyle == systemUiOverlayStyle));
   }
 
   @override
@@ -533,7 +552,8 @@ class _$AppStateImpl implements _AppState {
         totalTraffic,
         proxiesQuery,
         realTunEnable,
-        loading
+        loading,
+        systemUiOverlayStyle
       ]);
 
   /// Create a copy of AppState
@@ -547,27 +567,29 @@ class _$AppStateImpl implements _AppState {
 
 abstract class _AppState implements AppState {
   const factory _AppState(
-      {final bool isInit,
-      final bool backBlock,
-      final PageLabel pageLabel,
-      final List<Package> packages,
-      final int sortNum,
-      required final Size viewSize,
-      final Map<String, Map<String, int?>> delayMap,
-      final List<Group> groups,
-      final int checkIpNum,
-      required final Brightness brightness,
-      final int? runTime,
-      final List<ExternalProvider> providers,
-      final String? localIp,
-      required final FixedList<Connection> requests,
-      required final int version,
-      required final FixedList<Log> logs,
-      required final FixedList<Traffic> traffics,
-      required final Traffic totalTraffic,
-      final String proxiesQuery,
-      final bool realTunEnable,
-      final bool loading}) = _$AppStateImpl;
+          {final bool isInit,
+          final bool backBlock,
+          final PageLabel pageLabel,
+          final List<Package> packages,
+          final int sortNum,
+          required final Size viewSize,
+          final Map<String, Map<String, int?>> delayMap,
+          final List<Group> groups,
+          final int checkIpNum,
+          required final Brightness brightness,
+          final int? runTime,
+          final List<ExternalProvider> providers,
+          final String? localIp,
+          required final FixedList<Connection> requests,
+          required final int version,
+          required final FixedList<Log> logs,
+          required final FixedList<Traffic> traffics,
+          required final Traffic totalTraffic,
+          final String proxiesQuery,
+          final bool realTunEnable,
+          final bool loading,
+          required final SystemUiOverlayStyle systemUiOverlayStyle}) =
+      _$AppStateImpl;
 
   @override
   bool get isInit;
@@ -611,6 +633,8 @@ abstract class _AppState implements AppState {
   bool get realTunEnable;
   @override
   bool get loading;
+  @override
+  SystemUiOverlayStyle get systemUiOverlayStyle;
 
   /// Create a copy of AppState
   /// with the given fields replaced by the non-null parameter values.

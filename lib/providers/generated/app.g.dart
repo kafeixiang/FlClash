@@ -380,5 +380,22 @@ final proxiesQueryProvider =
 );
 
 typedef _$ProxiesQuery = AutoDisposeNotifier<String>;
+String _$systemUiOverlayStyleStateHash() =>
+    r'4420d92227ae617ce685c8943dda64f29f57d5d1';
+
+/// See also [SystemUiOverlayStyleState].
+@ProviderFor(SystemUiOverlayStyleState)
+final systemUiOverlayStyleStateProvider = AutoDisposeNotifierProvider<
+    SystemUiOverlayStyleState, SystemUiOverlayStyle>.internal(
+  SystemUiOverlayStyleState.new,
+  name: r'systemUiOverlayStyleStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$systemUiOverlayStyleStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$SystemUiOverlayStyleState = AutoDisposeNotifier<SystemUiOverlayStyle>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -62,27 +62,22 @@ class HomePage extends StatelessWidget {
                   selectedIndex: currentIndex,
                 ),
               );
-              return Column(
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: pageView,
-                  ),
-                  MediaQuery(
-                    data: MediaQuery.of(context).copyWith(
-                      padding: MediaQuery.of(context).padding.copyWith(
-                            top: 0,
-                          ),
-                    ),
-                    child: AnnotatedRegion<SystemUiOverlayStyle>(
-                      value: globalState.appState.systemUiOverlayStyle.copyWith(
-                        systemNavigationBarColor:
-                            context.colorScheme.surfaceContainer,
+              return AnnotatedRegion<SystemUiOverlayStyle>(
+                value: globalState.appState.systemUiOverlayStyle.copyWith(
+                  systemNavigationBarColor:
+                      context.colorScheme.surfaceContainer,
+                ),
+                child: SafeArea(
+                  child: Column(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: pageView,
                       ),
-                      child: bottomNavigationBar,
-                    ),
+                      bottomNavigationBar,
+                    ],
                   ),
-                ],
+                ),
               );
             } else {
               return pageView;
