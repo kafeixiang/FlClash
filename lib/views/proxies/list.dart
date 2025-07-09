@@ -129,7 +129,7 @@ class _ProxiesListViewState extends State<ProxiesListView> {
       items.addAll([
         ListHeader(
           onScrollToSelected: _scrollToGroupSelected,
-          isExpand: false,
+          isExpand: isExpand,
           group: group,
           onChange: (String groupName) {
             _handleChange(currentUnfoldSet, groupName);
