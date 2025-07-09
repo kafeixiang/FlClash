@@ -68,13 +68,21 @@ class HomePage extends StatelessWidget {
                       context.colorScheme.surfaceContainer,
                 ),
                 child: SafeArea(
+                  top: false,
                   child: Column(
                     children: [
                       Expanded(
                         flex: 1,
                         child: pageView,
                       ),
-                      bottomNavigationBar,
+                      MediaQuery.removePadding(
+                        removeTop: true,
+                        removeBottom: true,
+                        removeLeft: true,
+                        removeRight: true,
+                        context: context,
+                        child: bottomNavigationBar,
+                      ),
                     ],
                   ),
                 ),
