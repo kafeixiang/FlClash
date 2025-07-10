@@ -297,8 +297,7 @@ class _OverrideProfileViewState extends State<OverrideProfileView> {
                     ),
                   )
               ],
-              appBarEditState: AppBarEditState(
-                isEdit: isEdit,
+              editState: AppBarEditState(
                 editCount: editCount,
                 onExit: () {
                   ref.read(profileOverrideStateProvider.notifier).updateState(

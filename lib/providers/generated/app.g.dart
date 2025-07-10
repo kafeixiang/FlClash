@@ -365,21 +365,6 @@ final delayDataSourceProvider =
 );
 
 typedef _$DelayDataSource = AutoDisposeNotifier<DelayMap>;
-String _$proxiesQueryHash() => r'9f3907e06534b6882684bec47ca3ba2988297e19';
-
-/// See also [ProxiesQuery].
-@ProviderFor(ProxiesQuery)
-final proxiesQueryProvider =
-    AutoDisposeNotifierProvider<ProxiesQuery, String>.internal(
-  ProxiesQuery.new,
-  name: r'proxiesQueryProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$proxiesQueryHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef _$ProxiesQuery = AutoDisposeNotifier<String>;
 String _$systemUiOverlayStyleStateHash() =>
     r'4420d92227ae617ce685c8943dda64f29f57d5d1';
 

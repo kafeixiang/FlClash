@@ -99,21 +99,6 @@ class NavigationState with _$NavigationState {
 }
 
 @freezed
-class ProxiesSelectorState with _$ProxiesSelectorState {
-  const factory ProxiesSelectorState({
-    required List<String> groupNames,
-    required String? currentGroupName,
-  }) = _ProxiesSelectorState;
-}
-
-@freezed
-class GroupNamesState with _$GroupNamesState {
-  const factory GroupNamesState({
-    required List<String> groupNames,
-  }) = _GroupNamesState;
-}
-
-@freezed
 class GroupsState with _$GroupsState {
   const factory GroupsState({
     required List<Group> value,
@@ -128,16 +113,27 @@ class NavigationItemsState with _$NavigationItemsState {
 }
 
 @freezed
-class ProxiesListSelectorState with _$ProxiesListSelectorState {
-  const factory ProxiesListSelectorState({
-    required List<String> groupNames,
+class ProxiesListState with _$ProxiesListState {
+  const factory ProxiesListState({
+    required List<Group> groups,
     required Set<String> currentUnfoldSet,
     required ProxiesSortType proxiesSortType,
     required ProxyCardType proxyCardType,
     required num sortNum,
     required int columns,
-    required String query,
-  }) = _ProxiesListSelectorState;
+  }) = _ProxiesListState;
+}
+
+@freezed
+class ProxiesTabState with _$ProxiesTabState {
+  const factory ProxiesTabState({
+    required List<Group> groups,
+    required String? currentGroupName,
+    required ProxiesSortType proxiesSortType,
+    required ProxyCardType proxyCardType,
+    required num sortNum,
+    required int columns,
+  }) = _ProxiesTabState;
 }
 
 @freezed

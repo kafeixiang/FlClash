@@ -9,7 +9,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'chip.dart';
 
-typedef OnSearchCallback = void Function(String text);
 typedef OnKeywordsUpdateCallback = void Function(List<String> keywords);
 
 class CommonScaffold extends StatefulWidget {
@@ -20,9 +19,9 @@ class CommonScaffold extends StatefulWidget {
   final Widget? leading;
   final List<Widget>? actions;
   final bool? centerTitle;
-  final AppBarEditState? appBarEditState;
   final Widget? floatingActionButton;
-  final OnSearchCallback? onSearch;
+  final AppBarEditState? editState;
+  final AppBarSearchState? searchState;
   final OnKeywordsUpdateCallback? onKeywordsUpdate;
 
   const CommonScaffold({
@@ -34,8 +33,8 @@ class CommonScaffold extends StatefulWidget {
     this.title,
     this.actions,
     this.centerTitle,
-    this.appBarEditState,
-    this.onSearch,
+    this.editState,
+    this.searchState,
     this.floatingActionButton,
     this.onKeywordsUpdate,
   });
@@ -48,15 +47,18 @@ class CommonScaffoldState extends State<CommonScaffold> {
   late final ValueNotifier<AppBarState> _appBarState;
   final ValueNotifier<Widget?> _floatingActionButton = ValueNotifier(null);
   final ValueNotifier<List<String>> _keywordsNotifier = ValueNotifier([]);
-  // final ValueNotifier<bool> _loading = ValueNotifier(false);
   final _textController = TextEditingController();
 
   bool get _isSearch {
-    return _appBarState.value.searchState?.isSearch == true;
+    return _appBarState.value.searchState?.query != null;
   }
 
   bool get _isEdit {
-    return _appBarState.value.editState?.isEdit == true;
+    final editState = _appBarState.value.editState;
+    if (editState == null) {
+      return false;
+    }
+    return editState.editCount > 0;
   }
 
   @override
@@ -64,32 +66,18 @@ class CommonScaffoldState extends State<CommonScaffold> {
     super.initState();
     _appBarState = ValueNotifier(
       AppBarState(
-        editState: widget.appBarEditState,
-        searchState: widget.onSearch == null
-            ? null
-            : AppBarSearchState(
-                onSearch: widget.onSearch!,
-              ),
+        editState: widget.editState,
+        searchState: widget.searchState,
       ),
     );
   }
 
-  updateSearchState(
+  _updateSearchState(
     AppBarSearchState? Function(AppBarSearchState? state) builder,
   ) {
     _appBarState.value = _appBarState.value.copyWith(
       searchState: builder(
         _appBarState.value.searchState,
-      ),
-    );
-  }
-
-  updateEditState(
-    AppBarEditState? Function(AppBarEditState? state) builder,
-  ) {
-    _appBarState.value = _appBarState.value.copyWith(
-      editState: builder(
-        _appBarState.value.editState,
       ),
     );
   }
@@ -122,30 +110,23 @@ class CommonScaffoldState extends State<CommonScaffold> {
     );
   }
 
-  // Future<T?> loadingRun<T>(
-  //   Future<T> Function() futureFunction, {
-  //   String? title,
-  // }) async {
-  //   _loading.value = true;
-  //   try {
-  //     final res = await futureFunction();
-  //     _loading.value = false;
-  //     return res;
-  //   } catch (e) {
-  //     globalState.showMessage(
-  //       title: title ?? appLocalizations.tip,
-  //       message: TextSpan(
-  //         text: e.toString(),
-  //       ),
-  //     );
-  //     _loading.value = false;
-  //     return null;
-  //   }
-  // }
+  @override
+  void didUpdateWidget(CommonScaffold oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.editState != widget.editState) {
+      _appBarState.value = _appBarState.value.copyWith(
+        editState: widget.editState,
+      );
+    }
+    if (oldWidget.searchState != widget.searchState) {
+      _appBarState.value = _appBarState.value.copyWith(
+        searchState: widget.searchState,
+      );
+    }
+  }
 
   _handleClearInput() {
     _textController.text = "";
-
     if (_appBarState.value.searchState != null) {
       _appBarState.value.searchState!.onSearch("");
     }
@@ -156,18 +137,18 @@ class CommonScaffoldState extends State<CommonScaffold> {
       _handleClearInput();
       return;
     }
-    updateSearchState(
+    _updateSearchState(
       (state) => state?.copyWith(
-        isSearch: false,
+        query: null,
       ),
     );
   }
 
   _handleExitSearching() {
     _handleClearInput();
-    updateSearchState(
+    _updateSearchState(
       (state) => state?.copyWith(
-        isSearch: false,
+        query: null,
       ),
     );
   }
@@ -252,9 +233,9 @@ class CommonScaffoldState extends State<CommonScaffold> {
         if (hasSearch)
           IconButton(
             onPressed: () {
-              updateSearchState(
+              _updateSearchState(
                 (state) => state?.copyWith(
-                  isSearch: true,
+                  query: "",
                 ),
               );
             },

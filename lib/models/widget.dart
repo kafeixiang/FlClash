@@ -32,7 +32,7 @@ class AppBarState with _$AppBarState {
 class AppBarSearchState with _$AppBarSearchState {
   const factory AppBarSearchState({
     required Function(String) onSearch,
-    @Default(false) bool isSearch,
+    @Default(null) String? query,
   }) = _AppBarSearchState;
 }
 
@@ -40,7 +40,6 @@ class AppBarSearchState with _$AppBarSearchState {
 class AppBarEditState with _$AppBarEditState {
   const factory AppBarEditState({
     @Default(0) editCount,
-    @Default(false) bool isEdit,
     required Function() onExit,
   }) = _AppBarEditState;
 }

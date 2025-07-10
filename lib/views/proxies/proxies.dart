@@ -1,6 +1,7 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/common.dart';
+import 'package:fl_clash/models/widget.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/views/proxies/list.dart';
 import 'package:fl_clash/views/proxies/providers.dart';
@@ -117,18 +118,8 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
         : null;
   }
 
-  onSearch(String value) {
-    ref.read(proxiesQueryProvider.notifier).value = value;
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        ref.read(proxiesQueryProvider.notifier).value = "";
-      }
-    });
+  _onSearch(String value) {
+    ref.read(queryProvider.notifier).value = value;
   }
 
   @override
@@ -164,7 +155,7 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
       floatingActionButton: _buildFAB(),
       actions: _buildActions(),
       title: appLocalizations.proxies,
-      onSearch: onSearch,
+      searchState: AppBarSearchState(onSearch: _onSearch),
       body: switch (proxiesType) {
         ProxiesType.tab => ProxiesTabView(
             key: _proxiesTabKey,

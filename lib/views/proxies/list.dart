@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
-import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/providers/config.dart';
 import 'package:fl_clash/providers/state.dart';
 import 'package:fl_clash/state.dart';
@@ -108,23 +107,16 @@ class _ProxiesListViewState extends State<ProxiesListView> {
 
   List<Widget> _buildItems(
     WidgetRef ref, {
-    required List<String> groupNames,
+    required List<Group> groups,
     required int columns,
     required Set<String> currentUnfoldSet,
-    required ProxyCardType type,
-    required String query,
+    required ProxyCardType cardType,
+    required ProxiesSortType sortType,
   }) {
     final items = <Widget>[];
     final GroupNameProxiesMap groupNameProxiesMap = {};
-    for (final groupName in groupNames) {
-      final group = ref.read(
-        groupsProvider.select(
-          (state) => state.getGroup(groupName),
-        ),
-      );
-      if (group == null) {
-        continue;
-      }
+    for (final group in groups) {
+      final groupName = group.name;
       final isExpand = currentUnfoldSet.contains(groupName);
       items.addAll([
         ListHeader(
@@ -141,10 +133,9 @@ class _ProxiesListViewState extends State<ProxiesListView> {
       ]);
       if (isExpand) {
         final sortedProxies = globalState.appController.getSortProxies(
-          group.all
-              .where((item) => item.name.toLowerCase().contains(query))
-              .toList(),
-          group.testUrl,
+          proxies: group.all,
+          sortType: sortType,
+          testUrl: group.testUrl,
         );
         groupNameProxiesMap[groupName] = sortedProxies;
         final chunks = sortedProxies.chunks(columns);
@@ -154,7 +145,7 @@ class _ProxiesListViewState extends State<ProxiesListView> {
                 (proxy) => Flexible(
                   child: ProxyCard(
                     testUrl: group.testUrl,
-                    type: type,
+                    type: cardType,
                     groupType: group.type,
                     key: ValueKey('$groupName.${proxy.name}'),
                     proxy: proxy,
@@ -198,14 +189,10 @@ class _ProxiesListViewState extends State<ProxiesListView> {
 
   _buildHeader(
     WidgetRef ref, {
-    required String groupName,
+    required Group group,
     required Set<String> currentUnfoldSet,
   }) {
-    final group =
-        ref.read(groupsProvider.select((state) => state.getGroup(groupName)));
-    if (group == null) {
-      return SizedBox();
-    }
+    final groupName = group.name;
     final isExpand = currentUnfoldSet.contains(groupName);
     return SizedBox(
       height: listHeaderHeight,
@@ -252,20 +239,20 @@ class _ProxiesListViewState extends State<ProxiesListView> {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (_, ref, __) {
-        final state = ref.watch(proxiesListSelectorStateProvider);
+        final state = ref.watch(proxiesListStateProvider);
         ref.watch(themeSettingProvider.select((state) => state.textScale));
-        if (state.groupNames.isEmpty) {
+        if (state.groups.isEmpty) {
           return NullStatus(
             label: appLocalizations.nullTip(appLocalizations.proxies),
           );
         }
         final items = _buildItems(
           ref,
-          groupNames: state.groupNames,
+          groups: state.groups,
           currentUnfoldSet: state.currentUnfoldSet,
           columns: state.columns,
-          type: state.proxyCardType,
-          query: state.query,
+          cardType: state.proxyCardType,
+          sortType: state.proxiesSortType,
         );
         final itemsOffset = _getItemHeightList(items, state.proxyCardType);
         return CommonScrollBar(
@@ -297,10 +284,10 @@ class _ProxiesListViewState extends State<ProxiesListView> {
                       return SizedBox();
                     }
                     final index =
-                        headerState.currentIndex > state.groupNames.length - 1
+                        headerState.currentIndex > state.groups.length - 1
                             ? 0
                             : headerState.currentIndex;
-                    if (index < 0 || state.groupNames.isEmpty) {
+                    if (index < 0 || state.groups.isEmpty) {
                       return Container();
                     }
                     return Stack(
@@ -318,7 +305,7 @@ class _ProxiesListViewState extends State<ProxiesListView> {
                             ),
                             child: _buildHeader(
                               ref,
-                              groupName: state.groupNames[index],
+                              group: state.groups[index],
                               currentUnfoldSet: state.currentUnfoldSet,
                             ),
                           ),

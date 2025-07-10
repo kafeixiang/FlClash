@@ -153,7 +153,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
   Widget build(BuildContext context) {
     return CommonScaffold(
       title: appLocalizations.requests,
-      onSearch: _onSearch,
+      searchState: AppBarSearchState(onSearch: _onSearch),
       onKeywordsUpdate: _onKeywordsUpdate,
       body: LayoutBuilder(
         builder: (_, constraints) {

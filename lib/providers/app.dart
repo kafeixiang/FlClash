@@ -389,21 +389,6 @@ class DelayDataSource extends _$DelayDataSource with AutoDisposeNotifierMixin {
 }
 
 @riverpod
-class ProxiesQuery extends _$ProxiesQuery with AutoDisposeNotifierMixin {
-  @override
-  String build() {
-    return globalState.appState.proxiesQuery;
-  }
-
-  @override
-  onUpdate(value) {
-    globalState.appState = globalState.appState.copyWith(
-      proxiesQuery: value,
-    );
-  }
-}
-
-@riverpod
 class SystemUiOverlayStyleState extends _$SystemUiOverlayStyleState
     with AutoDisposeNotifierMixin {
   @override

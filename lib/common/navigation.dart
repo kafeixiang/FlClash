@@ -1,7 +1,9 @@
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
+import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/views/views.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class Navigation {
   static Navigation? _instance;
@@ -22,9 +24,16 @@ class Navigation {
       NavigationItem(
         icon: const Icon(Icons.article),
         label: PageLabel.proxies,
-        builder: (_) => const ProxiesView(
-          key: GlobalObjectKey(
-            PageLabel.proxies,
+        builder: (_) => ProviderScope(
+          overrides: [
+            queryProvider.overrideWith(
+              () => Query(),
+            ),
+          ],
+          child: const ProxiesView(
+            key: GlobalObjectKey(
+              PageLabel.proxies,
+            ),
           ),
         ),
         modes: hasProxies

@@ -31,7 +31,6 @@ class AppState with _$AppState {
     required FixedList<Log> logs,
     required FixedList<Traffic> traffics,
     required Traffic totalTraffic,
-    @Default("") String proxiesQuery,
     @Default(false) bool realTunEnable,
     @Default(false) bool loading,
     required SystemUiOverlayStyle systemUiOverlayStyle,

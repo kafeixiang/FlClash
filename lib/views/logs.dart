@@ -40,19 +40,6 @@ class _LogsViewState extends ConsumerState<LogsView> {
     _logsStateNotifier.value = _logsStateNotifier.value.copyWith(
       logs: _logs,
     );
-    // ref.listenManual(
-    //   isCurrentPageProvider(
-    //     PageLabel.logs,
-    //     handler: (pageLabel, viewMode) =>
-    //         pageLabel == PageLabel.tools && viewMode == ViewMode.mobile,
-    //   ),
-    //   (prev, next) {
-    //     if (prev != next && next == true) {
-    //       initPageState();
-    //     }
-    //   },
-    //   fireImmediately: true,
-    // );
     ref.listenManual(
       logsProvider.select((state) => state.list),
       (prev, next) {
@@ -189,7 +176,7 @@ class _LogsViewState extends ConsumerState<LogsView> {
     return CommonScaffold(
       actions: _buildActions(),
       onKeywordsUpdate: _onKeywordsUpdate,
-      onSearch: _onSearch,
+      searchState: AppBarSearchState(onSearch: _onSearch),
       title: appLocalizations.logs,
       body: LayoutBuilder(
         builder: (_, constraints) {

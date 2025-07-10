@@ -93,7 +93,7 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView> {
     return CommonScaffold(
       title: appLocalizations.connections,
       onKeywordsUpdate: _onKeywordsUpdate,
-      onSearch: _onSearch,
+      searchState: AppBarSearchState(onSearch: _onSearch),
       actions: _buildActions(),
       body: ValueListenableBuilder<ConnectionsState>(
         valueListenable: _connectionsStateNotifier,

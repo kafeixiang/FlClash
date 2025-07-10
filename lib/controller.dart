@@ -771,12 +771,16 @@ class AppController {
       );
   }
 
-  List<Proxy> getSortProxies(List<Proxy> proxies, [String? url]) {
-    return switch (_ref.read(proxiesStyleSettingProvider).sortType) {
+  List<Proxy> getSortProxies({
+    required List<Proxy> proxies,
+    required ProxiesSortType sortType,
+    String? testUrl,
+  }) {
+    return switch (sortType) {
       ProxiesSortType.none => proxies,
       ProxiesSortType.delay => _sortOfDelay(
           proxies: proxies,
-          testUrl: url,
+          testUrl: testUrl,
         ),
       ProxiesSortType.name => _sortOfName(proxies),
     };
