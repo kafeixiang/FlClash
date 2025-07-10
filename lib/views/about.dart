@@ -26,9 +26,10 @@ class AboutView extends StatelessWidget {
   _checkUpdate(BuildContext context) async {
     final commonScaffoldState = context.commonScaffoldState;
     if (commonScaffoldState?.mounted != true) return;
-    final data = await commonScaffoldState?.loadingRun<Map<String, dynamic>?>(
+    final data = await globalState.appController.safeRun<Map<String, dynamic>?>(
       request.checkForUpdate,
       title: appLocalizations.checkUpdate,
+      needLoading: true,
     );
     globalState.appController.checkUpdateResultHandle(
       data: data,

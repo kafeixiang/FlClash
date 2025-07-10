@@ -50,6 +50,9 @@ class _AppStateManagerState extends ConsumerState<AppStateManager>
         globalState.appController.savePreferencesDebounce();
       }
     });
+    if (window == null) {
+      return;
+    }
     ref.listenManual(
       autoSetSystemDnsStateProvider,
       (prev, next) async {
@@ -63,9 +66,6 @@ class _AppStateManagerState extends ConsumerState<AppStateManager>
         }
       },
     );
-    if (window == null) {
-      return;
-    }
     ref.listenManual(
       currentBrightnessProvider,
       (prev, next) {
@@ -149,6 +149,36 @@ class AppSidebarContainer extends ConsumerWidget {
     required this.child,
   });
 
+  Widget _buildLoading() {
+    return Consumer(
+      builder: (_, ref, __) {
+        final loading = ref.watch(loadingProvider);
+        final isMobileView = ref.watch(isMobileViewProvider);
+        return loading && !isMobileView
+            ? RotatedBox(
+                quarterTurns: 1,
+                child: const LinearProgressIndicator(),
+              )
+            : Container();
+      },
+    );
+  }
+
+  _buildBackground({required BuildContext context, required Widget child}) {
+    if (!Platform.isMacOS) {
+      return Material(
+        color: context.colorScheme.surfaceContainer,
+        child: child,
+      );
+    }
+    return TransparentMacOSSidebar(
+      child: Material(
+        color: Colors.transparent,
+        child: child,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final navigationState = ref.watch(navigationStateProvider);
@@ -159,80 +189,81 @@ class AppSidebarContainer extends ConsumerWidget {
     }
     final currentIndex = navigationState.currentIndex;
     final showLabel = ref.watch(appSettingProvider).showLabel;
-    final version = ref.watch(versionProvider);
-    final backgroundColor = Colors.transparent;
     return Row(
       children: [
-        TransparentMacOSSidebar(
-          child: Material(
-            color: backgroundColor,
-            child: Column(
-              children: [
-                if (version > 10 && Platform.isMacOS)
+        Stack(
+          alignment: Alignment.topRight,
+          children: [
+            _buildBackground(
+              context: context,
+              child: Column(
+                children: [
                   SizedBox(
                     height: 36,
                   ),
-                Expanded(
-                  child: ScrollConfiguration(
-                    behavior: HiddenBarScrollBehavior(),
-                    child: SingleChildScrollView(
-                      child: IntrinsicHeight(
-                        child: NavigationRail(
-                          backgroundColor: backgroundColor,
-                          selectedLabelTextStyle:
-                              context.textTheme.labelLarge!.copyWith(
-                            color: context.colorScheme.onSurface,
-                          ),
-                          unselectedLabelTextStyle:
-                              context.textTheme.labelLarge!.copyWith(
-                            color: context.colorScheme.onSurface,
-                          ),
-                          destinations: navigationItems
-                              .map(
-                                (e) => NavigationRailDestination(
-                                  icon: e.icon,
-                                  label: Text(
-                                    Intl.message(e.label.name),
+                  Expanded(
+                    child: ScrollConfiguration(
+                      behavior: HiddenBarScrollBehavior(),
+                      child: SingleChildScrollView(
+                        child: IntrinsicHeight(
+                          child: NavigationRail(
+                            backgroundColor: Colors.transparent,
+                            selectedLabelTextStyle:
+                                context.textTheme.labelLarge!.copyWith(
+                              color: context.colorScheme.onSurface,
+                            ),
+                            unselectedLabelTextStyle:
+                                context.textTheme.labelLarge!.copyWith(
+                              color: context.colorScheme.onSurface,
+                            ),
+                            destinations: navigationItems
+                                .map(
+                                  (e) => NavigationRailDestination(
+                                    icon: e.icon,
+                                    label: Text(
+                                      Intl.message(e.label.name),
+                                    ),
                                   ),
-                                ),
-                              )
-                              .toList(),
-                          onDestinationSelected: (index) {
-                            globalState.appController
-                                .toPage(navigationItems[index].label);
-                          },
-                          extended: false,
-                          selectedIndex: currentIndex,
-                          labelType: showLabel
-                              ? NavigationRailLabelType.all
-                              : NavigationRailLabelType.none,
+                                )
+                                .toList(),
+                            onDestinationSelected: (index) {
+                              globalState.appController
+                                  .toPage(navigationItems[index].label);
+                            },
+                            extended: false,
+                            selectedIndex: currentIndex,
+                            labelType: showLabel
+                                ? NavigationRailLabelType.all
+                                : NavigationRailLabelType.none,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                IconButton(
-                  onPressed: () {
-                    ref.read(appSettingProvider.notifier).updateState(
-                          (state) => state.copyWith(
-                            showLabel: !state.showLabel,
-                          ),
-                        );
-                  },
-                  icon: Icon(
-                    Icons.menu,
-                    color: context.colorScheme.onSurfaceVariant,
+                  const SizedBox(
+                    height: 16,
                   ),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-              ],
+                  IconButton(
+                    onPressed: () {
+                      ref.read(appSettingProvider.notifier).updateState(
+                            (state) => state.copyWith(
+                              showLabel: !state.showLabel,
+                            ),
+                          );
+                    },
+                    icon: Icon(
+                      Icons.menu,
+                      color: context.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                ],
+              ),
             ),
-          ),
+            _buildLoading(),
+          ],
         ),
         Expanded(
           flex: 1,

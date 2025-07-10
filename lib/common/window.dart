@@ -19,7 +19,7 @@ class Window {
       protocol.register("clashmeta");
       protocol.register("flclash");
     }
-    if ((version > 10 && Platform.isMacOS) || Platform.isWindows) {
+    if ((version > 10 && Platform.isMacOS)) {
       await acrylic.Window.initialize();
     }
     await windowManager.ensureInitialized();

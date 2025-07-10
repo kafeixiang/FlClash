@@ -99,11 +99,11 @@ class _LogsViewState extends ConsumerState<LogsView> {
   }
 
   _handleExport() async {
-    final commonScaffoldState = context.commonScaffoldState;
-    final res = await commonScaffoldState?.loadingRun<bool>(
+    final res = await globalState.appController.safeRun<bool>(
       () async {
         return await globalState.appController.exportLogs();
       },
+      needLoading: true,
       title: appLocalizations.exportLogs,
     );
     if (res != true) return;

@@ -290,8 +290,7 @@ class ProfileItem extends StatelessWidget {
   // }
 
   _handleExportFile(BuildContext context) async {
-    final commonScaffoldState = context.commonScaffoldState;
-    final res = await commonScaffoldState?.loadingRun<bool>(
+    final res = await globalState.appController.safeRun<bool>(
       () async {
         final file = await profile.getFile();
         final value = await picker.saveFile(
@@ -301,6 +300,7 @@ class ProfileItem extends StatelessWidget {
         if (value == null) return false;
         return true;
       },
+      needLoading: true,
       title: appLocalizations.tip,
     );
     if (res == true && context.mounted) {

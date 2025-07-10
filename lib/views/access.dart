@@ -115,7 +115,8 @@ class _AccessViewState extends ConsumerState<AccessView> {
     final commonScaffoldState = context.commonScaffoldState;
     if (commonScaffoldState?.mounted != true) return;
     final selectedPackageNames =
-        (await commonScaffoldState?.loadingRun<List<String>>(
+        (await globalState.appController.safeRun<List<String>>(
+              needLoading: true,
               () async {
                 return await app?.getChinaPackageNames() ?? [];
               },

@@ -26,13 +26,13 @@ class BackupAndRecovery extends ConsumerWidget {
     );
   }
 
-  _backupOnWebDAV(BuildContext context, DAVClient client) async {
-    final commonScaffoldState = context.commonScaffoldState;
-    final res = await commonScaffoldState?.loadingRun<bool>(
+  _backupOnWebDAV(DAVClient client) async {
+    final res = await globalState.appController.safeRun<bool>(
       () async {
         final backupData = await globalState.appController.backupData();
         return await client.backup(Uint8List.fromList(backupData));
       },
+      needLoading: true,
       title: appLocalizations.backup,
     );
     if (res != true) return;
@@ -47,13 +47,13 @@ class BackupAndRecovery extends ConsumerWidget {
     DAVClient client,
     RecoveryOption recoveryOption,
   ) async {
-    final commonScaffoldState = context.commonScaffoldState;
-    final res = await commonScaffoldState?.loadingRun<bool>(
+    final res = await globalState.appController.safeRun<bool>(
       () async {
         final data = await client.recovery();
         await globalState.appController.recoveryData(data, recoveryOption);
         return true;
       },
+      needLoading: true,
       title: appLocalizations.recovery,
     );
     if (res != true) return;
@@ -72,8 +72,7 @@ class BackupAndRecovery extends ConsumerWidget {
   }
 
   _backupOnLocal(BuildContext context) async {
-    final commonScaffoldState = context.commonScaffoldState;
-    final res = await commonScaffoldState?.loadingRun<bool>(
+    final res = await globalState.appController.safeRun<bool>(
       () async {
         final backupData = await globalState.appController.backupData();
         final value = await picker.saveFile(
@@ -93,14 +92,12 @@ class BackupAndRecovery extends ConsumerWidget {
   }
 
   _recoveryOnLocal(
-    BuildContext context,
     RecoveryOption recoveryOption,
   ) async {
     final file = await picker.pickerFile();
     final data = file?.bytes;
-    if (data == null || !context.mounted) return;
-    final commonScaffoldState = context.commonScaffoldState;
-    final res = await commonScaffoldState?.loadingRun<bool>(
+    if (data == null) return;
+    final res = await globalState.appController.safeRun<bool>(
       () async {
         await globalState.appController.recoveryData(
           List<int>.from(data),
@@ -108,6 +105,7 @@ class BackupAndRecovery extends ConsumerWidget {
         );
         return true;
       },
+      needLoading: true,
       title: appLocalizations.recovery,
     );
     if (res != true) return;
@@ -122,7 +120,7 @@ class BackupAndRecovery extends ConsumerWidget {
       child: const RecoveryOptionsDialog(),
     );
     if (recoveryOption == null || !context.mounted) return;
-    _recoveryOnLocal(context, recoveryOption);
+    _recoveryOnLocal(recoveryOption);
   }
 
   _handleChange(String? value, WidgetRef ref) {
@@ -254,7 +252,7 @@ class BackupAndRecovery extends ConsumerWidget {
           ),
           ListItem(
             onTap: () {
-              _backupOnWebDAV(context, client);
+              _backupOnWebDAV(client);
             },
             title: Text(appLocalizations.backup),
             subtitle: Text(appLocalizations.remoteBackupDesc),

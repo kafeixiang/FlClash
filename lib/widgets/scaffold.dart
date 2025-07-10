@@ -2,7 +2,6 @@ import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/app.dart';
-import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/fade_box.dart';
 import 'package:fl_clash/widgets/pop_scope.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +48,7 @@ class CommonScaffoldState extends State<CommonScaffold> {
   late final ValueNotifier<AppBarState> _appBarState;
   final ValueNotifier<Widget?> _floatingActionButton = ValueNotifier(null);
   final ValueNotifier<List<String>> _keywordsNotifier = ValueNotifier([]);
-  final ValueNotifier<bool> _loading = ValueNotifier(false);
+  // final ValueNotifier<bool> _loading = ValueNotifier(false);
   final _textController = TextEditingController();
 
   bool get _isSearch {
@@ -123,26 +122,26 @@ class CommonScaffoldState extends State<CommonScaffold> {
     );
   }
 
-  Future<T?> loadingRun<T>(
-    Future<T> Function() futureFunction, {
-    String? title,
-  }) async {
-    _loading.value = true;
-    try {
-      final res = await futureFunction();
-      _loading.value = false;
-      return res;
-    } catch (e) {
-      globalState.showMessage(
-        title: title ?? appLocalizations.tip,
-        message: TextSpan(
-          text: e.toString(),
-        ),
-      );
-      _loading.value = false;
-      return null;
-    }
-  }
+  // Future<T?> loadingRun<T>(
+  //   Future<T> Function() futureFunction, {
+  //   String? title,
+  // }) async {
+  //   _loading.value = true;
+  //   try {
+  //     final res = await futureFunction();
+  //     _loading.value = false;
+  //     return res;
+  //   } catch (e) {
+  //     globalState.showMessage(
+  //       title: title ?? appLocalizations.tip,
+  //       message: TextSpan(
+  //         text: e.toString(),
+  //       ),
+  //     );
+  //     _loading.value = false;
+  //     return null;
+  //   }
+  // }
 
   _handleClearInput() {
     _textController.text = "";
@@ -286,6 +285,18 @@ class CommonScaffoldState extends State<CommonScaffold> {
     return appBar;
   }
 
+  Widget _buildLoading() {
+    return Consumer(
+      builder: (_, ref, __) {
+        final loading = ref.watch(loadingProvider);
+        final isMobileView = ref.watch(isMobileViewProvider);
+        return loading && isMobileView
+            ? const LinearProgressIndicator()
+            : Container();
+      },
+    );
+  }
+
   PreferredSizeWidget _buildAppBar() {
     return PreferredSize(
       preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -311,14 +322,7 @@ class CommonScaffoldState extends State<CommonScaffold> {
                   );
                 },
               ),
-          Consumer(
-            builder: (_, ref, __) {
-              final loading = ref.watch(loadingProvider);
-              return loading == true
-                  ? const LinearProgressIndicator()
-                  : Container();
-            },
-          ),
+          _buildLoading(),
         ],
       ),
     );
