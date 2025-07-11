@@ -60,8 +60,8 @@ class Metadata with _$Metadata {
 class Connection with _$Connection {
   const factory Connection({
     required String id,
-    num? upload,
-    num? download,
+    int? upload,
+    int? download,
     required DateTime start,
     required Metadata metadata,
     required List<String> chains,
@@ -143,7 +143,6 @@ class ConnectionsState with _$ConnectionsState {
     @Default([]) List<Connection> connections,
     @Default([]) List<String> keywords,
     @Default("") String query,
-    @Default(false) bool loading,
   }) = _ConnectionsState;
 }
 

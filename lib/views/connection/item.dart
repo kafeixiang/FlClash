@@ -5,6 +5,7 @@ import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/plugins/app.dart';
 import 'package:fl_clash/providers/config.dart';
+import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,16 +22,28 @@ class ConnectionItem extends ConsumerWidget {
     this.trailing,
   });
 
+  static get height {
+    final measure = globalState.measure;
+    return measure.bodyLargeHeight +
+        8 * 2 +
+        measure.bodyMediumHeight * 1 +
+        40 +
+        16 * 2;
+  }
+
   Future<ImageProvider?> _getPackageIcon(Connection connection) async {
     return await app?.getPackageIcon(connection.metadata.process);
   }
 
   String _getSourceText(Connection connection) {
     final metadata = connection.metadata;
-    if (metadata.process.isEmpty) {
-      return connection.start.lastUpdateTimeDesc;
-    }
-    return "${metadata.process} · ${connection.start.lastUpdateTimeDesc}";
+    final progress =
+        metadata.process.isNotEmpty ? "${metadata.process} · " : "";
+    final traffic = Traffic(
+      up: connection.upload,
+      down: connection.download,
+    );
+    return "$progress ${traffic.toString()}";
   }
 
   @override
@@ -44,6 +57,8 @@ class ConnectionItem extends ConsumerWidget {
     );
     final title = Text(
       connection.desc,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
       style: context.textTheme.bodyLarge,
     );
     final subTitle = Column(
@@ -60,110 +75,63 @@ class ConnectionItem extends ConsumerWidget {
         const SizedBox(
           height: 8,
         ),
-        Wrap(
-          runSpacing: 6,
-          spacing: 6,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            for (final chain in connection.chains)
-              CommonChip(
-                label: chain,
-                onPressed: () {
-                  if (onClickKeyword == null) return;
-                  onClickKeyword!(chain);
-                },
-              ),
+            CommonChip(
+              label: connection.chains.last,
+              onPressed: () {
+                if (onClickKeyword == null) return;
+                onClickKeyword!(connection.chains.last);
+              },
+            ),
+            Text(
+              connection.start.lastUpdateTimeDesc,
+            )
           ],
-        ),
+        )
       ],
     );
-    return CommonPopupBox(
-      targetBuilder: (open) {
-        // openPopup(Offset offset) {
-        //   open(
-        //     offset: offset.translate(
-        //       0,
-        //       0,
-        //     ),
-        //   );
-        // }
-
-        return InkWell(
-          child: GestureDetector(
-            // onLongPressStart: (details) {
-            //   if (!system.isDesktop) {
-            //     return;
-            //   }
-            //   openPopup(details.localPosition);
-            // },
-            // onSecondaryTapDown: (details) {
-            //   if (!system.isDesktop) {
-            //     return;
-            //   }
-            //   openPopup(details.localPosition);
-            // },
-            child: ListItem(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 4,
-              ),
-              tileTitleAlignment: ListTileTitleAlignment.titleHeight,
-              leading: value
-                  ? GestureDetector(
-                      onTap: () {
-                        if (onClickKeyword == null) return;
-                        final process = connection.metadata.process;
-                        if (process.isEmpty) return;
-                        onClickKeyword!(process);
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.only(top: 4),
+    return ListItem(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 4,
+      ),
+      onTap: () {},
+      tileTitleAlignment: ListTileTitleAlignment.titleHeight,
+      leading: value
+          ? GestureDetector(
+              onTap: () {
+                if (onClickKeyword == null) return;
+                final process = connection.metadata.process;
+                if (process.isEmpty) return;
+                onClickKeyword!(process);
+              },
+              child: Container(
+                margin: const EdgeInsets.only(top: 4),
+                width: 48,
+                height: 48,
+                child: FutureBuilder<ImageProvider?>(
+                  future: _getPackageIcon(connection),
+                  builder: (_, snapshot) {
+                    if (!snapshot.hasData && snapshot.data == null) {
+                      return Container();
+                    } else {
+                      return Image(
+                        image: snapshot.data!,
+                        gaplessPlayback: true,
                         width: 48,
                         height: 48,
-                        child: FutureBuilder<ImageProvider?>(
-                          future: _getPackageIcon(connection),
-                          builder: (_, snapshot) {
-                            if (!snapshot.hasData && snapshot.data == null) {
-                              return Container();
-                            } else {
-                              return Image(
-                                image: snapshot.data!,
-                                gaplessPlayback: true,
-                                width: 48,
-                                height: 48,
-                              );
-                            }
-                          },
-                        ),
-                      ),
-                    )
-                  : null,
-              title: title,
-              subtitle: subTitle,
-              trailing: trailing,
-            ),
-          ),
-          onTap: () {},
-        );
-      },
-      popup: CommonPopupMenu(
-        minWidth: 160,
-        items: [
-          PopupMenuItemData(
-            label: "编辑规则",
-            onPressed: () {
-              // _handleShowEditExtendPage(context);
-            },
-          ),
-          PopupMenuItemData(
-            label: "设置直连",
-            onPressed: () {},
-          ),
-          PopupMenuItemData(
-            label: "一键屏蔽",
-            onPressed: () {},
-          ),
-        ],
-      ),
+                      );
+                    }
+                  },
+                ),
+              ),
+            )
+          : null,
+      title: title,
+      subtitle: subTitle,
+      trailing: trailing,
     );
   }
 }

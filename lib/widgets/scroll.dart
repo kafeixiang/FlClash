@@ -7,11 +7,13 @@ import 'package:flutter/material.dart';
 class CommonScrollBar extends StatelessWidget {
   final ScrollController? controller;
   final Widget child;
+  final bool trackVisibility;
 
   const CommonScrollBar({
     super.key,
     required this.child,
     required this.controller,
+    this.trackVisibility = true,
   });
 
   @override
@@ -19,7 +21,7 @@ class CommonScrollBar extends StatelessWidget {
     return Scrollbar(
       controller: controller,
       thumbVisibility: true,
-      trackVisibility: true,
+      trackVisibility: trackVisibility,
       thickness: 8,
       radius: const Radius.circular(8),
       interactive: true,

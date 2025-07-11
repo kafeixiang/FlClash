@@ -847,8 +847,8 @@ Connection _$ConnectionFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Connection {
   String get id => throw _privateConstructorUsedError;
-  num? get upload => throw _privateConstructorUsedError;
-  num? get download => throw _privateConstructorUsedError;
+  int? get upload => throw _privateConstructorUsedError;
+  int? get download => throw _privateConstructorUsedError;
   DateTime get start => throw _privateConstructorUsedError;
   Metadata get metadata => throw _privateConstructorUsedError;
   List<String> get chains => throw _privateConstructorUsedError;
@@ -871,8 +871,8 @@ abstract class $ConnectionCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
-      num? upload,
-      num? download,
+      int? upload,
+      int? download,
       DateTime start,
       Metadata metadata,
       List<String> chains});
@@ -910,11 +910,11 @@ class _$ConnectionCopyWithImpl<$Res, $Val extends Connection>
       upload: freezed == upload
           ? _value.upload
           : upload // ignore: cast_nullable_to_non_nullable
-              as num?,
+              as int?,
       download: freezed == download
           ? _value.download
           : download // ignore: cast_nullable_to_non_nullable
-              as num?,
+              as int?,
       start: null == start
           ? _value.start
           : start // ignore: cast_nullable_to_non_nullable
@@ -951,8 +951,8 @@ abstract class _$$ConnectionImplCopyWith<$Res>
   @useResult
   $Res call(
       {String id,
-      num? upload,
-      num? download,
+      int? upload,
+      int? download,
       DateTime start,
       Metadata metadata,
       List<String> chains});
@@ -989,11 +989,11 @@ class __$$ConnectionImplCopyWithImpl<$Res>
       upload: freezed == upload
           ? _value.upload
           : upload // ignore: cast_nullable_to_non_nullable
-              as num?,
+              as int?,
       download: freezed == download
           ? _value.download
           : download // ignore: cast_nullable_to_non_nullable
-              as num?,
+              as int?,
       start: null == start
           ? _value.start
           : start // ignore: cast_nullable_to_non_nullable
@@ -1028,9 +1028,9 @@ class _$ConnectionImpl implements _Connection {
   @override
   final String id;
   @override
-  final num? upload;
+  final int? upload;
   @override
-  final num? download;
+  final int? download;
   @override
   final DateTime start;
   @override
@@ -1087,8 +1087,8 @@ class _$ConnectionImpl implements _Connection {
 abstract class _Connection implements Connection {
   const factory _Connection(
       {required final String id,
-      final num? upload,
-      final num? download,
+      final int? upload,
+      final int? download,
       required final DateTime start,
       required final Metadata metadata,
       required final List<String> chains}) = _$ConnectionImpl;
@@ -1099,9 +1099,9 @@ abstract class _Connection implements Connection {
   @override
   String get id;
   @override
-  num? get upload;
+  int? get upload;
   @override
-  num? get download;
+  int? get download;
   @override
   DateTime get start;
   @override
@@ -1527,7 +1527,6 @@ mixin _$ConnectionsState {
   List<Connection> get connections => throw _privateConstructorUsedError;
   List<String> get keywords => throw _privateConstructorUsedError;
   String get query => throw _privateConstructorUsedError;
-  bool get loading => throw _privateConstructorUsedError;
 
   /// Create a copy of ConnectionsState
   /// with the given fields replaced by the non-null parameter values.
@@ -1543,10 +1542,7 @@ abstract class $ConnectionsStateCopyWith<$Res> {
       _$ConnectionsStateCopyWithImpl<$Res, ConnectionsState>;
   @useResult
   $Res call(
-      {List<Connection> connections,
-      List<String> keywords,
-      String query,
-      bool loading});
+      {List<Connection> connections, List<String> keywords, String query});
 }
 
 /// @nodoc
@@ -1567,7 +1563,6 @@ class _$ConnectionsStateCopyWithImpl<$Res, $Val extends ConnectionsState>
     Object? connections = null,
     Object? keywords = null,
     Object? query = null,
-    Object? loading = null,
   }) {
     return _then(_value.copyWith(
       connections: null == connections
@@ -1582,10 +1577,6 @@ class _$ConnectionsStateCopyWithImpl<$Res, $Val extends ConnectionsState>
           ? _value.query
           : query // ignore: cast_nullable_to_non_nullable
               as String,
-      loading: null == loading
-          ? _value.loading
-          : loading // ignore: cast_nullable_to_non_nullable
-              as bool,
     ) as $Val);
   }
 }
@@ -1599,10 +1590,7 @@ abstract class _$$ConnectionsStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {List<Connection> connections,
-      List<String> keywords,
-      String query,
-      bool loading});
+      {List<Connection> connections, List<String> keywords, String query});
 }
 
 /// @nodoc
@@ -1621,7 +1609,6 @@ class __$$ConnectionsStateImplCopyWithImpl<$Res>
     Object? connections = null,
     Object? keywords = null,
     Object? query = null,
-    Object? loading = null,
   }) {
     return _then(_$ConnectionsStateImpl(
       connections: null == connections
@@ -1636,10 +1623,6 @@ class __$$ConnectionsStateImplCopyWithImpl<$Res>
           ? _value.query
           : query // ignore: cast_nullable_to_non_nullable
               as String,
-      loading: null == loading
-          ? _value.loading
-          : loading // ignore: cast_nullable_to_non_nullable
-              as bool,
     ));
   }
 }
@@ -1650,8 +1633,7 @@ class _$ConnectionsStateImpl implements _ConnectionsState {
   const _$ConnectionsStateImpl(
       {final List<Connection> connections = const [],
       final List<String> keywords = const [],
-      this.query = "",
-      this.loading = false})
+      this.query = ""})
       : _connections = connections,
         _keywords = keywords;
 
@@ -1676,13 +1658,10 @@ class _$ConnectionsStateImpl implements _ConnectionsState {
   @override
   @JsonKey()
   final String query;
-  @override
-  @JsonKey()
-  final bool loading;
 
   @override
   String toString() {
-    return 'ConnectionsState(connections: $connections, keywords: $keywords, query: $query, loading: $loading)';
+    return 'ConnectionsState(connections: $connections, keywords: $keywords, query: $query)';
   }
 
   @override
@@ -1693,8 +1672,7 @@ class _$ConnectionsStateImpl implements _ConnectionsState {
             const DeepCollectionEquality()
                 .equals(other._connections, _connections) &&
             const DeepCollectionEquality().equals(other._keywords, _keywords) &&
-            (identical(other.query, query) || other.query == query) &&
-            (identical(other.loading, loading) || other.loading == loading));
+            (identical(other.query, query) || other.query == query));
   }
 
   @override
@@ -1702,8 +1680,7 @@ class _$ConnectionsStateImpl implements _ConnectionsState {
       runtimeType,
       const DeepCollectionEquality().hash(_connections),
       const DeepCollectionEquality().hash(_keywords),
-      query,
-      loading);
+      query);
 
   /// Create a copy of ConnectionsState
   /// with the given fields replaced by the non-null parameter values.
@@ -1719,8 +1696,7 @@ abstract class _ConnectionsState implements ConnectionsState {
   const factory _ConnectionsState(
       {final List<Connection> connections,
       final List<String> keywords,
-      final String query,
-      final bool loading}) = _$ConnectionsStateImpl;
+      final String query}) = _$ConnectionsStateImpl;
 
   @override
   List<Connection> get connections;
@@ -1728,8 +1704,6 @@ abstract class _ConnectionsState implements ConnectionsState {
   List<String> get keywords;
   @override
   String get query;
-  @override
-  bool get loading;
 
   /// Create a copy of ConnectionsState
   /// with the given fields replaced by the non-null parameter values.

@@ -37,6 +37,10 @@ extension DateTimeExtension on DateTime {
   }
 
   String get show {
-    return toIso8601String().substring(0, 10);
+    return toString().substring(0, 10);
+  }
+
+  String get showTime {
+    return toString().substring(10, 23);
   }
 }

@@ -53,8 +53,8 @@ Map<String, dynamic> _$$MetadataImplToJson(_$MetadataImpl instance) =>
 _$ConnectionImpl _$$ConnectionImplFromJson(Map<String, dynamic> json) =>
     _$ConnectionImpl(
       id: json['id'] as String,
-      upload: json['upload'] as num?,
-      download: json['download'] as num?,
+      upload: (json['upload'] as num?)?.toInt(),
+      download: (json['download'] as num?)?.toInt(),
       start: DateTime.parse(json['start'] as String),
       metadata: Metadata.fromJson(json['metadata'] as Map<String, dynamic>),
       chains:

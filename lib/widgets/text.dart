@@ -1,6 +1,6 @@
+import 'package:emoji_regex/emoji_regex.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:flutter/material.dart';
-import 'package:emoji_regex/emoji_regex.dart';
 
 import '../state.dart';
 
@@ -93,3 +93,19 @@ class EmojiText extends StatelessWidget {
     );
   }
 }
+
+// class HighlightText extends StatelessWidget {
+//   const HighlightText({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return RichText(
+//       textScaler: MediaQuery.of(context).textScaler,
+//       maxLines: maxLines,
+//       overflow: overflow ?? TextOverflow.clip,
+//       text: TextSpan(
+//         children: _buildTextSpans(text),
+//       ),
+//     );
+//   }
+// }

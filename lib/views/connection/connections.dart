@@ -20,9 +20,7 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView> {
   final _connectionsStateNotifier = ValueNotifier<ConnectionsState>(
     const ConnectionsState(),
   );
-  final ScrollController _scrollController = ScrollController(
-    keepScrollOffset: false,
-  );
+  final ScrollController _scrollController = ScrollController();
 
   Timer? timer;
 
@@ -104,13 +102,9 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView> {
               label: appLocalizations.nullTip(appLocalizations.connections),
             );
           }
-          return CommonScrollBar(
-            controller: _scrollController,
-            child: ListView.separated(
-              controller: _scrollController,
-              itemBuilder: (context, index) {
-                final connection = connections[index];
-                return ConnectionItem(
+          final items = connections
+              .map<Widget>(
+                (connection) => ConnectionItem(
                   key: Key(connection.id),
                   connection: connection,
                   onClickKeyword: (value) {
@@ -122,12 +116,27 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView> {
                       _handleBlockConnection(connection.id);
                     },
                   ),
-                );
-              },
-              separatorBuilder: (BuildContext context, int index) {
-                return const Divider(
+                ),
+              )
+              .separated(
+                const Divider(
                   height: 0,
-                );
+                ),
+              )
+              .toList();
+          return CommonScrollBar(
+            trackVisibility: false,
+            controller: _scrollController,
+            child: ListView.builder(
+              controller: _scrollController,
+              itemBuilder: (context, index) {
+                return items[index];
+              },
+              itemExtentBuilder: (index, _) {
+                if (index.isOdd) {
+                  return 0;
+                }
+                return ConnectionItem.height;
               },
               itemCount: connections.length,
             ),
