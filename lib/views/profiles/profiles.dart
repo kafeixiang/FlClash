@@ -24,7 +24,7 @@ class ProfilesView extends StatefulWidget {
 class _ProfilesViewState extends State<ProfilesView> {
   Function? applyConfigDebounce;
 
-  _handleShowAddExtendPage() {
+  void _handleShowAddExtendPage() {
     showExtend(
       globalState.navigatorKey.currentState!.context,
       builder: (_, type) {
@@ -33,13 +33,13 @@ class _ProfilesViewState extends State<ProfilesView> {
           body: AddProfileView(
             context: globalState.navigatorKey.currentState!.context,
           ),
-          title: "${appLocalizations.add}${appLocalizations.profile}",
+          title: '${appLocalizations.add}${appLocalizations.profile}',
         );
       },
     );
   }
 
-  _updateProfiles() async {
+  Future<void> _updateProfiles() async {
     final profiles = globalState.config.profiles;
     final messages = [];
     final updateProfiles = profiles.map<Future>(
@@ -51,7 +51,7 @@ class _ProfilesViewState extends State<ProfilesView> {
         try {
           await globalState.appController.updateProfile(profile);
         } catch (e) {
-          messages.add("${profile.label ?? profile.id}: $e \n");
+          messages.add('${profile.label ?? profile.id}: $e \n');
           globalState.appController.setProfile(
             profile.copyWith(
               isUpdating: false,
@@ -198,7 +198,7 @@ class ProfileItem extends StatelessWidget {
     required this.onChanged,
   });
 
-  _handleDeleteProfile(BuildContext context) async {
+  Future<void> _handleDeleteProfile(BuildContext context) async {
     final res = await globalState.showMessage(
       title: appLocalizations.tip,
       message: TextSpan(
@@ -233,7 +233,7 @@ class ProfileItem extends StatelessWidget {
     });
   }
 
-  _handleShowEditExtendPage(BuildContext context) {
+  void _handleShowEditExtendPage(BuildContext context) {
     showExtend(
       context,
       builder: (_, type) {
@@ -243,7 +243,7 @@ class ProfileItem extends StatelessWidget {
             profile: profile,
             context: context,
           ),
-          title: "${appLocalizations.edit}${appLocalizations.profile}",
+          title: '${appLocalizations.edit}${appLocalizations.profile}',
         );
       },
     );
@@ -260,7 +260,7 @@ class ProfileItem extends StatelessWidget {
           subscriptionInfo: subscriptionInfo,
         ),
       Text(
-        profile.lastUpdateDate?.lastUpdateTimeDesc ?? "",
+        profile.lastUpdateDate?.lastUpdateTimeDesc ?? '',
         style: context.textTheme.labelMedium?.toLight,
       ),
     ];
@@ -272,7 +272,7 @@ class ProfileItem extends StatelessWidget {
         height: 8,
       ),
       Text(
-        profile.lastUpdateDate?.lastUpdateTimeDesc ?? "",
+        profile.lastUpdateDate?.lastUpdateTimeDesc ?? '',
         style: context.textTheme.labelMedium?.toLight,
       ),
     ];
@@ -289,7 +289,7 @@ class ProfileItem extends StatelessWidget {
   //   }
   // }
 
-  _handleExportFile(BuildContext context) async {
+  Future<void> _handleExportFile(BuildContext context) async {
     final res = await globalState.appController.safeRun<bool>(
       () async {
         final file = await profile.getFile();
@@ -308,7 +308,7 @@ class ProfileItem extends StatelessWidget {
     }
   }
 
-  _handlePushGenProfilePage(BuildContext context, String id) {
+  void _handlePushGenProfilePage(BuildContext context, String id) {
     final overrideProfileView = OverrideProfileView(
       profileId: id,
     );

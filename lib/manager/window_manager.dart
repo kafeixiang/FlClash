@@ -58,7 +58,7 @@ class _WindowContainerState extends ConsumerState<WindowManager>
   @override
   void onWindowFocus() {
     super.onWindowFocus();
-    commonPrint.log("focus");
+    commonPrint.log('focus');
     render?.resume();
   }
 
@@ -95,14 +95,14 @@ class _WindowContainerState extends ConsumerState<WindowManager>
   @override
   void onWindowMinimize() async {
     globalState.appController.savePreferencesDebounce();
-    commonPrint.log("minimize");
+    commonPrint.log('minimize');
     render?.pause();
     super.onWindowMinimize();
   }
 
   @override
   void onWindowRestore() {
-    commonPrint.log("restore");
+    commonPrint.log('restore');
     render?.resume();
     super.onWindowRestore();
   }
@@ -171,7 +171,7 @@ class _WindowHeaderState extends State<WindowHeader> {
     _initNotifier();
   }
 
-  _initNotifier() async {
+  Future<void> _initNotifier() async {
     isMaximizedNotifier.value = await windowManager.isMaximized();
     isPinNotifier.value = await windowManager.isAlwaysOnTop();
   }
@@ -183,7 +183,7 @@ class _WindowHeaderState extends State<WindowHeader> {
     super.dispose();
   }
 
-  _updateMaximized() async {
+  Future<void> _updateMaximized() async {
     final isMaximized = await windowManager.isMaximized();
     switch (isMaximized) {
       case true:
@@ -196,13 +196,13 @@ class _WindowHeaderState extends State<WindowHeader> {
     isMaximizedNotifier.value = await windowManager.isMaximized();
   }
 
-  _updatePin() async {
+  Future<void> _updatePin() async {
     final isAlwaysOnTop = await windowManager.isAlwaysOnTop();
     await windowManager.setAlwaysOnTop(!isAlwaysOnTop);
     isPinNotifier.value = await windowManager.isAlwaysOnTop();
   }
 
-  _buildActions() {
+  Widget _buildActions() {
     return Row(
       children: [
         IconButton(
@@ -313,7 +313,7 @@ class AppIcon extends StatelessWidget {
             width: 24,
             height: 24,
             child: CircleAvatar(
-              foregroundImage: AssetImage("assets/images/icon.png"),
+              foregroundImage: AssetImage('assets/images/icon.png'),
               backgroundColor: Colors.transparent,
             ),
           ),

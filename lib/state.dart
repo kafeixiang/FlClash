@@ -67,9 +67,9 @@ class GlobalState {
     return _instance!;
   }
 
-  initApp(int version) async {
-    coreSHA256 = const String.fromEnvironment("CORE_SHA256");
-    isPre = const String.fromEnvironment("APP_ENV") != 'stable';
+  Future<void> initApp(int version) async {
+    coreSHA256 = const String.fromEnvironment('CORE_SHA256');
+    isPre = const String.fromEnvironment('APP_ENV') != 'stable';
     appState = AppState(
       brightness: WidgetsBinding.instance.platformDispatcher.platformBrightness,
       version: version,
@@ -84,7 +84,7 @@ class GlobalState {
     await init();
   }
 
-  _initDynamicColor() async {
+  Future<void> _initDynamicColor() async {
     try {
       corePalette = await DynamicColorPlugin.getCorePalette();
       accentColor = await DynamicColorPlugin.getAccentColor() ??
@@ -92,7 +92,7 @@ class GlobalState {
     } catch (_) {}
   }
 
-  init() async {
+  Future<void> init() async {
     packageInfo = await PackageInfo.fromPlatform();
     config = await preferences.getConfig() ??
         Config(
@@ -107,7 +107,7 @@ class GlobalState {
 
   String get ua => config.patchClashConfig.globalUa ?? packageInfo.ua;
 
-  startUpdateTasks([UpdateTasks? tasks]) async {
+  Future<void> startUpdateTasks([UpdateTasks? tasks]) async {
     if (timer != null && timer!.isActive == true) return;
     if (tasks != null) {
       this.tasks = tasks;
@@ -118,20 +118,20 @@ class GlobalState {
     });
   }
 
-  executorUpdateTask() async {
+  Future<void> executorUpdateTask() async {
     for (final task in tasks) {
       await task();
     }
     timer = null;
   }
 
-  stopUpdateTasks() {
+  void stopUpdateTasks() {
     if (timer == null || timer?.isActive == false) return;
     timer?.cancel();
     timer = null;
   }
 
-  handleStart([UpdateTasks? tasks]) async {
+  Future<void> handleStart([UpdateTasks? tasks]) async {
     startTime ??= DateTime.now();
     await clashCore.startListener();
     await service?.startVpn();
@@ -232,14 +232,14 @@ class GlobalState {
     );
   }
 
-  showNotifier(String text) {
+  void showNotifier(String text) {
     if (text.isEmpty) {
       return;
     }
     navigatorKey.currentContext?.showNotifier(text);
   }
 
-  openUrl(String url) async {
+  Future<void> openUrl(String url) async {
     final res = await showMessage(
       message: TextSpan(text: url),
       title: appLocalizations.externalLink,
@@ -267,7 +267,7 @@ class GlobalState {
     return CoreState(
       vpnProps: config.vpnProps,
       onlyStatisticsProxy: config.appSetting.onlyStatisticsProxy,
-      currentProfileName: currentProfile?.label ?? currentProfile?.id ?? "",
+      currentProfileName: currentProfile?.label ?? currentProfile?.id ?? '',
       bypassDomain: config.networkProps.bypassDomain,
     );
   }
@@ -299,112 +299,112 @@ class GlobalState {
     final realPatchConfig = patchConfig.copyWith(
       tun: patchConfig.tun.getRealTun(config.networkProps.routeMode),
     );
-    rawConfig["external-controller"] = realPatchConfig.externalController.value;
-    rawConfig["external-ui"] = "";
-    rawConfig["interface-name"] = "";
-    rawConfig["external-ui-url"] = "";
-    rawConfig["tcp-concurrent"] = realPatchConfig.tcpConcurrent;
-    rawConfig["unified-delay"] = realPatchConfig.unifiedDelay;
-    rawConfig["ipv6"] = realPatchConfig.ipv6;
-    rawConfig["log-level"] = realPatchConfig.logLevel.name;
-    rawConfig["port"] = 0;
-    rawConfig["socks-port"] = 0;
-    rawConfig["keep-alive-interval"] = realPatchConfig.keepAliveInterval;
-    rawConfig["mixed-port"] = realPatchConfig.mixedPort;
-    rawConfig["port"] = realPatchConfig.port;
-    rawConfig["socks-port"] = realPatchConfig.socksPort;
-    rawConfig["redir-port"] = realPatchConfig.redirPort;
-    rawConfig["tproxy-port"] = realPatchConfig.tproxyPort;
-    rawConfig["find-process-mode"] = realPatchConfig.findProcessMode.name;
-    rawConfig["allow-lan"] = realPatchConfig.allowLan;
-    rawConfig["mode"] = realPatchConfig.mode.name;
-    if (rawConfig["tun"] == null) {
-      rawConfig["tun"] = {};
+    rawConfig['external-controller'] = realPatchConfig.externalController.value;
+    rawConfig['external-ui'] = '';
+    rawConfig['interface-name'] = '';
+    rawConfig['external-ui-url'] = '';
+    rawConfig['tcp-concurrent'] = realPatchConfig.tcpConcurrent;
+    rawConfig['unified-delay'] = realPatchConfig.unifiedDelay;
+    rawConfig['ipv6'] = realPatchConfig.ipv6;
+    rawConfig['log-level'] = realPatchConfig.logLevel.name;
+    rawConfig['port'] = 0;
+    rawConfig['socks-port'] = 0;
+    rawConfig['keep-alive-interval'] = realPatchConfig.keepAliveInterval;
+    rawConfig['mixed-port'] = realPatchConfig.mixedPort;
+    rawConfig['port'] = realPatchConfig.port;
+    rawConfig['socks-port'] = realPatchConfig.socksPort;
+    rawConfig['redir-port'] = realPatchConfig.redirPort;
+    rawConfig['tproxy-port'] = realPatchConfig.tproxyPort;
+    rawConfig['find-process-mode'] = realPatchConfig.findProcessMode.name;
+    rawConfig['allow-lan'] = realPatchConfig.allowLan;
+    rawConfig['mode'] = realPatchConfig.mode.name;
+    if (rawConfig['tun'] == null) {
+      rawConfig['tun'] = {};
     }
-    rawConfig["tun"]["enable"] = realPatchConfig.tun.enable;
-    rawConfig["tun"]["device"] = realPatchConfig.tun.device;
-    rawConfig["tun"]["dns-hijack"] = realPatchConfig.tun.dnsHijack;
-    rawConfig["tun"]["stack"] = realPatchConfig.tun.stack.name;
-    rawConfig["tun"]["route-address"] = realPatchConfig.tun.routeAddress;
-    rawConfig["tun"]["auto-route"] = realPatchConfig.tun.autoRoute;
-    rawConfig["geodata-loader"] = realPatchConfig.geodataLoader.name;
-    if (rawConfig["sniffer"]?["sniff"] != null) {
-      for (final value in (rawConfig["sniffer"]?["sniff"] as Map).values) {
-        if (value["ports"] != null && value["ports"] is List) {
-          value["ports"] =
-              value["ports"]?.map((item) => item.toString()).toList() ?? [];
+    rawConfig['tun']['enable'] = realPatchConfig.tun.enable;
+    rawConfig['tun']['device'] = realPatchConfig.tun.device;
+    rawConfig['tun']['dns-hijack'] = realPatchConfig.tun.dnsHijack;
+    rawConfig['tun']['stack'] = realPatchConfig.tun.stack.name;
+    rawConfig['tun']['route-address'] = realPatchConfig.tun.routeAddress;
+    rawConfig['tun']['auto-route'] = realPatchConfig.tun.autoRoute;
+    rawConfig['geodata-loader'] = realPatchConfig.geodataLoader.name;
+    if (rawConfig['sniffer']?['sniff'] != null) {
+      for (final value in (rawConfig['sniffer']?['sniff'] as Map).values) {
+        if (value['ports'] != null && value['ports'] is List) {
+          value['ports'] =
+              value['ports']?.map((item) => item.toString()).toList() ?? [];
         }
       }
     }
-    if (rawConfig["profile"] == null) {
-      rawConfig["profile"] = {};
+    if (rawConfig['profile'] == null) {
+      rawConfig['profile'] = {};
     }
-    if (rawConfig["proxy-providers"] != null) {
-      final proxyProviders = rawConfig["proxy-providers"] as Map;
+    if (rawConfig['proxy-providers'] != null) {
+      final proxyProviders = rawConfig['proxy-providers'] as Map;
       for (final key in proxyProviders.keys) {
         final proxyProvider = proxyProviders[key];
-        if (proxyProvider["type"] != "http") {
+        if (proxyProvider['type'] != 'http') {
           continue;
         }
-        if (proxyProvider["url"] != null) {
-          proxyProvider["path"] = await appPath.getProvidersFilePath(
+        if (proxyProvider['url'] != null) {
+          proxyProvider['path'] = await appPath.getProvidersFilePath(
             profile.id,
-            "proxies",
-            proxyProvider["url"],
+            'proxies',
+            proxyProvider['url'],
           );
         }
       }
     }
 
-    if (rawConfig["rule-providers"] != null) {
-      final ruleProviders = rawConfig["rule-providers"] as Map;
+    if (rawConfig['rule-providers'] != null) {
+      final ruleProviders = rawConfig['rule-providers'] as Map;
       for (final key in ruleProviders.keys) {
         final ruleProvider = ruleProviders[key];
-        if (ruleProvider["type"] != "http") {
+        if (ruleProvider['type'] != 'http') {
           continue;
         }
-        if (ruleProvider["url"] != null) {
-          ruleProvider["path"] = await appPath.getProvidersFilePath(
+        if (ruleProvider['url'] != null) {
+          ruleProvider['path'] = await appPath.getProvidersFilePath(
             profile.id,
-            "rules",
-            ruleProvider["url"],
+            'rules',
+            ruleProvider['url'],
           );
         }
       }
     }
 
-    rawConfig["profile"]["store-selected"] = false;
-    rawConfig["geox-url"] = realPatchConfig.geoXUrl.toJson();
-    rawConfig["global-ua"] = realPatchConfig.globalUa;
-    if (rawConfig["hosts"] == null) {
-      rawConfig["hosts"] = {};
+    rawConfig['profile']['store-selected'] = false;
+    rawConfig['geox-url'] = realPatchConfig.geoXUrl.toJson();
+    rawConfig['global-ua'] = realPatchConfig.globalUa;
+    if (rawConfig['hosts'] == null) {
+      rawConfig['hosts'] = {};
     }
     for (final host in realPatchConfig.hosts.entries) {
-      rawConfig["hosts"][host.key] = host.value.splitByMultipleSeparators;
+      rawConfig['hosts'][host.key] = host.value.splitByMultipleSeparators;
     }
-    if (rawConfig["dns"] == null) {
-      rawConfig["dns"] = {};
+    if (rawConfig['dns'] == null) {
+      rawConfig['dns'] = {};
     }
-    final isEnableDns = rawConfig["dns"]["enable"] == true;
+    final isEnableDns = rawConfig['dns']['enable'] == true;
     final overrideDns = globalState.config.overrideDns;
     if (overrideDns || !isEnableDns) {
       final dns = switch (!isEnableDns) {
         true => realPatchConfig.dns.copyWith(
-            nameserver: [...realPatchConfig.dns.nameserver, "system://"]),
+            nameserver: [...realPatchConfig.dns.nameserver, 'system://']),
         false => realPatchConfig.dns,
       };
-      rawConfig["dns"] = dns.toJson();
-      rawConfig["dns"]["nameserver-policy"] = {};
+      rawConfig['dns'] = dns.toJson();
+      rawConfig['dns']['nameserver-policy'] = {};
       for (final entry in dns.nameserverPolicy.entries) {
-        rawConfig["dns"]["nameserver-policy"][entry.key] =
+        rawConfig['dns']['nameserver-policy'][entry.key] =
             entry.value.splitByMultipleSeparators;
       }
     }
     var rules = [];
-    if (rawConfig["rules"] != null) {
-      rules = rawConfig["rules"];
+    if (rawConfig['rules'] != null) {
+      rules = rawConfig['rules'];
     }
-    rawConfig.remove("rules");
+    rawConfig.remove('rules');
 
     final overrideData = profile.overrideData;
     if (overrideData.enable && config.scriptProps.currentScript == null) {
@@ -414,7 +414,7 @@ class GlobalState {
         rules = [...overrideData.runningRule, ...rules];
       }
     }
-    rawConfig["rule"] = rules;
+    rawConfig['rule'] = rules;
     return rawConfig;
   }
 
@@ -423,8 +423,8 @@ class GlobalState {
       true => clashLibHandler!.getConfig(profileId),
       false => clashCore.getConfig(profileId),
     };
-    configMap["rules"] = configMap["rule"];
-    configMap.remove("rule");
+    configMap['rules'] = configMap['rule'];
+    configMap.remove('rule');
     return configMap;
   }
 
@@ -435,15 +435,15 @@ class GlobalState {
     if (currentScript == null) {
       return config;
     }
-    if (config["proxy-providers"] == null) {
-      config["proxy-providers"] = {};
+    if (config['proxy-providers'] == null) {
+      config['proxy-providers'] = {};
     }
     final configJs = json.encode(config);
     final runtime = getJavascriptRuntime();
-    final res = await runtime.evaluateAsync("""
+    final res = await runtime.evaluateAsync('''
       ${currentScript.content}
       main($configJs)
-    """);
+    ''');
     if (res.isError) {
       throw res.stringResult;
     }
@@ -478,7 +478,7 @@ class DetectionState {
     return _instance!;
   }
 
-  startCheck() {
+  void startCheck() {
     debouncer.call(
       FunctionTag.checkIp,
       _checkIp,
@@ -488,7 +488,7 @@ class DetectionState {
     );
   }
 
-  _checkIp() async {
+  Future<void> _checkIp() async {
     final appState = globalState.appState;
     final isInit = appState.isInit;
     if (!isInit) return;
@@ -540,7 +540,7 @@ class DetectionState {
     });
   }
 
-  _clearSetTimeoutTimer() {
+  void _clearSetTimeoutTimer() {
     if (_setTimeoutTimer != null) {
       _setTimeoutTimer?.cancel();
       _setTimeoutTimer = null;

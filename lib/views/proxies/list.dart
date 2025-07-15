@@ -49,7 +49,7 @@ class _ProxiesListViewState extends State<ProxiesListView> {
     );
   }
 
-  _adjustHeader() {
+  void _adjustHeader() {
     _headerStateNotifier.value = _getProxiesListHeaderSelectorState(
       _controller.offset,
     );
@@ -71,7 +71,7 @@ class _ProxiesListViewState extends State<ProxiesListView> {
     super.dispose();
   }
 
-  _handleChange(Set<String> currentUnfoldSet, String groupName) {
+  void _handleChange(Set<String> currentUnfoldSet, String groupName) {
     final tempUnfoldSet = Set<String>.from(currentUnfoldSet);
     if (tempUnfoldSet.contains(groupName)) {
       tempUnfoldSet.remove(groupName);
@@ -187,7 +187,7 @@ class _ProxiesListViewState extends State<ProxiesListView> {
     return items;
   }
 
-  _buildHeader(
+  Widget _buildHeader(
     WidgetRef ref, {
     required Group group,
     required Set<String> currentUnfoldSet,
@@ -209,7 +209,7 @@ class _ProxiesListViewState extends State<ProxiesListView> {
     );
   }
 
-  _scrollToGroupSelected(String groupName) {
+  void _scrollToGroupSelected(String groupName) {
     if (_controller.position.maxScrollExtent == 0) {
       return;
     }
@@ -356,7 +356,7 @@ class _ListHeaderState extends State<ListHeader> {
 
   bool get isExpand => widget.isExpand;
 
-  _delayTest() async {
+  Future<void> _delayTest() async {
     if (isLock) return;
     isLock = true;
     await delayTest(
@@ -366,7 +366,7 @@ class _ListHeaderState extends State<ListHeader> {
     isLock = false;
   }
 
-  _handleChange(String groupName) {
+  void _handleChange(String groupName) {
     widget.onChange(groupName);
   }
 
@@ -489,7 +489,7 @@ class _ListHeaderState extends State<ListHeader> {
                                         .watch(getSelectedProxyNameProvider(
                                           groupName,
                                         ))
-                                        .getSafeValue("");
+                                        .getSafeValue('');
                                     return Row(
                                       mainAxisSize: MainAxisSize.min,
                                       mainAxisAlignment:
@@ -502,7 +502,7 @@ class _ListHeaderState extends State<ListHeader> {
                                             flex: 1,
                                             child: EmojiText(
                                               overflow: TextOverflow.ellipsis,
-                                              " · $proxyName",
+                                              ' · $proxyName',
                                               style: context.textTheme
                                                   .labelMedium?.toLight,
                                             ),

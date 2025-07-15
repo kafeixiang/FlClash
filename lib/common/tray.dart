@@ -38,7 +38,7 @@ class Tray {
     }
   }
 
-  update({
+  Future<void> update({
     required TrayState trayState,
     bool focus = false,
   }) async {
@@ -169,7 +169,7 @@ class Tray {
     }
   }
 
-  updateTrayTitle([Traffic? traffic]) async {
+  Future<void> updateTrayTitle([Traffic? traffic]) async {
     // if (!Platform.isMacOS) {
     //   return;
     // }
@@ -183,11 +183,11 @@ class Tray {
   }
 
   Future<void> _copyEnv(int port) async {
-    final url = "http://127.0.0.1:$port";
+    final url = 'http://127.0.0.1:$port';
 
     final cmdline = Platform.isWindows
-        ? "set \$env:all_proxy=$url"
-        : "export all_proxy=$url";
+        ? 'set \$env:all_proxy=$url'
+        : 'export all_proxy=$url';
 
     await Clipboard.setData(
       ClipboardData(

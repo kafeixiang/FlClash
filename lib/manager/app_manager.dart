@@ -86,7 +86,7 @@ class _AppStateManagerState extends ConsumerState<AppStateManager>
 
   @override
   Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
-    commonPrint.log("$state");
+    commonPrint.log('$state');
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.inactive) {
       globalState.appController.savePreferences();
@@ -164,7 +164,8 @@ class AppSidebarContainer extends ConsumerWidget {
     );
   }
 
-  _buildBackground({required BuildContext context, required Widget child}) {
+  Widget _buildBackground(
+      {required BuildContext context, required Widget child}) {
     if (!Platform.isMacOS) {
       return Material(
         color: context.colorScheme.surfaceContainer,

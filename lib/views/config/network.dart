@@ -18,7 +18,7 @@ class VPNItem extends ConsumerWidget {
     final enable =
         ref.watch(vpnSettingProvider.select((state) => state.enable));
     return ListItem.switchItem(
-      title: const Text("VPN"),
+      title: const Text('VPN'),
       subtitle: Text(appLocalizations.vpnEnableDesc),
       delegate: SwitchDelegate(
         value: enable,
@@ -139,7 +139,7 @@ class Ipv6Item extends ConsumerWidget {
   Widget build(BuildContext context, ref) {
     final ipv6 = ref.watch(vpnSettingProvider.select((state) => state.ipv6));
     return ListItem.switchItem(
-      title: const Text("IPv6"),
+      title: const Text('IPv6'),
       subtitle: Text(appLocalizations.ipv6InboundDesc),
       delegate: SwitchDelegate(
         value: ipv6,
@@ -278,7 +278,7 @@ class RouteModeItem extends ConsumerWidget {
         ref.watch(networkSettingProvider.select((state) => state.routeMode));
     return ListItem<RouteMode>.options(
       title: Text(appLocalizations.routeMode),
-      subtitle: Text(Intl.message("routeMode_${routeMode.name}")),
+      subtitle: Text(Intl.message('routeMode_${routeMode.name}')),
       delegate: OptionsDelegate<RouteMode>(
         title: appLocalizations.routeMode,
         options: RouteMode.values,
@@ -293,7 +293,7 @@ class RouteModeItem extends ConsumerWidget {
               );
         },
         textBuilder: (routeMode) => Intl.message(
-          "routeMode_${routeMode.name}",
+          'routeMode_${routeMode.name}',
         ),
         value: routeMode,
       ),
@@ -348,7 +348,7 @@ final networkItems = [
   if (Platform.isAndroid) const VPNItem(),
   if (Platform.isAndroid)
     ...generateSection(
-      title: "VPN",
+      title: 'VPN',
       items: [
         const VpnSystemProxyItem(),
         const BypassDomainItem(),

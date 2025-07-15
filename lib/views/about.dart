@@ -23,7 +23,7 @@ class Contributor {
 class AboutView extends StatelessWidget {
   const AboutView({super.key});
 
-  _checkUpdate(BuildContext context) async {
+  Future<void> _checkUpdate(BuildContext context) async {
     final commonScaffoldState = context.commonScaffoldState;
     if (commonScaffoldState?.mounted != true) return;
     final data = await globalState.appController.safeRun<Map<String, dynamic>?>(
@@ -49,10 +49,10 @@ class AboutView extends StatelessWidget {
           },
         ),
         ListItem(
-          title: const Text("Telegram"),
+          title: const Text('Telegram'),
           onTap: () {
             globalState.openUrl(
-              "https://t.me/FlClash",
+              'https://t.me/FlClash',
             );
           },
           trailing: const Icon(Icons.launch),
@@ -61,7 +61,7 @@ class AboutView extends StatelessWidget {
           title: Text(appLocalizations.project),
           onTap: () {
             globalState.openUrl(
-              "https://github.com/$repository",
+              'https://github.com/$repository',
             );
           },
           trailing: const Icon(Icons.launch),
@@ -70,7 +70,7 @@ class AboutView extends StatelessWidget {
           title: Text(appLocalizations.core),
           onTap: () {
             globalState.openUrl(
-              "https://github.com/chen08209/Clash.Meta/tree/FlClash",
+              'https://github.com/chen08209/Clash.Meta/tree/FlClash',
             );
           },
           trailing: const Icon(Icons.launch),
@@ -82,14 +82,14 @@ class AboutView extends StatelessWidget {
   List<Widget> _buildContributorsSection() {
     const contributors = [
       Contributor(
-        avatar: "assets/images/avatars/june2.jpg",
-        name: "June2",
-        link: "https://t.me/Jibadong",
+        avatar: 'assets/images/avatars/june2.jpg',
+        name: 'June2',
+        link: 'https://t.me/Jibadong',
       ),
       Contributor(
-        avatar: "assets/images/avatars/arue.jpg",
-        name: "Arue",
-        link: "https://t.me/xrcm6868",
+        avatar: 'assets/images/avatars/arue.jpg',
+        name: 'Arue',
+        link: 'https://t.me/xrcm6868',
       ),
     ];
     return generateSection(

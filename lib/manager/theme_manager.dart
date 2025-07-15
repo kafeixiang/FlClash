@@ -19,7 +19,7 @@ class ThemeManager extends ConsumerWidget {
     required this.child,
   });
 
-  _buildSystemUi(Widget child) {
+  Widget _buildSystemUi(Widget child) {
     if (!Platform.isAndroid) {
       return child;
     }

@@ -75,11 +75,11 @@ class _ConfigViewState extends State<ConfigView> {
         ),
       ),
       ListItem.open(
-        title: const Text("DNS"),
+        title: const Text('DNS'),
         subtitle: Text(appLocalizations.dnsDesc),
         leading: const Icon(Icons.dns),
         delegate: OpenDelegate(
-          title: "DNS",
+          title: 'DNS',
           actions: [
             Consumer(builder: (_, ref, __) {
               return IconButton(

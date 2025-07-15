@@ -30,7 +30,7 @@ class Logs extends _$Logs with AutoDisposeNotifierMixin {
     return globalState.appState.logs;
   }
 
-  addLog(Log value) {
+  void addLog(Log value) {
     state = state.copyWith()..add(value);
   }
 
@@ -56,7 +56,7 @@ class Requests extends _$Requests with AutoDisposeNotifierMixin {
     );
   }
 
-  addRequest(Connection value) {
+  void addRequest(Connection value) {
     state = state.copyWith()..add(value);
   }
 }
@@ -75,7 +75,7 @@ class Providers extends _$Providers with AutoDisposeNotifierMixin {
     );
   }
 
-  setProvider(ExternalProvider? provider) {
+  void setProvider(ExternalProvider? provider) {
     if (provider == null) return;
     final index = state.indexWhere((item) => item.name == provider.name);
     if (index == -1) return;
@@ -113,7 +113,7 @@ class SystemBrightness extends _$SystemBrightness
     );
   }
 
-  setState(Brightness value) {
+  void setState(Brightness value) {
     state = value;
   }
 }
@@ -132,11 +132,11 @@ class Traffics extends _$Traffics with AutoDisposeNotifierMixin {
     );
   }
 
-  addTraffic(Traffic value) {
+  void addTraffic(Traffic value) {
     state = state.copyWith()..add(value);
   }
 
-  clear() {
+  void clear() {
     state = state.copyWith()..clear();
   }
 }
@@ -282,7 +282,7 @@ class SortNum extends _$SortNum with AutoDisposeNotifierMixin {
     );
   }
 
-  add() => state++;
+  int add() => state++;
 }
 
 @riverpod
@@ -299,7 +299,7 @@ class CheckIpNum extends _$CheckIpNum with AutoDisposeNotifierMixin {
     );
   }
 
-  add() => state++;
+  int add() => state++;
 }
 
 @riverpod
@@ -376,7 +376,7 @@ class DelayDataSource extends _$DelayDataSource with AutoDisposeNotifierMixin {
     );
   }
 
-  setDelay(Delay delay) {
+  void setDelay(Delay delay) {
     if (state[delay.url]?[delay.name] != delay.value) {
       final DelayMap newDelayMap = Map.from(state);
       if (newDelayMap[delay.url] == null) {

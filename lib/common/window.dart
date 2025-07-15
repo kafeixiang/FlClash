@@ -8,16 +8,16 @@ import 'package:screen_retriever/screen_retriever.dart';
 import 'package:window_manager/window_manager.dart';
 
 class Window {
-  init(int version) async {
+  Future<void> init(int version) async {
     final props = globalState.config.windowProps;
     final acquire = await singleInstanceLock.acquire();
     if (!acquire) {
       exit(0);
     }
     if (Platform.isWindows) {
-      protocol.register("clash");
-      protocol.register("clashmeta");
-      protocol.register("flclash");
+      protocol.register('clash');
+      protocol.register('clashmeta');
+      protocol.register('flclash');
     }
     if ((version > 10 && Platform.isMacOS)) {
       await acrylic.Window.initialize();
@@ -66,14 +66,14 @@ class Window {
     });
   }
 
-  updateMacOSBrightness(Brightness brightness) {
+  void updateMacOSBrightness(Brightness brightness) {
     if (!Platform.isMacOS) {
       return;
     }
     acrylic.Window.overrideMacOSBrightness(dark: brightness == Brightness.dark);
   }
 
-  show() async {
+  Future<void> show() async {
     render?.resume();
     await windowManager.show();
     await windowManager.focus();
@@ -82,15 +82,15 @@ class Window {
 
   Future<bool> get isVisible async {
     final value = await windowManager.isVisible();
-    commonPrint.log("window visible check: $value");
+    commonPrint.log('window visible check: $value');
     return value;
   }
 
-  close() async {
+  Future<void> close() async {
     exit(0);
   }
 
-  hide() async {
+  Future<void> hide() async {
     render?.pause();
     await windowManager.hide();
     await windowManager.setSkipTaskbar(true);

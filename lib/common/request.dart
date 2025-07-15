@@ -19,7 +19,7 @@ class Request {
     _dio = Dio(
       BaseOptions(
         headers: {
-          "User-Agent": browserUa,
+          'User-Agent': browserUa,
         },
       ),
     );
@@ -69,7 +69,7 @@ class Request {
 
   Future<Map<String, dynamic>?> checkForUpdate() async {
     final response = await _dio.get(
-      "https://api.github.com/repos/$repository/releases/latest",
+      'https://api.github.com/repos/$repository/releases/latest',
       options: Options(
         responseType: ResponseType.json,
       ),
@@ -85,10 +85,10 @@ class Request {
   }
 
   final Map<String, IpInfo Function(Map<String, dynamic>)> _ipInfoSources = {
-    "https://ipwho.is/": IpInfo.fromIpwhoIsJson,
-    "https://api.ip.sb/geoip/": IpInfo.fromIpSbJson,
-    "https://ipapi.co/json/": IpInfo.fromIpApiCoJson,
-    "https://ipinfo.io/json/": IpInfo.fromIpInfoIoJson,
+    'https://ipwho.is/': IpInfo.fromIpwhoIsJson,
+    'https://api.ip.sb/geoip/': IpInfo.fromIpSbJson,
+    'https://ipapi.co/json/': IpInfo.fromIpApiCoJson,
+    'https://ipinfo.io/json/': IpInfo.fromIpInfoIoJson,
   };
 
   Future<Result<IpInfo?>> checkIp({CancelToken? cancelToken}) async {
@@ -118,7 +118,7 @@ class Request {
       }).catchError((e) {
         failureCount++;
         if (e == DioExceptionType.cancel) {
-          completer.complete(Result.error("cancelled"));
+          completer.complete(Result.error('cancelled'));
         }
         handleFailRes();
       });
@@ -133,7 +133,7 @@ class Request {
     try {
       final response = await _dio
           .get(
-            "http://$localhost:$helperPort/ping",
+            'http://$localhost:$helperPort/ping',
             options: Options(
               responseType: ResponseType.plain,
             ),
@@ -156,10 +156,10 @@ class Request {
     try {
       final response = await _dio
           .post(
-            "http://$localhost:$helperPort/start",
+            'http://$localhost:$helperPort/start',
             data: json.encode({
-              "path": appPath.corePath,
-              "arg": arg,
+              'path': appPath.corePath,
+              'arg': arg,
             }),
             options: Options(
               responseType: ResponseType.plain,
@@ -184,7 +184,7 @@ class Request {
     try {
       final response = await _dio
           .post(
-            "http://$localhost:$helperPort/stop",
+            'http://$localhost:$helperPort/stop',
             options: Options(
               responseType: ResponseType.plain,
             ),

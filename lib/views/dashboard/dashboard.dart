@@ -76,7 +76,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     ];
   }
 
-  _showAddWidgetsModal() {
+  void _showAddWidgetsModal() {
     showSheet(
       builder: (_, type) {
         return ValueListenableBuilder(
@@ -99,14 +99,14 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     );
   }
 
-  _handleUpdateIsEdit() {
+  void _handleUpdateIsEdit() {
     if (_isEditNotifier.value == true) {
       _handleSave();
     }
     _isEditNotifier.value = !_isEditNotifier.value;
   }
 
-  _handleSave() {
+  void _handleSave() {
     final children = key.currentState?.children;
     if (children == null) {
       return;
@@ -268,7 +268,7 @@ class _AddedContainerState extends State<_AddedContainer> {
     if (oldWidget.child != widget.child) {}
   }
 
-  _handleAdd() async {
+  Future<void> _handleAdd() async {
     widget.onAdd();
   }
 

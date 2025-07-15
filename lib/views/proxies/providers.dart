@@ -25,7 +25,7 @@ class ProvidersView extends ConsumerStatefulWidget {
 }
 
 class _ProvidersViewState extends ConsumerState<ProvidersView> {
-  _updateProviders() async {
+  Future<void> _updateProviders() async {
     final providers = ref.read(providersProvider);
     final providersNotifier = ref.read(providersProvider.notifier);
     final messages = [];
@@ -38,7 +38,7 @@ class _ProvidersViewState extends ConsumerState<ProvidersView> {
           providerName: provider.name,
         );
         if (message.isNotEmpty) {
-          messages.add("${provider.name}: $message \n");
+          messages.add('${provider.name}: $message \n');
         }
         providersNotifier.setProvider(
           await clashCore.getExternalProvider(provider.name),
@@ -47,7 +47,7 @@ class _ProvidersViewState extends ConsumerState<ProvidersView> {
     );
     final titleMedium = context.textTheme.titleMedium;
     await Future.wait(updateProviders);
-    await globalState.appController.updateGroupsDebounce();
+    globalState.appController.updateGroupsDebounce();
     if (messages.isNotEmpty) {
       globalState.showMessage(
         title: appLocalizations.tip,
@@ -67,12 +67,12 @@ class _ProvidersViewState extends ConsumerState<ProvidersView> {
   @override
   Widget build(BuildContext context) {
     final providers = ref.watch(providersProvider);
-    final proxyProviders = providers.where((item) => item.type == "Proxy").map(
+    final proxyProviders = providers.where((item) => item.type == 'Proxy').map(
           (item) => ProviderItem(
             provider: item,
           ),
         );
-    final ruleProviders = providers.where((item) => item.type == "Rule").map(
+    final ruleProviders = providers.where((item) => item.type == 'Rule').map(
           (item) => ProviderItem(
             provider: item,
           ),
@@ -114,9 +114,9 @@ class ProviderItem extends StatelessWidget {
     required this.provider,
   });
 
-  _handleUpdateProvider() async {
+  Future<void> _handleUpdateProvider() async {
     final appController = globalState.appController;
-    if (provider.vehicleType != "HTTP") return;
+    if (provider.vehicleType != 'HTTP') return;
     await globalState.appController.safeRun(
       () async {
         appController.setProvider(
@@ -134,10 +134,10 @@ class ProviderItem extends StatelessWidget {
     appController.setProvider(
       await clashCore.getExternalProvider(provider.name),
     );
-    await globalState.appController.updateGroupsDebounce();
+    globalState.appController.updateGroupsDebounce();
   }
 
-  _handleSideLoadProvider() async {
+  Future<void> _handleSideLoadProvider() async {
     await globalState.appController.safeRun<void>(() async {
       final platformFile = await picker.pickerFile();
       final bytes = platformFile?.bytes;
@@ -155,7 +155,7 @@ class ProviderItem extends StatelessWidget {
       );
       if (message.isNotEmpty) throw message;
     });
-    await globalState.appController.updateGroupsDebounce();
+    globalState.appController.updateGroupsDebounce();
   }
 
   String _buildProviderDesc() {
@@ -163,7 +163,7 @@ class ProviderItem extends StatelessWidget {
     final count = provider.count;
     return switch (count == 0) {
       true => baseInfo,
-      false => "$baseInfo  ·  $count${appLocalizations.entries}",
+      false => '$baseInfo  ·  $count${appLocalizations.entries}',
     };
   }
 
@@ -203,7 +203,7 @@ class ProviderItem extends StatelessWidget {
                 label: appLocalizations.upload,
                 onPressed: _handleSideLoadProvider,
               ),
-              if (provider.vehicleType == "HTTP")
+              if (provider.vehicleType == 'HTTP')
                 CommonChip(
                   avatar: const Icon(Icons.sync),
                   label: appLocalizations.sync,

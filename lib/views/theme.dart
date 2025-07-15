@@ -183,7 +183,7 @@ class _PrimaryColorItemState extends ConsumerState<_PrimaryColorItem> {
     return max((maxWidth / 96).ceil(), 3);
   }
 
-  _handleReset() async {
+  Future<void> _handleReset() async {
     final res = await globalState.showMessage(
       message: TextSpan(
         text: appLocalizations.resetTip,
@@ -203,7 +203,7 @@ class _PrimaryColorItemState extends ConsumerState<_PrimaryColorItem> {
     );
   }
 
-  _handleDel() async {
+  Future<void> _handleDel() async {
     if (_removablePrimaryColor == null) {
       return;
     }
@@ -240,7 +240,7 @@ class _PrimaryColorItemState extends ConsumerState<_PrimaryColorItem> {
     });
   }
 
-  _handleAdd() async {
+  Future<void> _handleAdd() async {
     final res = await globalState.showCommonDialog<int>(
       child: _PaletteDialog(),
     );
@@ -269,7 +269,7 @@ class _PrimaryColorItemState extends ConsumerState<_PrimaryColorItem> {
     );
   }
 
-  _handleChangeSchemeVariant() async {
+  Future<void> _handleChangeSchemeVariant() async {
     final schemeVariant = ref.read(
       themeSettingProvider.select(
         (state) => state.schemeVariant,
@@ -279,7 +279,7 @@ class _PrimaryColorItemState extends ConsumerState<_PrimaryColorItem> {
       child: OptionsDialog<DynamicSchemeVariant>(
         title: appLocalizations.colorSchemes,
         options: DynamicSchemeVariant.values,
-        textBuilder: (item) => Intl.message("${item.name}Scheme"),
+        textBuilder: (item) => Intl.message('${item.name}Scheme'),
         value: schemeVariant,
       ),
     );
@@ -336,7 +336,7 @@ class _PrimaryColorItemState extends ConsumerState<_PrimaryColorItem> {
                   visualDensity: VisualDensity.compact,
                 ),
                 onPressed: _handleChangeSchemeVariant,
-                child: Text(Intl.message("${schemeVariant.name}Scheme")),
+                child: Text(Intl.message('${schemeVariant.name}Scheme')),
               ),
             if (_removablePrimaryColor != null)
               FilledButton(
@@ -495,7 +495,7 @@ class _TextScaleFactorItem extends ConsumerWidget {
         (state) => state.textScale,
       ),
     );
-    final String process = "${((textScale.scale * 100) as double).round()}%";
+    final String process = '${((textScale.scale * 100) as double).round()}%';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

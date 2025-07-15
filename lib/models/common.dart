@@ -73,18 +73,18 @@ class Connection with _$Connection {
 
 extension ConnectionExt on Connection {
   String get desc {
-    var text = "${metadata.network}://";
+    var text = '${metadata.network}://';
     final ips = [
       metadata.host,
       metadata.destinationIP,
     ].where((ip) => ip.isNotEmpty);
-    text += ips.join("/");
-    text += ":${metadata.destinationPort}";
+    text += ips.join('/');
+    text += ':${metadata.destinationPort}';
     return text;
   }
 }
 
-String _logDateTime(_) {
+String _logDateTime(dynamic _) {
   return DateTime.now().showFull;
 }
 
@@ -96,8 +96,8 @@ String _logDateTime(_) {
 class Log with _$Log {
   const factory Log({
     // @JsonKey(fromJson: _logId) required String id,
-    @JsonKey(name: "LogLevel") @Default(LogLevel.app) LogLevel logLevel,
-    @JsonKey(name: "Payload") @Default("") String payload,
+    @JsonKey(name: 'LogLevel') @Default(LogLevel.app) LogLevel logLevel,
+    @JsonKey(name: 'Payload') @Default('') String payload,
     @JsonKey(fromJson: _logDateTime) required String dateTime,
   }) = _Log;
 
@@ -119,7 +119,7 @@ class LogsState with _$LogsState {
   const factory LogsState({
     @Default([]) List<Log> logs,
     @Default([]) List<String> keywords,
-    @Default("") String query,
+    @Default('') String query,
     @Default(false) bool autoScrollToEnd,
   }) = _LogsState;
 }
@@ -143,7 +143,7 @@ class ConnectionsState with _$ConnectionsState {
   const factory ConnectionsState({
     @Default([]) List<Connection> connections,
     @Default([]) List<String> keywords,
-    @Default("") String query,
+    @Default('') String query,
   }) = _ConnectionsState;
 }
 
@@ -158,7 +158,7 @@ extension ConnectionsStateExt on ConnectionsState {
       final hostText = connection.metadata.host.toLowerCase();
       final destinationIPText = connection.metadata.destinationIP.toLowerCase();
       final processText = connection.metadata.process.toLowerCase();
-      final chainsText = chains.join("").toLowerCase();
+      final chainsText = chains.join('').toLowerCase();
       return {...chains, process}.containsAll(keywords) &&
           (networkText.contains(lowerQuery) ||
               hostText.contains(lowerQuery) ||
@@ -169,7 +169,7 @@ extension ConnectionsStateExt on ConnectionsState {
   }
 }
 
-const defaultDavFileName = "backup.zip";
+const defaultDavFileName = 'backup.zip';
 
 @freezed
 class DAV with _$DAV {
@@ -193,14 +193,14 @@ class FileInfo with _$FileInfo {
 
 extension FileInfoExt on FileInfo {
   String get desc =>
-      "${TrafficValue(value: size).show}  ·  ${lastModified.lastUpdateTimeDesc}";
+      '${TrafficValue(value: size).show}  ·  ${lastModified.lastUpdateTimeDesc}';
 }
 
 @freezed
 class VersionInfo with _$VersionInfo {
   const factory VersionInfo({
-    @Default("") String clashName,
-    @Default("") String version,
+    @Default('') String clashName,
+    @Default('') String version,
   }) = _VersionInfo;
 
   factory VersionInfo.fromJson(Map<String, Object?> json) =>
@@ -274,7 +274,7 @@ class Group with _$Group {
     String? now,
     bool? hidden,
     String? testUrl,
-    @Default("") String icon,
+    @Default('') String icon,
     required String name,
   }) = _Group;
 
@@ -289,7 +289,7 @@ extension GroupsExt on List<Group> {
 }
 
 extension GroupExt on Group {
-  String get realNow => now ?? "";
+  String get realNow => now ?? '';
 
   String getCurrentSelectedName(String proxyName) {
     if (type.isComputedSelected) {
@@ -307,10 +307,10 @@ class TrafficValue {
 
   int get value => _value;
 
-  String get show => "$showValue $showUnit";
+  String get show => '$showValue $showUnit';
 
   String get shortShow =>
-      "${trafficValueShow.value.fixed(decimals: 1)} $showUnit";
+      '${trafficValueShow.value.fixed(decimals: 1)} $showUnit';
 
   String get showValue => trafficValueShow.value.fixed();
 
@@ -347,7 +347,7 @@ class TrafficValue {
 
   @override
   String toString() {
-    return "$showValue$showUnit";
+    return '$showValue$showUnit';
   }
 
   @override
@@ -411,56 +411,56 @@ class IpInfo {
   static IpInfo fromIpInfoIoJson(Map<String, dynamic> json) {
     return switch (json) {
       {
-        "ip": final String ip,
-        "country": final String country,
+        'ip': final String ip,
+        'country': final String country,
       } =>
         IpInfo(
           ip: ip,
           countryCode: country,
         ),
-      _ => throw const FormatException("invalid json"),
+      _ => throw const FormatException('invalid json'),
     };
   }
 
   static IpInfo fromIpApiCoJson(Map<String, dynamic> json) {
     return switch (json) {
       {
-        "ip": final String ip,
-        "country_code": final String countryCode,
+        'ip': final String ip,
+        'country_code': final String countryCode,
       } =>
         IpInfo(
           ip: ip,
           countryCode: countryCode,
         ),
-      _ => throw const FormatException("invalid json"),
+      _ => throw const FormatException('invalid json'),
     };
   }
 
   static IpInfo fromIpSbJson(Map<String, dynamic> json) {
     return switch (json) {
       {
-        "ip": final String ip,
-        "country_code": final String countryCode,
+        'ip': final String ip,
+        'country_code': final String countryCode,
       } =>
         IpInfo(
           ip: ip,
           countryCode: countryCode,
         ),
-      _ => throw const FormatException("invalid json"),
+      _ => throw const FormatException('invalid json'),
     };
   }
 
   static IpInfo fromIpwhoIsJson(Map<String, dynamic> json) {
     return switch (json) {
       {
-        "ip": final String ip,
-        "country_code": final String countryCode,
+        'ip': final String ip,
+        'country_code': final String countryCode,
       } =>
         IpInfo(
           ip: ip,
           countryCode: countryCode,
         ),
-      _ => throw const FormatException("invalid json"),
+      _ => throw const FormatException('invalid json'),
     };
   }
 
@@ -539,7 +539,7 @@ class Result<T> with _$Result<T> {
   factory Result.success(T data) => Result(
         data: data,
         type: ResultType.success,
-        message: "",
+        message: '',
       );
 
   factory Result.error(String message) => Result(

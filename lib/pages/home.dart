@@ -140,7 +140,8 @@ class _HomePageViewState extends ConsumerState<_HomePageView> {
     );
   }
 
-  _toPage(PageLabel pageLabel, [bool ignoreAnimateTo = false]) async {
+  Future<void> _toPage(PageLabel pageLabel,
+      [bool ignoreAnimateTo = false]) async {
     if (!mounted) {
       return;
     }
@@ -162,7 +163,7 @@ class _HomePageViewState extends ConsumerState<_HomePageView> {
     }
   }
 
-  _updatePageController() {
+  void _updatePageController() {
     final pageLabel = globalState.appState.pageLabel;
     _toPage(pageLabel, true);
   }

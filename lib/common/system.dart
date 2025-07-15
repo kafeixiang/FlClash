@@ -27,9 +27,9 @@ class System {
   Future<int> get version async {
     final deviceInfo = await DeviceInfoPlugin().deviceInfo;
     return switch (Platform.operatingSystem) {
-      "macos" => (deviceInfo as MacOsDeviceInfo).majorVersion,
-      "android" => (deviceInfo as AndroidDeviceInfo).version.sdkInt,
-      "windows" => (deviceInfo as WindowsDeviceInfo).majorVersion,
+      'macos' => (deviceInfo as MacOsDeviceInfo).majorVersion,
+      'android' => (deviceInfo as AndroidDeviceInfo).version.sdkInt,
+      'windows' => (deviceInfo as WindowsDeviceInfo).majorVersion,
       String() => 0
     };
   }
@@ -78,10 +78,10 @@ class System {
     if (Platform.isMacOS) {
       final shell = 'chown root:admin $corePath; chmod +sx $corePath';
       final arguments = [
-        "-e",
+        '-e',
         'do shell script "$shell" with administrator privileges',
       ];
-      final result = await Process.run("osascript", arguments);
+      final result = await Process.run('osascript', arguments);
       if (result.exitCode != 0) {
         return AuthorizeCode.error;
       }
@@ -95,7 +95,7 @@ class System {
         ),
       );
       final arguments = [
-        "-c",
+        '-c',
         'echo "$password" | sudo -S chown root:root "$corePath" && echo "$password" | sudo -S chmod +sx "$corePath"'
       ];
       final result = await Process.run(shell, arguments);
@@ -107,12 +107,12 @@ class System {
     return AuthorizeCode.error;
   }
 
-  back() async {
+  Future<void> back() async {
     await app?.moveTaskToBack();
     await window?.hide();
   }
 
-  exit() async {
+  Future<void> exit() async {
     if (Platform.isAndroid) {
       await SystemNavigator.pop();
     }
@@ -169,7 +169,7 @@ class Windows {
     calloc.free(argumentsPtr);
     calloc.free(operationPtr);
 
-    commonPrint.log("windows runas: $command $arguments resultCode:$result");
+    commonPrint.log('windows runas: $command $arguments resultCode:$result');
 
     if (result < 42) {
       return false;
@@ -177,11 +177,11 @@ class Windows {
     return true;
   }
 
-  _killProcess(int port) async {
+  Future<void> _killProcess(int port) async {
     final result = await Process.run('netstat', ['-ano']);
     final lines = result.stdout.toString().trim().split('\n');
     for (final line in lines) {
-      if (!line.contains(":$port") || !line.contains("LISTENING")) {
+      if (!line.contains(':$port') || !line.contains('LISTENING')) {
         continue;
       }
       final parts = line.trim().split(RegExp(r'\s+'));
@@ -203,7 +203,7 @@ class Windows {
       return WindowsHelperServiceStatus.none;
     }
     final output = result.stdout.toString();
-    if (output.contains("RUNNING") && await request.pingHelper()) {
+    if (output.contains('RUNNING') && await request.pingHelper()) {
       return WindowsHelperServiceStatus.running;
     }
     return WindowsHelperServiceStatus.presence;
@@ -219,26 +219,26 @@ class Windows {
     await _killProcess(helperPort);
 
     final command = [
-      "/c",
+      '/c',
       if (status == WindowsHelperServiceStatus.presence) ...[
-        "sc",
-        "delete",
+        'sc',
+        'delete',
         appHelperService,
-        "/force",
-        "&&",
+        '/force',
+        '&&',
       ],
-      "sc",
-      "create",
+      'sc',
+      'create',
       appHelperService,
       'binPath= "${appPath.helperPath}"',
       'start= auto',
-      "&&",
-      "sc",
-      "start",
+      '&&',
+      'sc',
+      'start',
       appHelperService,
-    ].join(" ");
+    ].join(' ');
 
-    final res = runas("cmd.exe", command);
+    final res = runas('cmd.exe', command);
 
     await Future.delayed(
       Duration(milliseconds: 300),
@@ -285,7 +285,7 @@ class Windows {
     </Exec>
   </Actions>
 </Task>''';
-    final taskPath = join(await appPath.tempPath, "task.xml");
+    final taskPath = join(await appPath.tempPath, 'task.xml');
     await File(taskPath).create(recursive: true);
     await File(taskPath)
         .writeAsBytes(taskXml.encodeUtf16LeWithBom, flush: true);
@@ -294,12 +294,12 @@ class Windows {
       '/TN',
       appName,
       '/XML',
-      "%s",
+      '%s',
       '/F',
-    ].join(" ");
+    ].join(' ');
     return runas(
       'schtasks',
-      commandLine.replaceFirst("%s", taskPath),
+      commandLine.replaceFirst('%s', taskPath),
     );
   }
 }
@@ -323,7 +323,7 @@ class MacOS {
     final output = result.stdout.toString();
     final deviceLine = output
         .split('\n')
-        .firstWhere((s) => s.contains('interface:'), orElse: () => "");
+        .firstWhere((s) => s.contains('interface:'), orElse: () => '');
     final lineSplits = deviceLine.trim().split(' ');
     if (lineSplits.length != 2) {
       return null;
@@ -335,15 +335,15 @@ class MacOS {
     );
     final serviceResultOutput = serviceResult.stdout.toString();
     final currentService = serviceResultOutput.split('\n\n').firstWhere(
-          (s) => s.contains("Device: $device"),
-          orElse: () => "",
+          (s) => s.contains('Device: $device'),
+          orElse: () => '',
         );
     if (currentService.isEmpty) {
       return null;
     }
-    final currentServiceNameLine = currentService.split("\n").firstWhere(
+    final currentServiceNameLine = currentService.split('\n').firstWhere(
         (line) => RegExp(r'^\(\d+\).*').hasMatch(line),
-        orElse: () => "");
+        orElse: () => '');
     final currentServiceNameLineSplits =
         currentServiceNameLine.trim().split(' ');
     if (currentServiceNameLineSplits.length < 2) {
@@ -365,12 +365,12 @@ class MacOS {
     if (output.startsWith("There aren't any DNS Servers set on")) {
       originDns = [];
     } else {
-      originDns = output.split("\n");
+      originDns = output.split('\n');
     }
     return originDns;
   }
 
-  updateDns(bool restore) async {
+  Future<void> updateDns(bool restore) async {
     final serviceName = await defaultServiceName;
     if (serviceName == null) {
       return;
@@ -383,7 +383,7 @@ class MacOS {
       if (originDns == null) {
         return;
       }
-      final needAddDns = "223.5.5.5";
+      final needAddDns = '223.5.5.5';
       if (originDns.contains(needAddDns)) {
         return;
       }
@@ -398,7 +398,7 @@ class MacOS {
         '-setdnsservers',
         serviceName,
         if (nextDns.isNotEmpty) ...nextDns,
-        if (nextDns.isEmpty) "Empty",
+        if (nextDns.isEmpty) 'Empty',
       ],
     );
   }

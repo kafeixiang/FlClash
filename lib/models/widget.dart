@@ -39,7 +39,7 @@ class AppBarSearchState with _$AppBarSearchState {
 @freezed
 class AppBarEditState with _$AppBarEditState {
   const factory AppBarEditState({
-    @Default(0) editCount,
+    @Default(0) int editCount,
     required Function() onExit,
   }) = _AppBarEditState;
 }

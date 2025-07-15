@@ -80,7 +80,7 @@ class _ScrollToEndBoxState<T> extends State<ScrollToEndBox<T>> {
     super.initState();
   }
 
-  _handleTryToEnd() {
+  void _handleTryToEnd() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.controller.hasClients &&
           widget.controller.position.pixels !=
@@ -96,7 +96,7 @@ class _ScrollToEndBoxState<T> extends State<ScrollToEndBox<T>> {
     });
   }
 
-  _handleAutoToEnd() {
+  void _handleAutoToEnd() {
     throttler.call(FunctionTag.autoScrollToEnd, () {
       _handleTryToEnd();
     }, duration: commonDuration);
@@ -165,7 +165,7 @@ class CacheItemExtentListViewState extends State<CacheItemExtentListView> {
     _updateCacheHeightMap();
   }
 
-  _updateCacheHeightMap() {
+  void _updateCacheHeightMap() {
     globalState.computeHeightMapCache[widget.tag]
         ?.updateMaxLength(widget.itemCount);
     globalState.computeHeightMapCache[widget.tag] ??=

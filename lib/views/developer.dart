@@ -44,16 +44,16 @@ class DeveloperView extends ConsumerWidget {
                       destinationPort: '',
                       host: '',
                       process: '',
-                      remoteDestination: "",
+                      remoteDestination: '',
                     ),
-                    chains: ["chains"],
+                    chains: ['chains'],
                   ));
               globalState.appController.addLog(
                 Log.app(
-                  "[$i]${utils.generateRandomString(
+                  '[$i]${utils.generateRandomString(
                     maxLength: 200,
                     minLength: 20,
-                  )}",
+                  )}',
                 ),
               );
             }
@@ -72,7 +72,7 @@ class DeveloperView extends ConsumerWidget {
           },
         ),
         ListItem(
-          title: Text("loading"),
+          title: Text('loading'),
           onTap: () {
             ref.read(loadingProvider.notifier).value = true;
           },

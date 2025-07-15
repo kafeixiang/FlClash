@@ -118,7 +118,7 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
         : null;
   }
 
-  _onSearch(String value) {
+  void _onSearch(String value) {
     ref.read(queryProvider.notifier).value = value;
   }
 

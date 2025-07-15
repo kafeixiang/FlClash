@@ -100,7 +100,7 @@ class _LogsViewState extends ConsumerState<LogsView> {
     super.dispose();
   }
 
-  _handleExport() async {
+  Future<void> _handleExport() async {
     final res = await globalState.appController.safeRun<bool>(
       () async {
         return await globalState.appController.exportLogs();
@@ -115,7 +115,7 @@ class _LogsViewState extends ConsumerState<LogsView> {
     );
   }
 
-  updateLogsThrottler() {
+  void updateLogsThrottler() {
     throttler.call(FunctionTag.logs, () {
       final isEquality = logListEquality.equals(
         _logs,

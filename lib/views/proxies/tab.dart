@@ -58,12 +58,12 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
     super.dispose();
   }
 
-  scrollToGroupSelected() {
+  void scrollToGroupSelected() {
     final currentGroupName = globalState.appController.getCurrentGroupName();
     _keyMap[currentGroupName]?.currentState?.scrollToSelected();
   }
 
-  delayTestCurrentGroup() async {
+  Future<void> delayTestCurrentGroup() async {
     final currentGroupName = globalState.appController.getCurrentGroupName();
     final currentState = _keyMap[currentGroupName]?.currentState;
     await delayTest(
@@ -72,7 +72,7 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
     );
   }
 
-  _buildMoreButton() {
+  Widget _buildMoreButton() {
     return Consumer(
       builder: (_, ref, ___) {
         final isMobileView = ref.watch(isMobileViewProvider);
@@ -90,7 +90,7 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
     );
   }
 
-  _showMoreMenu() {
+  void _showMoreMenu() {
     showSheet(
       context: context,
       props: SheetProps(
@@ -140,7 +140,7 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
     );
   }
 
-  _tabControllerListener([int? index]) {
+  void _tabControllerListener([int? index]) {
     int? groupIndex = index;
     if (groupIndex == -1) {
       return;
@@ -162,13 +162,13 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
     });
   }
 
-  _destroyTabController() {
+  void _destroyTabController() {
     _tabController?.removeListener(_tabControllerListener);
     _tabController?.dispose();
     _tabController = null;
   }
 
-  _updateTabController(int length, int index) {
+  void _updateTabController(int length, int index) {
     if (length == 0) {
       _destroyTabController();
       return;
@@ -310,7 +310,7 @@ class _ProxyGroupViewState extends ConsumerState<ProxyGroupView> {
   PageStorageKey _getPageStorageKey() {
     final profile = globalState.config.currentProfile;
     final key =
-        "${profile?.id}_${ScrollPositionCacheKeys.proxiesTabList.name}_${widget.group.name}_${profile?.lastUpdateDate?.microsecond}";
+        '${profile?.id}_${ScrollPositionCacheKeys.proxiesTabList.name}_${widget.group.name}_${profile?.lastUpdateDate?.microsecond}';
     return ProxiesTabView.pageListStoreMap.updateCacheValue(
       key,
       () => PageStorageKey(key),
@@ -323,7 +323,7 @@ class _ProxyGroupViewState extends ConsumerState<ProxyGroupView> {
     super.dispose();
   }
 
-  scrollToSelected() {
+  void scrollToSelected() {
     if (_controller.position.maxScrollExtent == 0) {
       return;
     }
@@ -406,7 +406,7 @@ class _DelayTestButtonState extends State<DelayTestButton>
   late AnimationController _controller;
   late Animation<double> _scale;
 
-  _healthcheck() async {
+  Future<void> _healthcheck() async {
     if (_controller.isAnimating) {
       return;
     }

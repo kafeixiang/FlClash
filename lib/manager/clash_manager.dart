@@ -74,7 +74,7 @@ class _ClashContainerState extends ConsumerState<ClashManager>
     debouncer.call(
       FunctionTag.updateDelay,
       () async {
-        await appController.updateGroupsDebounce();
+        appController.updateGroupsDebounce();
       },
       duration: const Duration(milliseconds: 5000),
     );
@@ -102,7 +102,7 @@ class _ClashContainerState extends ConsumerState<ClashManager>
             providerName,
           ),
         );
-    await globalState.appController.updateGroupsDebounce();
+    globalState.appController.updateGroupsDebounce();
     super.onLoaded(providerName);
   }
 }

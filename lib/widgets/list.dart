@@ -253,7 +253,7 @@ class ListItem<T> extends StatelessWidget {
   })  : leading = null,
         onTap = null;
 
-  _buildListTile({
+  Widget _buildListTile({
     void Function()? onTap,
     Widget? trailing,
     Widget? leading,

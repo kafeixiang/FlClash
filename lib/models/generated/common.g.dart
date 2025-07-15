@@ -74,7 +74,7 @@ Map<String, dynamic> _$$ConnectionImplToJson(_$ConnectionImpl instance) =>
 _$LogImpl _$$LogImplFromJson(Map<String, dynamic> json) => _$LogImpl(
       logLevel: $enumDecodeNullable(_$LogLevelEnumMap, json['LogLevel']) ??
           LogLevel.app,
-      payload: json['Payload'] as String? ?? "",
+      payload: json['Payload'] as String? ?? '',
       dateTime: _logDateTime(json['dateTime']),
     );
 
@@ -109,8 +109,8 @@ Map<String, dynamic> _$$DAVImplToJson(_$DAVImpl instance) => <String, dynamic>{
 
 _$VersionInfoImpl _$$VersionInfoImplFromJson(Map<String, dynamic> json) =>
     _$VersionInfoImpl(
-      clashName: json['clashName'] as String? ?? "",
-      version: json['version'] as String? ?? "",
+      clashName: json['clashName'] as String? ?? '',
+      version: json['version'] as String? ?? '',
     );
 
 Map<String, dynamic> _$$VersionInfoImplToJson(_$VersionInfoImpl instance) =>
@@ -141,7 +141,7 @@ _$GroupImpl _$$GroupImplFromJson(Map<String, dynamic> json) => _$GroupImpl(
       now: json['now'] as String?,
       hidden: json['hidden'] as bool?,
       testUrl: json['testUrl'] as String?,
-      icon: json['icon'] as String? ?? "",
+      icon: json['icon'] as String? ?? '',
       name: json['name'] as String,
     );
 

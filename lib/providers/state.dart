@@ -99,7 +99,7 @@ CoreState coreState(Ref ref) {
   return CoreState(
     vpnProps: vpnProps,
     onlyStatisticsProxy: onlyStatisticsProxy,
-    currentProfileName: currentProfile?.label ?? currentProfile?.id ?? "",
+    currentProfileName: currentProfile?.label ?? currentProfile?.id ?? '',
   );
 }
 
@@ -587,7 +587,7 @@ class ProfileOverrideState extends _$ProfileOverrideState {
     );
   }
 
-  updateState(
+  void updateState(
     ProfileOverrideStateModel? Function(ProfileOverrideStateModel state)
         builder,
   ) {
@@ -717,5 +717,5 @@ VM2<bool, bool> autoSetSystemDnsState(Ref ref) {
 @riverpod
 class Query extends _$Query with AutoDisposeNotifierMixin {
   @override
-  String build() => "";
+  String build() => '';
 }

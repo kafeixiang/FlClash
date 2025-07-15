@@ -114,10 +114,10 @@ extension DoubleListExt on List<double> {
 }
 
 extension MapExt<K, V> on Map<K, V> {
-  updateCacheValue(K key, V Function() callback) {
+  V updateCacheValue(K key, V Function() callback) {
     if (this[key] == null) {
       this[key] = callback();
     }
-    return this[key];
+    return this[key]!;
   }
 }

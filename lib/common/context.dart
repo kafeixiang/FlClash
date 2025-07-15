@@ -7,11 +7,11 @@ extension BuildContextExtension on BuildContext {
     return findAncestorStateOfType<CommonScaffoldState>();
   }
 
-  showNotifier(String text) {
+  Future<void>? showNotifier(String text) {
     return findAncestorStateOfType<MessageManagerState>()?.message(text);
   }
 
-  showSnackBar(
+  void showSnackBar(
     String message, {
     SnackBarAction? action,
   }) {

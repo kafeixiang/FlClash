@@ -30,24 +30,24 @@ class ResourcesView extends StatelessWidget {
   Widget build(BuildContext context) {
     const geoItems = <GeoItem>[
       GeoItem(
-        label: "GeoIp",
+        label: 'GeoIp',
         fileName: geoIpFileName,
-        key: "geoip",
+        key: 'geoip',
       ),
       GeoItem(
-        label: "GeoSite",
+        label: 'GeoSite',
         fileName: geoSiteFileName,
-        key: "geosite",
+        key: 'geosite',
       ),
       GeoItem(
-        label: "MMDB",
+        label: 'MMDB',
         fileName: mmdbFileName,
-        key: "mmdb",
+        key: 'mmdb',
       ),
       GeoItem(
-        label: "ASN",
+        label: 'ASN',
         fileName: asnFileName,
-        key: "asn",
+        key: 'asn',
       ),
     ];
 
@@ -88,7 +88,7 @@ class _GeoDataListItemState extends State<GeoDataListItem> {
 
   GeoItem get geoItem => widget.geoItem;
 
-  _updateUrl(String url, WidgetRef ref) async {
+  Future<void> _updateUrl(String url, WidgetRef ref) async {
     final defaultMap = defaultGeoXUrl.toJson();
     final newUrl = await globalState.showCommonDialog<String>(
       child: UpdateGeoUrlFormDialog(
@@ -100,7 +100,7 @@ class _GeoDataListItemState extends State<GeoDataListItem> {
     if (newUrl != null && newUrl != url && mounted) {
       try {
         if (!newUrl.isUrl) {
-          throw "Invalid url";
+          throw 'Invalid url';
         }
         ref.read(patchClashConfigProvider.notifier).updateState((state) {
           final map = state.geoXUrl.toJson();
@@ -201,7 +201,7 @@ class _GeoDataListItemState extends State<GeoDataListItem> {
     );
   }
 
-  _handleUpdateGeoDataItem() async {
+  Future<void> _handleUpdateGeoDataItem() async {
     await globalState.appController.safeRun<void>(
       () async {
         await updateGeoDateItem();
@@ -211,7 +211,7 @@ class _GeoDataListItemState extends State<GeoDataListItem> {
     setState(() {});
   }
 
-  updateGeoDateItem() async {
+  Future<void> updateGeoDateItem() async {
     isUpdating.value = true;
     try {
       final message = await clashCore.updateGeoData(
@@ -226,7 +226,7 @@ class _GeoDataListItemState extends State<GeoDataListItem> {
       rethrow;
     }
     isUpdating.value = false;
-    return null;
+    return;
   }
 
   @override
@@ -290,14 +290,14 @@ class _UpdateGeoUrlFormDialogState extends State<UpdateGeoUrlFormDialog> {
     urlController = TextEditingController(text: widget.url);
   }
 
-  _handleReset() async {
+  Future<void> _handleReset() async {
     if (widget.defaultValue == null) {
       return;
     }
     Navigator.of(context).pop<String>(widget.defaultValue);
   }
 
-  _handleUpdate() async {
+  Future<void> _handleUpdate() async {
     final url = urlController.value.text;
     if (url.isEmpty) return;
     Navigator.of(context).pop<String>(url);

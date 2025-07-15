@@ -39,18 +39,18 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView> {
     ];
   }
 
-  _onSearch(String value) {
+  void _onSearch(String value) {
     _connectionsStateNotifier.value = _connectionsStateNotifier.value.copyWith(
       query: value,
     );
   }
 
-  _onKeywordsUpdate(List<String> keywords) {
+  void _onKeywordsUpdate(List<String> keywords) {
     _connectionsStateNotifier.value =
         _connectionsStateNotifier.value.copyWith(keywords: keywords);
   }
 
-  _updateConnections() async {
+  Future<void> _updateConnections() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (mounted) {
         _connectionsStateNotifier.value =
@@ -70,7 +70,7 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView> {
     _updateConnections();
   }
 
-  _handleBlockConnection(String id) async {
+  Future<void> _handleBlockConnection(String id) async {
     clashCore.closeConnection(id);
     _connectionsStateNotifier.value = _connectionsStateNotifier.value.copyWith(
       connections: await clashCore.getConnections(),

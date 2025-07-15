@@ -57,7 +57,7 @@ class Navigation {
             PageLabel.requests,
           ),
         ),
-        description: "requestsDesc",
+        description: 'requestsDesc',
         modes: [NavigationItemMode.desktop, NavigationItemMode.more],
       ),
       NavigationItem(
@@ -68,13 +68,13 @@ class Navigation {
             PageLabel.connections,
           ),
         ),
-        description: "connectionsDesc",
+        description: 'connectionsDesc',
         modes: [NavigationItemMode.desktop, NavigationItemMode.more],
       ),
       NavigationItem(
         icon: Icon(Icons.storage),
         label: PageLabel.resources,
-        description: "resourcesDesc",
+        description: 'resourcesDesc',
         builder: (_) => const ResourcesView(
           key: GlobalObjectKey(
             PageLabel.resources,
@@ -90,7 +90,7 @@ class Navigation {
             PageLabel.logs,
           ),
         ),
-        description: "logsDesc",
+        description: 'logsDesc',
         modes: openLogs
             ? [NavigationItemMode.desktop, NavigationItemMode.more]
             : [],

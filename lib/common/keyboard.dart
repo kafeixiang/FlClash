@@ -79,13 +79,13 @@ final Map<PhysicalKeyboardKey, String> _knownKeyLabels =
   PhysicalKeyboardKey.arrowLeft: '←',
   PhysicalKeyboardKey.arrowDown: '↓',
   PhysicalKeyboardKey.arrowUp: '↑',
-  PhysicalKeyboardKey.controlLeft: "CTRL",
+  PhysicalKeyboardKey.controlLeft: 'CTRL',
   PhysicalKeyboardKey.shiftLeft: 'SHIFT',
-  PhysicalKeyboardKey.altLeft: "ALT",
+  PhysicalKeyboardKey.altLeft: 'ALT',
   PhysicalKeyboardKey.metaLeft: Platform.isMacOS ? '⌘' : 'WIN',
-  PhysicalKeyboardKey.controlRight: "CTRL",
+  PhysicalKeyboardKey.controlRight: 'CTRL',
   PhysicalKeyboardKey.shiftRight: 'SHIFT',
-  PhysicalKeyboardKey.altRight: "ALT",
+  PhysicalKeyboardKey.altRight: 'ALT',
   PhysicalKeyboardKey.metaRight: Platform.isMacOS ? '⌘' : 'WIN',
   PhysicalKeyboardKey.fn: 'FN',
 };
@@ -101,6 +101,3 @@ extension KeyboardKeyExt on KeyboardKey {
     return _knownKeyLabels[physicalKey] ?? physicalKey?.debugName ?? 'Unknown';
   }
 }
-
-
-

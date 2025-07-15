@@ -28,7 +28,7 @@ class ToolsView extends ConsumerStatefulWidget {
 }
 
 class _ToolViewState extends ConsumerState<ToolsView> {
-  _buildNavigationMenuItem(NavigationItem navigationItem) {
+  Widget _buildNavigationMenuItem(NavigationItem navigationItem) {
     return ListItem.open(
       leading: navigationItem.icon,
       title: Text(Intl.message(navigationItem.label.name)),
@@ -69,7 +69,7 @@ class _ToolViewState extends ConsumerState<ToolsView> {
     );
   }
 
-  _getSettingList() {
+  List<Widget> _getSettingList() {
     return generateSection(
       title: appLocalizations.settings,
       items: [
@@ -218,7 +218,7 @@ class _LoopbackItem extends StatelessWidget {
       onTap: () {
         windows?.runas(
           '"${join(dirname(Platform.resolvedExecutable), "EnableLoopback.exe")}"',
-          "",
+          '',
         );
       },
     );

@@ -11,6 +11,9 @@ import 'chip.dart';
 
 typedef OnKeywordsUpdateCallback = void Function(List<String> keywords);
 
+typedef AppBarSearchStateBuilder = AppBarSearchState? Function(
+    AppBarSearchState? state);
+
 class CommonScaffold extends StatefulWidget {
   final AppBar? appBar;
   final Widget body;
@@ -72,9 +75,9 @@ class CommonScaffoldState extends State<CommonScaffold> {
     );
   }
 
-  _updateSearchState(
-    AppBarSearchState? Function(AppBarSearchState? state) builder,
-  ) {
+  Future<void> _updateSearchState(
+    AppBarSearchStateBuilder builder,
+  ) async {
     _appBarState.value = _appBarState.value.copyWith(
       searchState: builder(
         _appBarState.value.searchState,
@@ -125,14 +128,14 @@ class CommonScaffoldState extends State<CommonScaffold> {
     }
   }
 
-  _handleClearInput() {
-    _textController.text = "";
+  void _handleClearInput() {
+    _textController.text = '';
     if (_appBarState.value.searchState != null) {
-      _appBarState.value.searchState!.onSearch("");
+      _appBarState.value.searchState!.onSearch('');
     }
   }
 
-  _handleClear() {
+  void _handleClear() {
     if (_textController.text.isNotEmpty) {
       _handleClearInput();
       return;
@@ -144,7 +147,7 @@ class CommonScaffoldState extends State<CommonScaffold> {
     );
   }
 
-  _handleExitSearching() {
+  void _handleExitSearching() {
     _handleClearInput();
     _updateSearchState(
       (state) => state?.copyWith(
@@ -161,14 +164,14 @@ class CommonScaffoldState extends State<CommonScaffold> {
     super.dispose();
   }
 
-  addKeyword(String keyword) {
+  void addKeyword(String keyword) {
     final isContains = _keywordsNotifier.value.contains(keyword);
     if (isContains) return;
     final keywords = List<String>.from(_keywordsNotifier.value)..add(keyword);
     _keywordsNotifier.value = keywords;
   }
 
-  _deleteKeyword(String keyword) {
+  void _deleteKeyword(String keyword) {
     final isContains = _keywordsNotifier.value.contains(keyword);
     if (!isContains) return;
     final keywords = List<String>.from(_keywordsNotifier.value)
@@ -211,7 +214,7 @@ class CommonScaffoldState extends State<CommonScaffold> {
             !_isEdit
                 ? widget.title!
                 : appLocalizations.selectedCountTitle(
-                    "${_appBarState.value.editState?.editCount ?? 0}",
+                    '${_appBarState.value.editState?.editCount ?? 0}',
                   ),
           );
   }
@@ -235,7 +238,7 @@ class CommonScaffoldState extends State<CommonScaffold> {
             onPressed: () {
               _updateSearchState(
                 (state) => state?.copyWith(
-                  query: "",
+                  query: '',
                 ),
               );
             },

@@ -24,13 +24,13 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
   final _tag = CacheTag.requests;
   late ScrollController _scrollController;
 
-  _onSearch(String value) {
+  void _onSearch(String value) {
     _requestsStateNotifier.value = _requestsStateNotifier.value.copyWith(
       query: value,
     );
   }
 
-  _onKeywordsUpdate(List<String> keywords) {
+  void _onKeywordsUpdate(List<String> keywords) {
     _requestsStateNotifier.value =
         _requestsStateNotifier.value.copyWith(keywords: keywords);
   }
@@ -64,7 +64,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
     super.dispose();
   }
 
-  updateRequestsThrottler() {
+  void updateRequestsThrottler() {
     throttler.call(FunctionTag.requests, () {
       final isEquality = connectionListEquality.equals(
         _requests,

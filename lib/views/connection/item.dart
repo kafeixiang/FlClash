@@ -22,7 +22,7 @@ class ConnectionItem extends ConsumerWidget {
     this.trailing,
   });
 
-  static get height {
+  static double get height {
     final measure = globalState.measure;
     return measure.bodyLargeHeight +
         8 +
@@ -39,12 +39,12 @@ class ConnectionItem extends ConsumerWidget {
   String _getSourceText(Connection connection) {
     final metadata = connection.metadata;
     final progress =
-        metadata.process.isNotEmpty ? "${metadata.process} · " : "";
+        metadata.process.isNotEmpty ? '${metadata.process} · ' : '';
     final traffic = Traffic(
       up: connection.upload,
       down: connection.download,
     );
-    return "$progress ${traffic.toString()}";
+    return '$progress ${traffic.toString()}';
   }
 
   @override
