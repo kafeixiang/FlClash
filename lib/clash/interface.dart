@@ -57,11 +57,11 @@ mixin ClashInterface {
 
   FutureOr<String> getMemory();
 
-  void resetTraffic();
+  FutureOr<void> resetTraffic();
 
-  void startLog();
+  FutureOr<void> startLog();
 
-  void stopLog();
+  FutureOr<void> stopLog();
 
   Future<bool> crash();
 
