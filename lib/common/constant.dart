@@ -88,7 +88,7 @@ double getWidgetHeight(num lines) {
   return max(lines * 84 + (lines - 1) * 16, 0).ap;
 }
 
-const maxLength = 150;
+const maxLength = 1000;
 
 final mainIsolate = "FlClashMainIsolate";
 

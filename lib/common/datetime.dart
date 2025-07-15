@@ -40,6 +40,10 @@ extension DateTimeExtension on DateTime {
     return toString().substring(0, 10);
   }
 
+  String get showFull {
+    return toString().substring(0, 23);
+  }
+
   String get showTime {
     return toString().substring(10, 23);
   }

@@ -72,10 +72,18 @@ extension ListExt<T> on List<T> {
     return res;
   }
 
-  List<T> safeSublist(int start) {
+  List<T> safeSublist(int start, [int? end]) {
     if (start <= 0) return this;
     if (start > length) return [];
+    if (end != null) {
+      return sublist(start, end.clamp(start, length));
+    }
     return sublist(start);
+  }
+
+  T safeGet(int index) {
+    if (length > index) return this[index];
+    return last;
   }
 }
 

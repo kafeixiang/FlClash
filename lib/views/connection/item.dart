@@ -25,7 +25,8 @@ class ConnectionItem extends ConsumerWidget {
   static get height {
     final measure = globalState.measure;
     return measure.bodyLargeHeight +
-        8 * 2 +
+        8 +
+        12 +
         measure.bodyMediumHeight * 1 +
         40 +
         16 * 2;
@@ -73,7 +74,7 @@ class ConnectionItem extends ConsumerWidget {
           overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(
-          height: 8,
+          height: 12,
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

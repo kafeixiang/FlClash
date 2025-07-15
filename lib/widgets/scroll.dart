@@ -56,14 +56,16 @@ class ScrollToEndBox<T> extends StatefulWidget {
   final ScrollController controller;
   final List<T> dataSource;
   final Widget child;
-  final CacheTag tag;
+  final bool enable;
+  final VoidCallback? onCancelToEnd;
 
   const ScrollToEndBox({
     super.key,
     required this.child,
     required this.controller,
-    required this.tag,
     required this.dataSource,
+    this.onCancelToEnd,
+    this.enable = true,
   });
 
   @override
@@ -73,36 +75,53 @@ class ScrollToEndBox<T> extends StatefulWidget {
 class _ScrollToEndBoxState<T> extends State<ScrollToEndBox<T>> {
   final equals = ListEquality<T>();
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
   _handleTryToEnd() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final double offset =
-          globalState.computeScrollPositionCache[widget.tag] ?? -1;
-      if (offset < 0) {
-        widget.controller.animateTo(
-          duration: kThemeAnimationDuration,
-          widget.controller.position.maxScrollExtent,
-          curve: Curves.easeOut,
-        );
+      if (widget.controller.hasClients &&
+          widget.controller.position.pixels !=
+              widget.controller.position.maxScrollExtent) {
+        if (mounted) {
+          widget.controller.animateTo(
+            duration: kThemeAnimationDuration,
+            widget.controller.position.maxScrollExtent,
+            curve: Curves.easeOut,
+          );
+        }
       }
     });
+  }
+
+  _handleAutoToEnd() {
+    throttler.call(FunctionTag.autoScrollToEnd, () {
+      _handleTryToEnd();
+    }, duration: commonDuration);
   }
 
   @override
   void didUpdateWidget(ScrollToEndBox<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!equals.equals(oldWidget.dataSource, widget.dataSource)) {
+    if (widget.enable == true && oldWidget.enable != true) {
       _handleTryToEnd();
+      return;
+    }
+    if (widget.enable &&
+        !equals.equals(oldWidget.dataSource, widget.dataSource)) {
+      _handleAutoToEnd();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return NotificationListener<UserScrollNotification>(
-      onNotification: (details) {
-        globalState.computeScrollPositionCache[widget.tag] =
-            details.metrics.pixels == details.metrics.maxScrollExtent
-                ? -1
-                : details.metrics.pixels;
+      onNotification: (_) {
+        if (widget.onCancelToEnd != null) {
+          widget.onCancelToEnd!();
+        }
         return false;
       },
       child: widget.child,

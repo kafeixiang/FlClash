@@ -1123,6 +1123,7 @@ Log _$LogFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Log {
+// @JsonKey(fromJson: _logId) required String id,
   @JsonKey(name: "LogLevel")
   LogLevel get logLevel => throw _privateConstructorUsedError;
   @JsonKey(name: "Payload")
@@ -1240,6 +1241,7 @@ class _$LogImpl implements _Log {
   factory _$LogImpl.fromJson(Map<String, dynamic> json) =>
       _$$LogImplFromJson(json);
 
+// @JsonKey(fromJson: _logId) required String id,
   @override
   @JsonKey(name: "LogLevel")
   final LogLevel logLevel;
@@ -1296,6 +1298,7 @@ abstract class _Log implements Log {
 
   factory _Log.fromJson(Map<String, dynamic> json) = _$LogImpl.fromJson;
 
+// @JsonKey(fromJson: _logId) required String id,
   @override
   @JsonKey(name: "LogLevel")
   LogLevel get logLevel;
@@ -1319,7 +1322,7 @@ mixin _$LogsState {
   List<Log> get logs => throw _privateConstructorUsedError;
   List<String> get keywords => throw _privateConstructorUsedError;
   String get query => throw _privateConstructorUsedError;
-  bool get loading => throw _privateConstructorUsedError;
+  bool get autoScrollToEnd => throw _privateConstructorUsedError;
 
   /// Create a copy of LogsState
   /// with the given fields replaced by the non-null parameter values.
@@ -1334,7 +1337,10 @@ abstract class $LogsStateCopyWith<$Res> {
       _$LogsStateCopyWithImpl<$Res, LogsState>;
   @useResult
   $Res call(
-      {List<Log> logs, List<String> keywords, String query, bool loading});
+      {List<Log> logs,
+      List<String> keywords,
+      String query,
+      bool autoScrollToEnd});
 }
 
 /// @nodoc
@@ -1355,7 +1361,7 @@ class _$LogsStateCopyWithImpl<$Res, $Val extends LogsState>
     Object? logs = null,
     Object? keywords = null,
     Object? query = null,
-    Object? loading = null,
+    Object? autoScrollToEnd = null,
   }) {
     return _then(_value.copyWith(
       logs: null == logs
@@ -1370,9 +1376,9 @@ class _$LogsStateCopyWithImpl<$Res, $Val extends LogsState>
           ? _value.query
           : query // ignore: cast_nullable_to_non_nullable
               as String,
-      loading: null == loading
-          ? _value.loading
-          : loading // ignore: cast_nullable_to_non_nullable
+      autoScrollToEnd: null == autoScrollToEnd
+          ? _value.autoScrollToEnd
+          : autoScrollToEnd // ignore: cast_nullable_to_non_nullable
               as bool,
     ) as $Val);
   }
@@ -1387,7 +1393,10 @@ abstract class _$$LogsStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {List<Log> logs, List<String> keywords, String query, bool loading});
+      {List<Log> logs,
+      List<String> keywords,
+      String query,
+      bool autoScrollToEnd});
 }
 
 /// @nodoc
@@ -1406,7 +1415,7 @@ class __$$LogsStateImplCopyWithImpl<$Res>
     Object? logs = null,
     Object? keywords = null,
     Object? query = null,
-    Object? loading = null,
+    Object? autoScrollToEnd = null,
   }) {
     return _then(_$LogsStateImpl(
       logs: null == logs
@@ -1421,9 +1430,9 @@ class __$$LogsStateImplCopyWithImpl<$Res>
           ? _value.query
           : query // ignore: cast_nullable_to_non_nullable
               as String,
-      loading: null == loading
-          ? _value.loading
-          : loading // ignore: cast_nullable_to_non_nullable
+      autoScrollToEnd: null == autoScrollToEnd
+          ? _value.autoScrollToEnd
+          : autoScrollToEnd // ignore: cast_nullable_to_non_nullable
               as bool,
     ));
   }
@@ -1436,7 +1445,7 @@ class _$LogsStateImpl implements _LogsState {
       {final List<Log> logs = const [],
       final List<String> keywords = const [],
       this.query = "",
-      this.loading = false})
+      this.autoScrollToEnd = false})
       : _logs = logs,
         _keywords = keywords;
 
@@ -1463,11 +1472,11 @@ class _$LogsStateImpl implements _LogsState {
   final String query;
   @override
   @JsonKey()
-  final bool loading;
+  final bool autoScrollToEnd;
 
   @override
   String toString() {
-    return 'LogsState(logs: $logs, keywords: $keywords, query: $query, loading: $loading)';
+    return 'LogsState(logs: $logs, keywords: $keywords, query: $query, autoScrollToEnd: $autoScrollToEnd)';
   }
 
   @override
@@ -1478,7 +1487,8 @@ class _$LogsStateImpl implements _LogsState {
             const DeepCollectionEquality().equals(other._logs, _logs) &&
             const DeepCollectionEquality().equals(other._keywords, _keywords) &&
             (identical(other.query, query) || other.query == query) &&
-            (identical(other.loading, loading) || other.loading == loading));
+            (identical(other.autoScrollToEnd, autoScrollToEnd) ||
+                other.autoScrollToEnd == autoScrollToEnd));
   }
 
   @override
@@ -1487,7 +1497,7 @@ class _$LogsStateImpl implements _LogsState {
       const DeepCollectionEquality().hash(_logs),
       const DeepCollectionEquality().hash(_keywords),
       query,
-      loading);
+      autoScrollToEnd);
 
   /// Create a copy of LogsState
   /// with the given fields replaced by the non-null parameter values.
@@ -1503,7 +1513,7 @@ abstract class _LogsState implements LogsState {
       {final List<Log> logs,
       final List<String> keywords,
       final String query,
-      final bool loading}) = _$LogsStateImpl;
+      final bool autoScrollToEnd}) = _$LogsStateImpl;
 
   @override
   List<Log> get logs;
@@ -1512,7 +1522,7 @@ abstract class _LogsState implements LogsState {
   @override
   String get query;
   @override
-  bool get loading;
+  bool get autoScrollToEnd;
 
   /// Create a copy of LogsState
   /// with the given fields replaced by the non-null parameter values.

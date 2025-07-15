@@ -320,6 +320,7 @@ enum FunctionTag {
   proxiesTabChange,
   logs,
   requests,
+  autoScrollToEnd,
 }
 
 enum DashboardWidget {

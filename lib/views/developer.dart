@@ -50,10 +50,10 @@ class DeveloperView extends ConsumerWidget {
                   ));
               globalState.appController.addLog(
                 Log.app(
-                  utils.generateRandomString(
+                  "[$i]${utils.generateRandomString(
                     maxLength: 200,
                     minLength: 20,
-                  ),
+                  )}",
                 ),
               );
             }

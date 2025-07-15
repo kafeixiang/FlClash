@@ -85,7 +85,7 @@ extension ConnectionExt on Connection {
 }
 
 String _logDateTime(_) {
-  return DateTime.now().toString();
+  return DateTime.now().showFull;
 }
 
 // String _logId(_) {
@@ -95,6 +95,7 @@ String _logDateTime(_) {
 @freezed
 class Log with _$Log {
   const factory Log({
+    // @JsonKey(fromJson: _logId) required String id,
     @JsonKey(name: "LogLevel") @Default(LogLevel.app) LogLevel logLevel,
     @JsonKey(name: "Payload") @Default("") String payload,
     @JsonKey(fromJson: _logDateTime) required String dateTime,
@@ -119,7 +120,7 @@ class LogsState with _$LogsState {
     @Default([]) List<Log> logs,
     @Default([]) List<String> keywords,
     @Default("") String query,
-    @Default(false) bool loading,
+    @Default(false) bool autoScrollToEnd,
   }) = _LogsState;
 }
 

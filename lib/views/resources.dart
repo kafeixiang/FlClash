@@ -145,7 +145,7 @@ class _GeoDataListItemState extends State<GeoDataListItem> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(
-              height: 4,
+              height: 6,
             ),
             FutureBuilder<FileInfo>(
               future: _getGeoFileLastModified(geoItem.fileName),
@@ -157,9 +157,6 @@ class _GeoDataListItemState extends State<GeoDataListItem> {
                       ? SizedBox(
                           width: height,
                           height: height,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                          ),
                         )
                       : Text(
                           snapshot.data!.desc,
@@ -168,12 +165,15 @@ class _GeoDataListItemState extends State<GeoDataListItem> {
                 );
               },
             ),
+            const SizedBox(
+              height: 4,
+            ),
             Text(
               url,
               style: context.textTheme.bodyMedium?.toLight,
             ),
             const SizedBox(
-              height: 8,
+              height: 12,
             ),
             Wrap(
               runSpacing: 6,
