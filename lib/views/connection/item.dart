@@ -86,8 +86,17 @@ class ConnectionItem extends ConsumerWidget {
                 onClickKeyword!(connection.chains.last);
               },
             ),
-            Text(
-              connection.start.lastUpdateTimeDesc,
+            Row(
+              spacing: 8,
+              children: [
+                Text(
+                  connection.start.showTime,
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    color: context.colorScheme.primary,
+                  ),
+                ),
+                if (trailing != null) trailing!,
+              ],
             )
           ],
         )
@@ -132,7 +141,6 @@ class ConnectionItem extends ConsumerWidget {
           : null,
       title: title,
       subtitle: subTitle,
-      trailing: trailing,
     );
   }
 }

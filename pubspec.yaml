@@ -64,6 +64,7 @@ dependencies:
   flutter_cache_manager: ^3.4.1
   crypto: ^3.0.3
   flutter_acrylic: ^1.1.4
+  two_dimensional_scrollables: ^0.3.6
 dev_dependencies:
   flutter_test:
     sdk: flutter

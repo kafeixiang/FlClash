@@ -11,6 +11,7 @@ import 'package:fl_clash/plugins/app.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/dialog.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -551,7 +552,9 @@ class AppController {
 
   Future<void> init() async {
     FlutterError.onError = (details) {
-      commonPrint.log(details.stack.toString());
+      if (kDebugMode) {
+        commonPrint.log(details.stack.toString());
+      }
     };
     updateTray(true);
     await _initCore();

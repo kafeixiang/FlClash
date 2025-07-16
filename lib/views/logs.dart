@@ -93,6 +93,117 @@ class _LogsViewState extends ConsumerState<LogsView> {
         _logsStateNotifier.value.copyWith(keywords: keywords);
   }
 
+  // Widget _buildTable(LogsState state) {
+  //   final items = state.list;
+  //   final payload = state.list.reduce(
+  //     (longest, current) {
+  //       return current.payload.length > longest.payload.length
+  //           ? current
+  //           : longest;
+  //     },
+  //   ).payload;
+  //   final size = globalState.measure.computeTextSize(
+  //     Text(
+  //       payload,
+  //       style: context.textTheme.bodyMedium,
+  //       maxLines: 1,
+  //     ),
+  //   );
+  //   print("[loogest]===>${payload},${size.width}");
+  //   return Padding(
+  //     padding: EdgeInsets.all(8),
+  //     child: TableView.builder(
+  //       verticalDetails: ScrollableDetails.vertical(
+  //         controller: _scrollController,
+  //         reverse: true,
+  //         physics: NextClampingScrollPhysics(),
+  //       ),
+  //       columnBuilder: (index) {
+  //         if (index == 0) {
+  //           return const TableSpan(
+  //             extent: FixedTableSpanExtent(100),
+  //           );
+  //         }
+  //         return TableSpan(
+  //           extent: MaxSpanExtent(
+  //             RemainingSpanExtent(),
+  //             FixedTableSpanExtent(
+  //               size.width + 300,
+  //             ),
+  //           ),
+  //         );
+  //       },
+  //       columnCount: 2,
+  //       rowCount: items.length,
+  //       rowBuilder: (_) {
+  //         return const TableSpan(
+  //           extent: FixedTableSpanExtent(36),
+  //         );
+  //       },
+  //       cellBuilder: (_, vicinity) {
+  //         final item = items[vicinity.row];
+  //         return TableViewCell(
+  //           child: Container(
+  //             padding: EdgeInsets.symmetric(
+  //               vertical: 4,
+  //               horizontal: 6,
+  //             ),
+  //             alignment: Alignment.centerLeft,
+  //             child: vicinity.column == 0
+  //                 ? Text(
+  //                     item.logLevel.name,
+  //                     style: context.textTheme.bodyMedium,
+  //                   )
+  //                 : Text(
+  //                     item.payload,
+  //                     maxLines: 1,
+  //                     style: context.textTheme.bodyMedium,
+  //                     overflow: TextOverflow.ellipsis,
+  //                   ),
+  //           ),
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
+
+  Widget _buildList(LogsState state) {
+    final logs = state.list;
+    final items = logs
+        .map<Widget>(
+          (log) => LogItem(
+            key: Key(log.dateTime),
+            log: log,
+            onClick: (value) {
+              context.commonScaffoldState?.addKeyword(value);
+            },
+          ),
+        )
+        .separated(
+          const Divider(
+            height: 0,
+          ),
+        )
+        .toList();
+
+    return ListView.builder(
+      physics: NextClampingScrollPhysics(),
+      reverse: true,
+      shrinkWrap: true,
+      controller: _scrollController,
+      itemBuilder: (_, index) {
+        return items[index];
+      },
+      itemExtentBuilder: (index, _) {
+        if (index.isOdd) {
+          return 0;
+        }
+        return LogItem.height;
+      },
+      itemCount: items.length,
+    );
+  }
+
   @override
   void dispose() {
     _logsStateNotifier.dispose();
@@ -145,62 +256,31 @@ class _LogsViewState extends ConsumerState<LogsView> {
         valueListenable: _logsStateNotifier,
         builder: (context, state, __) {
           final logs = state.list;
-          final items = logs
-              .map<Widget>(
-                (log) => LogItem(
-                  key: Key(log.dateTime),
-                  log: log,
-                  onClick: (value) {
-                    context.commonScaffoldState?.addKeyword(value);
-                  },
-                ),
-              )
-              .separated(
-                const Divider(
-                  height: 0,
-                ),
-              )
-              .toList();
-          return logs.isEmpty
-              ? NullStatus(
-                  label: appLocalizations.nullTip(
-                    appLocalizations.logs,
-                  ),
-                )
-              : Align(
-                  alignment: Alignment.topCenter,
-                  child: ScrollToEndBox(
-                    onCancelToEnd: () {
-                      _logsStateNotifier.value =
-                          _logsStateNotifier.value.copyWith(
-                        autoScrollToEnd: false,
-                      );
-                    },
-                    controller: _scrollController,
-                    enable: state.autoScrollToEnd,
-                    dataSource: logs,
-                    child: CommonScrollBar(
-                      controller: _scrollController,
-                      trackVisibility: false,
-                      child: ListView.builder(
-                        physics: NextClampingScrollPhysics(),
-                        reverse: true,
-                        shrinkWrap: true,
-                        controller: _scrollController,
-                        itemBuilder: (_, index) {
-                          return items[index];
-                        },
-                        itemExtentBuilder: (index, _) {
-                          if (index.isOdd) {
-                            return 0;
-                          }
-                          return LogItem.height;
-                        },
-                        itemCount: items.length,
-                      ),
-                    ),
-                  ),
+          if (logs.isEmpty) {
+            return NullStatus(
+              label: appLocalizations.nullTip(
+                appLocalizations.logs,
+              ),
+            );
+          }
+          return Align(
+            alignment: Alignment.topCenter,
+            child: ScrollToEndBox(
+              onCancelToEnd: () {
+                _logsStateNotifier.value = _logsStateNotifier.value.copyWith(
+                  autoScrollToEnd: false,
                 );
+              },
+              controller: _scrollController,
+              enable: state.autoScrollToEnd,
+              dataSource: logs,
+              child: CommonScrollBar(
+                controller: _scrollController,
+                trackVisibility: false,
+                child: _buildList(state),
+              ),
+            ),
+          );
         },
       ),
     );

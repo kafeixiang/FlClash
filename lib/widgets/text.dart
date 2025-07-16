@@ -22,6 +22,7 @@ class TooltipText extends StatelessWidget {
         );
         if (maxWidth < size.width) {
           return Tooltip(
+            triggerMode: TooltipTriggerMode.longPress,
             preferBelow: false,
             message: text.data,
             child: text,

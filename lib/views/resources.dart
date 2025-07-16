@@ -186,13 +186,34 @@ class _GeoDataListItemState extends State<GeoDataListItem> {
                     _updateUrl(url, ref);
                   },
                 ),
-                CommonChip(
-                  avatar: const Icon(Icons.sync),
-                  label: appLocalizations.sync,
-                  onPressed: () {
-                    _handleUpdateGeoDataItem();
-                  },
-                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      child: ValueListenableBuilder(
+                        valueListenable: isUpdating,
+                        builder: (_, isUpdating, ___) {
+                          return isUpdating
+                              ? SizedBox(
+                                  height: 30,
+                                  width: 30,
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(2),
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                )
+                              : CommonChip(
+                                  avatar: const Icon(Icons.sync),
+                                  label: appLocalizations.sync,
+                                  onPressed: () {
+                                    _handleUpdateGeoDataItem();
+                                  },
+                                );
+                        },
+                      ),
+                    )
+                  ],
+                )
               ],
             ),
           ],
@@ -244,23 +265,6 @@ class _GeoDataListItemState extends State<GeoDataListItem> {
       ),
       title: Text(geoItem.label),
       subtitle: _buildSubtitle(),
-      trailing: SizedBox(
-        height: 48,
-        width: 48,
-        child: ValueListenableBuilder(
-          valueListenable: isUpdating,
-          builder: (_, isUpdating, ___) {
-            return FadeThroughBox(
-              child: isUpdating
-                  ? const Padding(
-                      padding: EdgeInsets.all(8),
-                      child: CircularProgressIndicator(),
-                    )
-                  : const SizedBox(),
-            );
-          },
-        ),
-      ),
     );
   }
 }

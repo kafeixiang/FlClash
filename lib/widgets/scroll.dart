@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:collection/collection.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
@@ -74,51 +76,58 @@ class ScrollToEndBox<T> extends StatefulWidget {
 
 class _ScrollToEndBoxState<T> extends State<ScrollToEndBox<T>> {
   final equals = ListEquality<T>();
+  bool _isFastToEnd = false;
 
   @override
   void initState() {
     super.initState();
   }
 
-  void _handleTryToEnd() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+  Future<bool> _handleTryToEnd() {
+    final completer = Completer<bool>();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (widget.controller.hasClients &&
           widget.controller.position.pixels !=
               widget.controller.position.maxScrollExtent) {
         if (mounted) {
-          widget.controller.animateTo(
+          await widget.controller.animateTo(
             duration: kThemeAnimationDuration,
             widget.controller.position.maxScrollExtent,
             curve: Curves.easeOut,
           );
         }
       }
+      completer.complete(true);
     });
-  }
-
-  void _handleAutoToEnd() {
-    throttler.call(FunctionTag.autoScrollToEnd, () {
-      _handleTryToEnd();
-    }, duration: commonDuration);
+    return completer.future;
   }
 
   @override
   void didUpdateWidget(ScrollToEndBox<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.enable == true && oldWidget.enable != true) {
-      _handleTryToEnd();
+      _handleFastToEnd();
       return;
     }
     if (widget.enable &&
         !equals.equals(oldWidget.dataSource, widget.dataSource)) {
-      _handleAutoToEnd();
+      _handleTryToEnd();
     }
+  }
+
+  Future<void> _handleFastToEnd() async {
+    _isFastToEnd = true;
+    await _handleTryToEnd();
+    _isFastToEnd = false;
   }
 
   @override
   Widget build(BuildContext context) {
     return NotificationListener<UserScrollNotification>(
-      onNotification: (_) {
+      onNotification: (details) {
+        if (_isFastToEnd) {
+          return false;
+        }
         if (widget.onCancelToEnd != null) {
           widget.onCancelToEnd!();
         }
