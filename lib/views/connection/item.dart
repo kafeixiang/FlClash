@@ -22,14 +22,14 @@ class ConnectionItem extends ConsumerWidget {
     this.trailing,
   });
 
+  static double get subTitleHeight {
+    final measure = globalState.measure;
+    return measure.bodyMediumHeight + 8 + 8 + 36;
+  }
+
   static double get height {
     final measure = globalState.measure;
-    return measure.bodyLargeHeight +
-        8 +
-        12 +
-        measure.bodyMediumHeight * 1 +
-        40 +
-        16 * 2;
+    return measure.bodyLargeHeight + subTitleHeight + 16 * 2;
   }
 
   Future<ImageProvider?> _getPackageIcon(Connection connection) async {
@@ -56,51 +56,80 @@ class ConnectionItem extends ConsumerWidget {
             Platform.isAndroid,
       ),
     );
-    final title = Text(
-      connection.desc,
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-      style: context.textTheme.bodyLarge,
-    );
-    final subTitle = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    final title = Row(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      spacing: 4,
       children: [
-        const SizedBox(
-          height: 8,
+        Flexible(
+          flex: 1,
+          child: Text(
+            connection.desc,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: context.textTheme.bodyLarge,
+          ),
         ),
         Text(
-          _getSourceText(connection),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+          connection.start.showTime,
+          style: context.textTheme.bodyMedium?.copyWith(
+            color: context.colorScheme.primary,
+          ),
         ),
-        const SizedBox(
-          height: 12,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            CommonChip(
-              label: connection.chains.last,
-              onPressed: () {
-                if (onClickKeyword == null) return;
-                onClickKeyword!(connection.chains.last);
-              },
-            ),
-            Row(
-              spacing: 8,
+      ],
+    );
+    final subTitle = SizedBox(
+      height: ConnectionItem.subTitleHeight,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(
+            height: 8,
+          ),
+          Text(
+            _getSourceText(connection),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          Expanded(
+            flex: 1,
+            child: Row(
+              spacing: 4,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  connection.start.showTime,
-                  style: context.textTheme.bodyMedium?.copyWith(
-                    color: context.colorScheme.primary,
+                Flexible(
+                  flex: 1,
+                  child: Container(
+                    clipBehavior: Clip.none,
+                    child: ListView.separated(
+                      separatorBuilder: (_, __) => SizedBox(
+                        width: 6,
+                      ),
+                      padding: EdgeInsets.zero,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: connection.chains.length,
+                      itemBuilder: (_, index) {
+                        final chain = connection.chains[index];
+                        return CommonChip(
+                          label: chain,
+                          onPressed: () {
+                            if (onClickKeyword == null) return;
+                            onClickKeyword!(chain);
+                          },
+                        );
+                      },
+                    ),
                   ),
                 ),
                 if (trailing != null) trailing!,
               ],
-            )
-          ],
-        )
-      ],
+            ),
+          )
+        ],
+      ),
     );
     return ListItem(
       padding: const EdgeInsets.symmetric(

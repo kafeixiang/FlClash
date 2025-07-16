@@ -26,9 +26,9 @@ typedef UpdateTasks = List<FutureOr Function()>;
 
 class GlobalState {
   static GlobalState? _instance;
-  Map<CacheTag, double> computeScrollPositionCache = {};
   Map<CacheTag, FixedMap<String, double>> computeHeightMapCache = {};
 
+  // Map<CacheTag, double> computeScrollPositionCache = {};
   // final Map<String, double> scrollPositionCache = {};
   bool isService = false;
   Timer? timer;

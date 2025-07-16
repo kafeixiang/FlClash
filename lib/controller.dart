@@ -351,7 +351,6 @@ class AppController {
     _ref.read(logsProvider.notifier).value = FixedList(500);
     _ref.read(requestsProvider.notifier).value = FixedList(500);
     globalState.computeHeightMapCache = {};
-    globalState.computeScrollPositionCache = {};
   }
 
   void updateBrightness() {

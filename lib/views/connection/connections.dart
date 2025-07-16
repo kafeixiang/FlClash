@@ -111,6 +111,7 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView> {
                     context.commonScaffoldState?.addKeyword(value);
                   },
                   trailing: IconButton(
+                    visualDensity: VisualDensity.compact,
                     icon: const Icon(Icons.block),
                     onPressed: () {
                       _handleBlockConnection(connection.id);

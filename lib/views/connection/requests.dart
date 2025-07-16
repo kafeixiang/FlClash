@@ -21,7 +21,6 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
     const ConnectionsState(),
   );
   List<Connection> _requests = [];
-  final _tag = CacheTag.requests;
   late ScrollController _scrollController;
 
   void _onSearch(String value) {
@@ -38,10 +37,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
   @override
   void initState() {
     super.initState();
-    final preOffset = globalState.computeScrollPositionCache[_tag] ?? -1;
-    _scrollController = ScrollController(
-      initialScrollOffset: preOffset > 0 ? preOffset : double.maxFinite,
-    );
+    _scrollController = ScrollController();
     _requests = globalState.appState.requests.list;
     _requestsStateNotifier.value = _requestsStateNotifier.value.copyWith(
       connections: _requests,
@@ -93,6 +89,11 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
         valueListenable: _requestsStateNotifier,
         builder: (context, state, __) {
           final requests = state.list;
+          if (requests.isEmpty) {
+            return NullStatus(
+              label: appLocalizations.nullTip(appLocalizations.requests),
+            );
+          }
           final items = requests
               .map<Widget>(
                 (connection) => ConnectionItem(
@@ -109,33 +110,29 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
                 ),
               )
               .toList();
-          return items.isEmpty
-              ? NullStatus(
-                  label: appLocalizations.nullTip(appLocalizations.requests),
-                )
-              : Align(
-                  alignment: Alignment.topCenter,
-                  child: CommonScrollBar(
-                    trackVisibility: false,
-                    controller: _scrollController,
-                    child: ListView.builder(
-                      reverse: true,
-                      shrinkWrap: true,
-                      physics: NextClampingScrollPhysics(),
-                      controller: _scrollController,
-                      itemBuilder: (_, index) {
-                        return items[index];
-                      },
-                      itemExtentBuilder: (index, _) {
-                        if (index.isOdd) {
-                          return 0;
-                        }
-                        return ConnectionItem.height;
-                      },
-                      itemCount: items.length,
-                    ),
-                  ),
-                );
+          return Align(
+            alignment: Alignment.topCenter,
+            child: CommonScrollBar(
+              trackVisibility: false,
+              controller: _scrollController,
+              child: ListView.builder(
+                reverse: true,
+                shrinkWrap: true,
+                physics: NextClampingScrollPhysics(),
+                controller: _scrollController,
+                itemBuilder: (_, index) {
+                  return items[index];
+                },
+                itemExtentBuilder: (index, _) {
+                  if (index.isOdd) {
+                    return 0;
+                  }
+                  return ConnectionItem.height;
+                },
+                itemCount: items.length,
+              ),
+            ),
+          );
         },
       ),
     );
