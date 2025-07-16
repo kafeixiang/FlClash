@@ -71,8 +71,8 @@ class ConnectionItem extends ConsumerWidget {
           ),
         ),
         Text(
-          connection.start.showTime,
-          style: context.textTheme.bodyMedium?.copyWith(
+          connection.start.lastUpdateTimeDesc,
+          style: context.textTheme.bodySmall?.copyWith(
             color: context.colorScheme.primary,
           ),
         ),

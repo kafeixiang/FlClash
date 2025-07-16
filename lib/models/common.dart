@@ -120,7 +120,7 @@ class LogsState with _$LogsState {
     @Default([]) List<Log> logs,
     @Default([]) List<String> keywords,
     @Default('') String query,
-    @Default(false) bool autoScrollToEnd,
+    @Default(true) bool autoScrollToEnd,
   }) = _LogsState;
 }
 
@@ -144,6 +144,7 @@ class ConnectionsState with _$ConnectionsState {
     @Default([]) List<Connection> connections,
     @Default([]) List<String> keywords,
     @Default('') String query,
+    @Default(true) bool autoScrollToEnd,
   }) = _ConnectionsState;
 }
 

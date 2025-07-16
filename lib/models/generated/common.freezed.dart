@@ -1124,9 +1124,9 @@ Log _$LogFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Log {
 // @JsonKey(fromJson: _logId) required String id,
-  @JsonKey(name: "LogLevel")
+  @JsonKey(name: 'LogLevel')
   LogLevel get logLevel => throw _privateConstructorUsedError;
-  @JsonKey(name: "Payload")
+  @JsonKey(name: 'Payload')
   String get payload => throw _privateConstructorUsedError;
   @JsonKey(fromJson: _logDateTime)
   String get dateTime => throw _privateConstructorUsedError;
@@ -1146,8 +1146,8 @@ abstract class $LogCopyWith<$Res> {
       _$LogCopyWithImpl<$Res, Log>;
   @useResult
   $Res call(
-      {@JsonKey(name: "LogLevel") LogLevel logLevel,
-      @JsonKey(name: "Payload") String payload,
+      {@JsonKey(name: 'LogLevel') LogLevel logLevel,
+      @JsonKey(name: 'Payload') String payload,
       @JsonKey(fromJson: _logDateTime) String dateTime});
 }
 
@@ -1193,8 +1193,8 @@ abstract class _$$LogImplCopyWith<$Res> implements $LogCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: "LogLevel") LogLevel logLevel,
-      @JsonKey(name: "Payload") String payload,
+      {@JsonKey(name: 'LogLevel') LogLevel logLevel,
+      @JsonKey(name: 'Payload') String payload,
       @JsonKey(fromJson: _logDateTime) String dateTime});
 }
 
@@ -1234,8 +1234,8 @@ class __$$LogImplCopyWithImpl<$Res> extends _$LogCopyWithImpl<$Res, _$LogImpl>
 @JsonSerializable()
 class _$LogImpl implements _Log {
   const _$LogImpl(
-      {@JsonKey(name: "LogLevel") this.logLevel = LogLevel.app,
-      @JsonKey(name: "Payload") this.payload = "",
+      {@JsonKey(name: 'LogLevel') this.logLevel = LogLevel.app,
+      @JsonKey(name: 'Payload') this.payload = '',
       @JsonKey(fromJson: _logDateTime) required this.dateTime});
 
   factory _$LogImpl.fromJson(Map<String, dynamic> json) =>
@@ -1243,10 +1243,10 @@ class _$LogImpl implements _Log {
 
 // @JsonKey(fromJson: _logId) required String id,
   @override
-  @JsonKey(name: "LogLevel")
+  @JsonKey(name: 'LogLevel')
   final LogLevel logLevel;
   @override
-  @JsonKey(name: "Payload")
+  @JsonKey(name: 'Payload')
   final String payload;
   @override
   @JsonKey(fromJson: _logDateTime)
@@ -1291,8 +1291,8 @@ class _$LogImpl implements _Log {
 
 abstract class _Log implements Log {
   const factory _Log(
-          {@JsonKey(name: "LogLevel") final LogLevel logLevel,
-          @JsonKey(name: "Payload") final String payload,
+          {@JsonKey(name: 'LogLevel') final LogLevel logLevel,
+          @JsonKey(name: 'Payload') final String payload,
           @JsonKey(fromJson: _logDateTime) required final String dateTime}) =
       _$LogImpl;
 
@@ -1300,10 +1300,10 @@ abstract class _Log implements Log {
 
 // @JsonKey(fromJson: _logId) required String id,
   @override
-  @JsonKey(name: "LogLevel")
+  @JsonKey(name: 'LogLevel')
   LogLevel get logLevel;
   @override
-  @JsonKey(name: "Payload")
+  @JsonKey(name: 'Payload')
   String get payload;
   @override
   @JsonKey(fromJson: _logDateTime)
@@ -1444,8 +1444,8 @@ class _$LogsStateImpl implements _LogsState {
   const _$LogsStateImpl(
       {final List<Log> logs = const [],
       final List<String> keywords = const [],
-      this.query = "",
-      this.autoScrollToEnd = false})
+      this.query = '',
+      this.autoScrollToEnd = true})
       : _logs = logs,
         _keywords = keywords;
 
@@ -1537,6 +1537,7 @@ mixin _$ConnectionsState {
   List<Connection> get connections => throw _privateConstructorUsedError;
   List<String> get keywords => throw _privateConstructorUsedError;
   String get query => throw _privateConstructorUsedError;
+  bool get autoScrollToEnd => throw _privateConstructorUsedError;
 
   /// Create a copy of ConnectionsState
   /// with the given fields replaced by the non-null parameter values.
@@ -1552,7 +1553,10 @@ abstract class $ConnectionsStateCopyWith<$Res> {
       _$ConnectionsStateCopyWithImpl<$Res, ConnectionsState>;
   @useResult
   $Res call(
-      {List<Connection> connections, List<String> keywords, String query});
+      {List<Connection> connections,
+      List<String> keywords,
+      String query,
+      bool autoScrollToEnd});
 }
 
 /// @nodoc
@@ -1573,6 +1577,7 @@ class _$ConnectionsStateCopyWithImpl<$Res, $Val extends ConnectionsState>
     Object? connections = null,
     Object? keywords = null,
     Object? query = null,
+    Object? autoScrollToEnd = null,
   }) {
     return _then(_value.copyWith(
       connections: null == connections
@@ -1587,6 +1592,10 @@ class _$ConnectionsStateCopyWithImpl<$Res, $Val extends ConnectionsState>
           ? _value.query
           : query // ignore: cast_nullable_to_non_nullable
               as String,
+      autoScrollToEnd: null == autoScrollToEnd
+          ? _value.autoScrollToEnd
+          : autoScrollToEnd // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -1600,7 +1609,10 @@ abstract class _$$ConnectionsStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {List<Connection> connections, List<String> keywords, String query});
+      {List<Connection> connections,
+      List<String> keywords,
+      String query,
+      bool autoScrollToEnd});
 }
 
 /// @nodoc
@@ -1619,6 +1631,7 @@ class __$$ConnectionsStateImplCopyWithImpl<$Res>
     Object? connections = null,
     Object? keywords = null,
     Object? query = null,
+    Object? autoScrollToEnd = null,
   }) {
     return _then(_$ConnectionsStateImpl(
       connections: null == connections
@@ -1633,6 +1646,10 @@ class __$$ConnectionsStateImplCopyWithImpl<$Res>
           ? _value.query
           : query // ignore: cast_nullable_to_non_nullable
               as String,
+      autoScrollToEnd: null == autoScrollToEnd
+          ? _value.autoScrollToEnd
+          : autoScrollToEnd // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -1643,7 +1660,8 @@ class _$ConnectionsStateImpl implements _ConnectionsState {
   const _$ConnectionsStateImpl(
       {final List<Connection> connections = const [],
       final List<String> keywords = const [],
-      this.query = ""})
+      this.query = '',
+      this.autoScrollToEnd = true})
       : _connections = connections,
         _keywords = keywords;
 
@@ -1668,10 +1686,13 @@ class _$ConnectionsStateImpl implements _ConnectionsState {
   @override
   @JsonKey()
   final String query;
+  @override
+  @JsonKey()
+  final bool autoScrollToEnd;
 
   @override
   String toString() {
-    return 'ConnectionsState(connections: $connections, keywords: $keywords, query: $query)';
+    return 'ConnectionsState(connections: $connections, keywords: $keywords, query: $query, autoScrollToEnd: $autoScrollToEnd)';
   }
 
   @override
@@ -1682,7 +1703,9 @@ class _$ConnectionsStateImpl implements _ConnectionsState {
             const DeepCollectionEquality()
                 .equals(other._connections, _connections) &&
             const DeepCollectionEquality().equals(other._keywords, _keywords) &&
-            (identical(other.query, query) || other.query == query));
+            (identical(other.query, query) || other.query == query) &&
+            (identical(other.autoScrollToEnd, autoScrollToEnd) ||
+                other.autoScrollToEnd == autoScrollToEnd));
   }
 
   @override
@@ -1690,7 +1713,8 @@ class _$ConnectionsStateImpl implements _ConnectionsState {
       runtimeType,
       const DeepCollectionEquality().hash(_connections),
       const DeepCollectionEquality().hash(_keywords),
-      query);
+      query,
+      autoScrollToEnd);
 
   /// Create a copy of ConnectionsState
   /// with the given fields replaced by the non-null parameter values.
@@ -1706,7 +1730,8 @@ abstract class _ConnectionsState implements ConnectionsState {
   const factory _ConnectionsState(
       {final List<Connection> connections,
       final List<String> keywords,
-      final String query}) = _$ConnectionsStateImpl;
+      final String query,
+      final bool autoScrollToEnd}) = _$ConnectionsStateImpl;
 
   @override
   List<Connection> get connections;
@@ -1714,6 +1739,8 @@ abstract class _ConnectionsState implements ConnectionsState {
   List<String> get keywords;
   @override
   String get query;
+  @override
+  bool get autoScrollToEnd;
 
   /// Create a copy of ConnectionsState
   /// with the given fields replaced by the non-null parameter values.
@@ -2171,7 +2198,7 @@ class __$$VersionInfoImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$VersionInfoImpl implements _VersionInfo {
-  const _$VersionInfoImpl({this.clashName = "", this.version = ""});
+  const _$VersionInfoImpl({this.clashName = '', this.version = ''});
 
   factory _$VersionInfoImpl.fromJson(Map<String, dynamic> json) =>
       _$$VersionInfoImplFromJson(json);
@@ -2592,7 +2619,7 @@ class _$GroupImpl implements _Group {
       this.now,
       this.hidden,
       this.testUrl,
-      this.icon = "",
+      this.icon = '',
       required this.name})
       : _all = all;
 

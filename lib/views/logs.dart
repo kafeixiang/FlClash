@@ -16,9 +16,7 @@ class LogsView extends ConsumerStatefulWidget {
 }
 
 class _LogsViewState extends ConsumerState<LogsView> {
-  final _logsStateNotifier = ValueNotifier<LogsState>(LogsState(
-    autoScrollToEnd: true,
-  ));
+  final _logsStateNotifier = ValueNotifier<LogsState>(LogsState());
   late ScrollController _scrollController;
 
   List<Log> _logs = [];

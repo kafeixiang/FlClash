@@ -86,7 +86,7 @@ final realTunEnableProvider =
 );
 
 typedef _$RealTunEnable = AutoDisposeNotifier<bool>;
-String _$logsHash() => r'56fb8aa9d62a97b026b749d204576a7384084737';
+String _$logsHash() => r'0a32e067292d449d61af59a689cb26691f4afe44';
 
 /// See also [Logs].
 @ProviderFor(Logs)
@@ -100,7 +100,7 @@ final logsProvider = AutoDisposeNotifierProvider<Logs, FixedList<Log>>.internal(
 );
 
 typedef _$Logs = AutoDisposeNotifier<FixedList<Log>>;
-String _$requestsHash() => r'51c9dbba18649206b22dd0ba86c58ab986fc0939';
+String _$requestsHash() => r'96fd89353c2f1e5e50f62e4b0244e543eab77261';
 
 /// See also [Requests].
 @ProviderFor(Requests)
@@ -115,7 +115,7 @@ final requestsProvider =
 );
 
 typedef _$Requests = AutoDisposeNotifier<FixedList<Connection>>;
-String _$providersHash() => r'69e480ef409837596937d233e45b9995a83b3949';
+String _$providersHash() => r'4292240629a99470b2e72426dde3b9049b9b57e0';
 
 /// See also [Providers].
 @ProviderFor(Providers)
@@ -145,7 +145,7 @@ final packagesProvider =
 );
 
 typedef _$Packages = AutoDisposeNotifier<List<Package>>;
-String _$systemBrightnessHash() => r'72f78a2a307075dcf525f933e8be79d92d26c6a2';
+String _$systemBrightnessHash() => r'46eb2d23b05405723efc29480e8f258bf2d8138b';
 
 /// See also [SystemBrightness].
 @ProviderFor(SystemBrightness)
@@ -161,7 +161,7 @@ final systemBrightnessProvider =
 );
 
 typedef _$SystemBrightness = AutoDisposeNotifier<Brightness>;
-String _$trafficsHash() => r'c3f33e9be5ae399562a380156280406fdeeb72aa';
+String _$trafficsHash() => r'8b86eb718fed5776de174c51fd5b231957011fe6';
 
 /// See also [Traffics].
 @ProviderFor(Traffics)
@@ -263,7 +263,7 @@ final currentPageLabelProvider =
 );
 
 typedef _$CurrentPageLabel = AutoDisposeNotifier<PageLabel>;
-String _$sortNumHash() => r'0f85ebbc77124020eaccf988c6ac9d86a7f34d7e';
+String _$sortNumHash() => r'b67bee9fdfbb74b484190fbc6e5c3da7d773bed0';
 
 /// See also [SortNum].
 @ProviderFor(SortNum)
@@ -277,7 +277,7 @@ final sortNumProvider = AutoDisposeNotifierProvider<SortNum, int>.internal(
 );
 
 typedef _$SortNum = AutoDisposeNotifier<int>;
-String _$checkIpNumHash() => r'794de8e31e98ee4fde10509dc8f433699bff18b4';
+String _$checkIpNumHash() => r'4d8b32ed9c0013c056f90c9d5483f11fa5fddec5';
 
 /// See also [CheckIpNum].
 @ProviderFor(CheckIpNum)
@@ -349,7 +349,7 @@ final groupsProvider =
 );
 
 typedef _$Groups = AutoDisposeNotifier<List<Group>>;
-String _$delayDataSourceHash() => r'9731553fb48dd89840767bf5508547d90562eb55';
+String _$delayDataSourceHash() => r'1b94dcfdb9e1eb4c0b7ca69d933f2299d1f94ed5';
 
 /// See also [DelayDataSource].
 @ProviderFor(DelayDataSource)

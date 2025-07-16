@@ -37,18 +37,17 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController();
     _requests = globalState.appState.requests.list;
+    _scrollController = ScrollController(
+      initialScrollOffset: _requests.length * ConnectionItem.height,
+    );
     _requestsStateNotifier.value = _requestsStateNotifier.value.copyWith(
       connections: _requests,
     );
     ref.listenManual(
       requestsProvider.select((state) => state.list),
       (prev, next) {
-        if (!connectionListEquality.equals(prev, next)) {
-          _requests = next;
-          updateRequestsThrottler();
-        }
+        _requests = next;
       },
     );
   }
@@ -79,10 +78,39 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
     }, duration: commonDuration);
   }
 
+  List<Widget> _buildActions() {
+    return [
+      ValueListenableBuilder(
+        valueListenable: _requestsStateNotifier,
+        builder: (_, state, __) {
+          return IconButton(
+            style: state.autoScrollToEnd
+                ? ButtonStyle(
+                    backgroundColor: WidgetStatePropertyAll(
+                      context.colorScheme.secondaryContainer,
+                    ),
+                  )
+                : null,
+            onPressed: () {
+              _requestsStateNotifier.value =
+                  _requestsStateNotifier.value.copyWith(
+                autoScrollToEnd: !_requestsStateNotifier.value.autoScrollToEnd,
+              );
+            },
+            icon: const Icon(
+              Icons.vertical_align_top_outlined,
+            ),
+          );
+        },
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return CommonScaffold(
       title: appLocalizations.requests,
+      actions: _buildActions(),
       searchState: AppBarSearchState(onSearch: _onSearch),
       onKeywordsUpdate: _onKeywordsUpdate,
       body: ValueListenableBuilder<ConnectionsState>(
@@ -115,21 +143,32 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
             child: CommonScrollBar(
               trackVisibility: false,
               controller: _scrollController,
-              child: ListView.builder(
-                reverse: true,
-                shrinkWrap: true,
-                physics: NextClampingScrollPhysics(),
+              child: ScrollToEndBox(
                 controller: _scrollController,
-                itemBuilder: (_, index) {
-                  return items[index];
+                dataSource: requests,
+                enable: state.autoScrollToEnd,
+                onCancelToEnd: () {
+                  _requestsStateNotifier.value =
+                      _requestsStateNotifier.value.copyWith(
+                    autoScrollToEnd: false,
+                  );
                 },
-                itemExtentBuilder: (index, _) {
-                  if (index.isOdd) {
-                    return 0;
-                  }
-                  return ConnectionItem.height;
-                },
-                itemCount: items.length,
+                child: ListView.builder(
+                  reverse: true,
+                  shrinkWrap: true,
+                  physics: NextClampingScrollPhysics(),
+                  controller: _scrollController,
+                  itemBuilder: (_, index) {
+                    return items[index];
+                  },
+                  itemExtentBuilder: (index, _) {
+                    if (index.isOdd) {
+                      return 0;
+                    }
+                    return ConnectionItem.height;
+                  },
+                  itemCount: items.length,
+                ),
               ),
             ),
           );

@@ -679,7 +679,7 @@ abstract class _AppBarSearchState implements AppBarSearchState {
 
 /// @nodoc
 mixin _$AppBarEditState {
-  dynamic get editCount => throw _privateConstructorUsedError;
+  int get editCount => throw _privateConstructorUsedError;
   dynamic Function() get onExit => throw _privateConstructorUsedError;
 
   /// Create a copy of AppBarEditState
@@ -695,7 +695,7 @@ abstract class $AppBarEditStateCopyWith<$Res> {
           AppBarEditState value, $Res Function(AppBarEditState) then) =
       _$AppBarEditStateCopyWithImpl<$Res, AppBarEditState>;
   @useResult
-  $Res call({dynamic editCount, dynamic Function() onExit});
+  $Res call({int editCount, dynamic Function() onExit});
 }
 
 /// @nodoc
@@ -713,14 +713,14 @@ class _$AppBarEditStateCopyWithImpl<$Res, $Val extends AppBarEditState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? editCount = freezed,
+    Object? editCount = null,
     Object? onExit = null,
   }) {
     return _then(_value.copyWith(
-      editCount: freezed == editCount
+      editCount: null == editCount
           ? _value.editCount
           : editCount // ignore: cast_nullable_to_non_nullable
-              as dynamic,
+              as int,
       onExit: null == onExit
           ? _value.onExit
           : onExit // ignore: cast_nullable_to_non_nullable
@@ -737,7 +737,7 @@ abstract class _$$AppBarEditStateImplCopyWith<$Res>
       __$$AppBarEditStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({dynamic editCount, dynamic Function() onExit});
+  $Res call({int editCount, dynamic Function() onExit});
 }
 
 /// @nodoc
@@ -753,11 +753,14 @@ class __$$AppBarEditStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? editCount = freezed,
+    Object? editCount = null,
     Object? onExit = null,
   }) {
     return _then(_$AppBarEditStateImpl(
-      editCount: freezed == editCount ? _value.editCount! : editCount,
+      editCount: null == editCount
+          ? _value.editCount
+          : editCount // ignore: cast_nullable_to_non_nullable
+              as int,
       onExit: null == onExit
           ? _value.onExit
           : onExit // ignore: cast_nullable_to_non_nullable
@@ -773,7 +776,7 @@ class _$AppBarEditStateImpl implements _AppBarEditState {
 
   @override
   @JsonKey()
-  final dynamic editCount;
+  final int editCount;
   @override
   final dynamic Function() onExit;
 
@@ -787,13 +790,13 @@ class _$AppBarEditStateImpl implements _AppBarEditState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AppBarEditStateImpl &&
-            const DeepCollectionEquality().equals(other.editCount, editCount) &&
+            (identical(other.editCount, editCount) ||
+                other.editCount == editCount) &&
             (identical(other.onExit, onExit) || other.onExit == onExit));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType, const DeepCollectionEquality().hash(editCount), onExit);
+  int get hashCode => Object.hash(runtimeType, editCount, onExit);
 
   /// Create a copy of AppBarEditState
   /// with the given fields replaced by the non-null parameter values.
@@ -807,11 +810,11 @@ class _$AppBarEditStateImpl implements _AppBarEditState {
 
 abstract class _AppBarEditState implements AppBarEditState {
   const factory _AppBarEditState(
-      {final dynamic editCount,
+      {final int editCount,
       required final dynamic Function() onExit}) = _$AppBarEditStateImpl;
 
   @override
-  dynamic get editCount;
+  int get editCount;
   @override
   dynamic Function() get onExit;
 

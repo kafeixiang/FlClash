@@ -79,7 +79,7 @@ final currentNavigationItemsStateProvider =
 // ignore: unused_element
 typedef CurrentNavigationItemsStateRef
     = AutoDisposeProviderRef<NavigationItemsState>;
-String _$coreStateHash() => r'33f01ee9173525862c89522bf73b3174beb63daa';
+String _$coreStateHash() => r'3a651f6254443f4f760720cb570195199d014d4b';
 
 /// See also [coreState].
 @ProviderFor(coreState)
@@ -2184,7 +2184,7 @@ final autoSetSystemDnsStateProvider =
 // ignore: unused_element
 typedef AutoSetSystemDnsStateRef = AutoDisposeProviderRef<VM2<bool, bool>>;
 String _$profileOverrideStateHash() =>
-    r'fa26570a355ab39e27b1f93d1d2f358717065592';
+    r'0a1657ff3b4657fcc481a4cdd1deda5b353bf845';
 
 /// See also [ProfileOverrideState].
 @ProviderFor(ProfileOverrideState)
@@ -2200,7 +2200,7 @@ final profileOverrideStateProvider = AutoDisposeNotifierProvider<
 );
 
 typedef _$ProfileOverrideState = AutoDisposeNotifier<ProfileOverrideStateModel>;
-String _$queryHash() => r'768026453e7ea390af601e1100b5706ef04257dd';
+String _$queryHash() => r'e99b2a2439872f88f09fee8d63f0cc7fb4852186';
 
 /// See also [Query].
 @ProviderFor(Query)
