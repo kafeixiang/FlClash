@@ -228,6 +228,7 @@ class _GeoDataListItemState extends State<GeoDataListItem> {
         await updateGeoDateItem();
       },
       silence: false,
+      needLoading: false,
     );
     setState(() {});
   }

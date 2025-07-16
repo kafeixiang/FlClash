@@ -214,7 +214,7 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
           onNotification: (scrollNotification) {
             _hasMoreButtonNotifier.value =
                 scrollNotification.metrics.maxScrollExtent > 0;
-            return true;
+            return false;
           },
           child: ValueListenableBuilder(
             valueListenable: _hasMoreButtonNotifier,

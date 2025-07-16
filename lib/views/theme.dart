@@ -495,7 +495,7 @@ class _TextScaleFactorItem extends ConsumerWidget {
         (state) => state.textScale,
       ),
     );
-    final String process = '${((textScale.scale * 100) as double).round()}%';
+    final String process = '${(textScale.scale * 100).round()}%';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

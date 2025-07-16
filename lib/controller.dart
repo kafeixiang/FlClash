@@ -1063,7 +1063,9 @@ class AppController {
   }) async {
     final realSilence = needLoading == true ? true : silence;
     try {
-      _ref.read(loadingProvider.notifier).value = true;
+      if (needLoading) {
+        _ref.read(loadingProvider.notifier).value = true;
+      }
       final res = await futureFunction();
       return res;
     } catch (e) {
