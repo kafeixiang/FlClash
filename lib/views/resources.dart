@@ -178,6 +178,7 @@ class _GeoDataListItemState extends State<GeoDataListItem> {
             Wrap(
               runSpacing: 6,
               spacing: 12,
+              runAlignment: WrapAlignment.center,
               children: [
                 CommonChip(
                   avatar: const Icon(Icons.edit),

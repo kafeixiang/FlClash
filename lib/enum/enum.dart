@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:fl_clash/views/dashboard/widgets/widgets.dart';
 import 'package:fl_clash/widgets/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
@@ -98,6 +99,19 @@ enum LogLevel {
   error,
   silent,
   app,
+}
+
+extension LogLevelExt on LogLevel {
+  Color? get color {
+    return switch (this) {
+      LogLevel.silent => Colors.grey.shade700,
+      LogLevel.debug => Colors.grey.shade400,
+      LogLevel.info => null,
+      LogLevel.app => null,
+      LogLevel.warning => Colors.deepOrangeAccent,
+      LogLevel.error => Colors.redAccent,
+    };
+  }
 }
 
 enum TransportProtocol { udp, tcp }

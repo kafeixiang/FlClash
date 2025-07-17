@@ -91,117 +91,6 @@ class _LogsViewState extends ConsumerState<LogsView> {
         _logsStateNotifier.value.copyWith(keywords: keywords);
   }
 
-  // Widget _buildTable(LogsState state) {
-  //   final items = state.list;
-  //   final payload = state.list.reduce(
-  //     (longest, current) {
-  //       return current.payload.length > longest.payload.length
-  //           ? current
-  //           : longest;
-  //     },
-  //   ).payload;
-  //   final size = globalState.measure.computeTextSize(
-  //     Text(
-  //       payload,
-  //       style: context.textTheme.bodyMedium,
-  //       maxLines: 1,
-  //     ),
-  //   );
-  //   print("[loogest]===>${payload},${size.width}");
-  //   return Padding(
-  //     padding: EdgeInsets.all(8),
-  //     child: TableView.builder(
-  //       verticalDetails: ScrollableDetails.vertical(
-  //         controller: _scrollController,
-  //         reverse: true,
-  //         physics: NextClampingScrollPhysics(),
-  //       ),
-  //       columnBuilder: (index) {
-  //         if (index == 0) {
-  //           return const TableSpan(
-  //             extent: FixedTableSpanExtent(100),
-  //           );
-  //         }
-  //         return TableSpan(
-  //           extent: MaxSpanExtent(
-  //             RemainingSpanExtent(),
-  //             FixedTableSpanExtent(
-  //               size.width + 300,
-  //             ),
-  //           ),
-  //         );
-  //       },
-  //       columnCount: 2,
-  //       rowCount: items.length,
-  //       rowBuilder: (_) {
-  //         return const TableSpan(
-  //           extent: FixedTableSpanExtent(36),
-  //         );
-  //       },
-  //       cellBuilder: (_, vicinity) {
-  //         final item = items[vicinity.row];
-  //         return TableViewCell(
-  //           child: Container(
-  //             padding: EdgeInsets.symmetric(
-  //               vertical: 4,
-  //               horizontal: 6,
-  //             ),
-  //             alignment: Alignment.centerLeft,
-  //             child: vicinity.column == 0
-  //                 ? Text(
-  //                     item.logLevel.name,
-  //                     style: context.textTheme.bodyMedium,
-  //                   )
-  //                 : Text(
-  //                     item.payload,
-  //                     maxLines: 1,
-  //                     style: context.textTheme.bodyMedium,
-  //                     overflow: TextOverflow.ellipsis,
-  //                   ),
-  //           ),
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
-
-  Widget _buildList(LogsState state) {
-    final logs = state.list;
-    final items = logs
-        .map<Widget>(
-          (log) => LogItem(
-            key: Key(log.dateTime),
-            log: log,
-            onClick: (value) {
-              context.commonScaffoldState?.addKeyword(value);
-            },
-          ),
-        )
-        .separated(
-          const Divider(
-            height: 0,
-          ),
-        )
-        .toList();
-
-    return ListView.builder(
-      physics: NextClampingScrollPhysics(),
-      reverse: true,
-      shrinkWrap: true,
-      controller: _scrollController,
-      itemBuilder: (_, index) {
-        return items[index];
-      },
-      itemExtentBuilder: (index, _) {
-        if (index.isOdd) {
-          return 0;
-        }
-        return LogItem.height;
-      },
-      itemCount: items.length,
-    );
-  }
-
   @override
   void dispose() {
     _logsStateNotifier.dispose();
@@ -226,6 +115,9 @@ class _LogsViewState extends ConsumerState<LogsView> {
 
   void updateLogsThrottler() {
     throttler.call(FunctionTag.logs, () {
+      if (!mounted) {
+        return;
+      }
       final isEquality = logListEquality.equals(
         _logs,
         _logsStateNotifier.value.logs,
@@ -261,6 +153,22 @@ class _LogsViewState extends ConsumerState<LogsView> {
               ),
             );
           }
+          final items = logs
+              .map<Widget>(
+                (log) => LogItem(
+                  key: Key(log.dateTime),
+                  log: log,
+                  onClick: (value) {
+                    context.commonScaffoldState?.addKeyword(value);
+                  },
+                ),
+              )
+              .separated(
+                const Divider(
+                  height: 0,
+                ),
+              )
+              .toList();
           return Align(
             alignment: Alignment.topCenter,
             child: ScrollToEndBox(
@@ -275,7 +183,22 @@ class _LogsViewState extends ConsumerState<LogsView> {
               child: CommonScrollBar(
                 controller: _scrollController,
                 trackVisibility: false,
-                child: _buildList(state),
+                child: ListView.builder(
+                  physics: NextClampingScrollPhysics(),
+                  reverse: true,
+                  shrinkWrap: true,
+                  controller: _scrollController,
+                  itemBuilder: (_, index) {
+                    return items[index];
+                  },
+                  itemExtentBuilder: (index, _) {
+                    if (index.isOdd) {
+                      return 0;
+                    }
+                    return LogItem.height;
+                  },
+                  itemCount: items.length,
+                ),
               ),
             ),
           );
@@ -307,13 +230,22 @@ class LogItem extends StatelessWidget {
         horizontal: 16,
         vertical: 4,
       ),
+      onTap: () {
+        globalState.showCommonDialog(
+          child: LogDetailDialog(
+            log: log,
+          ),
+        );
+      },
       title: SizedBox(
         height: globalState.measure.bodyLargeHeight * 2,
         child: Text(
           log.payload,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: context.textTheme.bodyLarge,
+          style: context.textTheme.bodyLarge?.copyWith(
+            color: log.logLevel.color,
+          ),
         ),
       ),
       subtitle: Column(
@@ -331,13 +263,56 @@ class LogItem extends StatelessWidget {
                 },
                 label: log.logLevel.name,
               ),
-              SelectableText(
+              Text(
                 log.dateTime,
-                style: context.textTheme.bodySmall?.copyWith(
-                  color: context.colorScheme.primary,
-                ),
               ),
             ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class LogDetailDialog extends StatelessWidget {
+  final Log log;
+
+  const LogDetailDialog({
+    super.key,
+    required this.log,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return CommonDialog(
+      title: '日志详情',
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop(true);
+          },
+          child: Text(
+            appLocalizations.confirm,
+          ),
+        )
+      ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 6,
+        children: [
+          SelectionArea(
+            child: Text(
+              log.payload,
+              style: context.textTheme.bodyLarge?.copyWith(
+                color: log.logLevel.color,
+              ),
+            ),
+          ),
+          Text(
+            log.dateTime,
+            style: context.textTheme.bodySmall?.copyWith(
+              color: context.colorScheme.onSurfaceVariant,
+            ),
           )
         ],
       ),

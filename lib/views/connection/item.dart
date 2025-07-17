@@ -59,7 +59,7 @@ class ConnectionItem extends ConsumerWidget {
     final title = Row(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      spacing: 4,
+      spacing: 8,
       children: [
         Flexible(
           flex: 1,
@@ -73,7 +73,7 @@ class ConnectionItem extends ConsumerWidget {
         Text(
           connection.start.lastUpdateTimeDesc,
           style: context.textTheme.bodySmall?.copyWith(
-            color: context.colorScheme.primary,
+            color: context.colorScheme.onSurfaceVariant,
           ),
         ),
       ],
@@ -97,7 +97,7 @@ class ConnectionItem extends ConsumerWidget {
           Expanded(
             flex: 1,
             child: Row(
-              spacing: 4,
+              spacing: 8,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Flexible(

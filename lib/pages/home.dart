@@ -42,26 +42,27 @@ class HomePage extends StatelessWidget {
                     );
               return view;
             });
+            final currentIndex = state.currentIndex;
+            final bottomNavigationBar = NavigationBarTheme(
+              data: _NavigationBarDefaultsM3(context),
+              child: NavigationBar(
+                destinations: navigationItems
+                    .map(
+                      (e) => NavigationDestination(
+                        icon: e.icon,
+                        label: Intl.message(e.label.name),
+                      ),
+                    )
+                    .toList(),
+                onDestinationSelected: (index) {
+                  globalState.appController.toPage(
+                    navigationItems[index].label,
+                  );
+                },
+                selectedIndex: currentIndex,
+              ),
+            );
             if (isMobile) {
-              final currentIndex = state.currentIndex;
-              final bottomNavigationBar = NavigationBarTheme(
-                data: _NavigationBarDefaultsM3(context),
-                child: NavigationBar(
-                  destinations: navigationItems
-                      .map(
-                        (e) => NavigationDestination(
-                          icon: e.icon,
-                          label: Intl.message(e.label.name),
-                        ),
-                      )
-                      .toList(),
-                  onDestinationSelected: (index) {
-                    globalState.appController
-                        .toPage(navigationItems[index].label);
-                  },
-                  selectedIndex: currentIndex,
-                ),
-              );
               return AnnotatedRegion<SystemUiOverlayStyle>(
                 value: globalState.appState.systemUiOverlayStyle.copyWith(
                   systemNavigationBarColor:

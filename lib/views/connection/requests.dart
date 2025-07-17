@@ -61,6 +61,9 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
 
   void updateRequestsThrottler() {
     throttler.call(FunctionTag.requests, () {
+      if (!mounted) {
+        return;
+      }
       final isEquality = connectionListEquality.equals(
         _requests,
         _requestsStateNotifier.value.connections,
