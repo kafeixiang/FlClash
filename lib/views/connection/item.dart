@@ -30,7 +30,7 @@ class ConnectionItem extends ConsumerWidget {
     final measure = globalState.measure;
     return measure.bodyMediumHeight +
         8 +
-        8 +
+        12 +
         measure.bodyLargeHeight +
         subTitleHeight +
         16 * 2;
@@ -172,7 +172,7 @@ class ConnectionItem extends ConsumerWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
-            spacing: 16,
+            spacing: 12,
             children: [
               if (icon != null) icon,
               Flexible(
@@ -181,7 +181,7 @@ class ConnectionItem extends ConsumerWidget {
             ],
           ),
           const SizedBox(
-            height: 8,
+            height: 12,
           ),
           subTitle,
         ],

@@ -125,22 +125,18 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView> {
                 ),
               )
               .toList();
-          return CommonScrollBar(
-            trackVisibility: false,
+          return ListView.builder(
             controller: _scrollController,
-            child: ListView.builder(
-              controller: _scrollController,
-              itemBuilder: (context, index) {
-                return items[index];
-              },
-              itemExtentBuilder: (index, _) {
-                if (index.isOdd) {
-                  return 0;
-                }
-                return ConnectionItem.height;
-              },
-              itemCount: connections.length,
-            ),
+            itemBuilder: (context, index) {
+              return items[index];
+            },
+            itemExtentBuilder: (index, _) {
+              if (index.isOdd) {
+                return 0;
+              }
+              return ConnectionItem.height;
+            },
+            itemCount: connections.length,
           );
         },
       ),
