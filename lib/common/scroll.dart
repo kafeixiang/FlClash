@@ -35,7 +35,7 @@ class ShowBarScrollBehavior extends BaseScrollBehavior {
     Widget child,
     ScrollableDetails details,
   ) {
-    return CommonAutoHiddenScrollBar(
+    return CommonScrollBar(
       controller: details.controller,
       child: child,
     );

@@ -10,42 +10,22 @@ class CommonScrollBar extends StatelessWidget {
   final ScrollController? controller;
   final Widget child;
   final bool trackVisibility;
+  final bool thumbVisibility;
 
   const CommonScrollBar({
     super.key,
     required this.child,
     required this.controller,
-    this.trackVisibility = true,
+    this.trackVisibility = false,
+    this.thumbVisibility = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return Scrollbar(
       controller: controller,
-      thumbVisibility: true,
+      thumbVisibility: thumbVisibility,
       trackVisibility: trackVisibility,
-      thickness: 8,
-      radius: const Radius.circular(8),
-      interactive: true,
-      child: child,
-    );
-  }
-}
-
-class CommonAutoHiddenScrollBar extends StatelessWidget {
-  final ScrollController? controller;
-  final Widget child;
-
-  const CommonAutoHiddenScrollBar({
-    super.key,
-    required this.child,
-    required this.controller,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Scrollbar(
-      controller: controller,
       thickness: 8,
       radius: const Radius.circular(8),
       interactive: true,

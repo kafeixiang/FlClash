@@ -113,7 +113,7 @@ class _OverrideProfileViewState extends State<OverrideProfileView> {
       child: LayoutBuilder(
         builder: (_, constraints) {
           _currentMaxWidth = constraints.maxWidth - 104;
-          return CommonAutoHiddenScrollBar(
+          return CommonScrollBar(
             controller: _controller,
             child: CustomScrollView(
               controller: _controller,

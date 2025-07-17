@@ -257,6 +257,8 @@ class _ProxiesListViewState extends State<ProxiesListView> {
         final itemsOffset = _getItemHeightList(items, state.proxyCardType);
         return CommonScrollBar(
           controller: _controller,
+          thumbVisibility: true,
+          trackVisibility: true,
           child: Stack(
             children: [
               Positioned.fill(

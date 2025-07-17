@@ -95,7 +95,7 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView> {
       actions: _buildActions(),
       body: ValueListenableBuilder<ConnectionsState>(
         valueListenable: _connectionsStateNotifier,
-        builder: (_, state, __) {
+        builder: (context, state, __) {
           final connections = state.list;
           if (connections.isEmpty) {
             return NullStatus(

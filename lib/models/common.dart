@@ -96,7 +96,7 @@ String _logDateTime(dynamic _) {
 class Log with _$Log {
   const factory Log({
     // @JsonKey(fromJson: _logId) required String id,
-    @JsonKey(name: 'LogLevel') @Default(LogLevel.app) LogLevel logLevel,
+    @JsonKey(name: 'LogLevel') @Default(LogLevel.info) LogLevel logLevel,
     @JsonKey(name: 'Payload') @Default('') String payload,
     @JsonKey(fromJson: _logDateTime) required String dateTime,
   }) = _Log;

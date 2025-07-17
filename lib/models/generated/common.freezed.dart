@@ -1234,7 +1234,7 @@ class __$$LogImplCopyWithImpl<$Res> extends _$LogCopyWithImpl<$Res, _$LogImpl>
 @JsonSerializable()
 class _$LogImpl implements _Log {
   const _$LogImpl(
-      {@JsonKey(name: 'LogLevel') this.logLevel = LogLevel.app,
+      {@JsonKey(name: 'LogLevel') this.logLevel = LogLevel.info,
       @JsonKey(name: 'Payload') this.payload = '',
       @JsonKey(fromJson: _logDateTime) required this.dateTime});
 

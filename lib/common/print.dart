@@ -13,7 +13,7 @@ class CommonPrint {
   }
 
   void log(String? text) {
-    final payload = '[FlClash] $text';
+    final payload = '[APP] $text';
     debugPrint(payload);
     if (!globalState.isInit) {
       return;

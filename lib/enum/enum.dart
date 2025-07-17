@@ -98,7 +98,6 @@ enum LogLevel {
   warning,
   error,
   silent,
-  app,
 }
 
 extension LogLevelExt on LogLevel {
@@ -107,7 +106,6 @@ extension LogLevelExt on LogLevel {
       LogLevel.silent => Colors.grey.shade700,
       LogLevel.debug => Colors.grey.shade400,
       LogLevel.info => null,
-      LogLevel.app => null,
       LogLevel.warning => Colors.deepOrangeAccent,
       LogLevel.error => Colors.redAccent,
     };

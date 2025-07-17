@@ -355,7 +355,7 @@ class _ProxyGroupViewState extends ConsumerState<ProxyGroupView> {
 
     return Align(
       alignment: Alignment.topCenter,
-      child: CommonAutoHiddenScrollBar(
+      child: CommonScrollBar(
         controller: _controller,
         child: GridView.builder(
           key: _getPageStorageKey(),

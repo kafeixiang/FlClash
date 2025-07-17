@@ -418,7 +418,6 @@ const _$LogLevelEnumMap = {
   LogLevel.warning: 'warning',
   LogLevel.error: 'error',
   LogLevel.silent: 'silent',
-  LogLevel.app: 'app',
 };
 
 const _$FindProcessModeEnumMap = {

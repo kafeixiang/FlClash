@@ -182,7 +182,6 @@ class _LogsViewState extends ConsumerState<LogsView> {
               dataSource: logs,
               child: CommonScrollBar(
                 controller: _scrollController,
-                trackVisibility: false,
                 child: ListView.builder(
                   physics: NextClampingScrollPhysics(),
                   reverse: true,
@@ -300,15 +299,13 @@ class LogDetailDialog extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 6,
         children: [
-          SelectionArea(
-            child: Text(
-              log.payload,
-              style: context.textTheme.bodyLarge?.copyWith(
-                color: log.logLevel.color,
-              ),
+          SelectableText(
+            log.payload,
+            style: context.textTheme.bodyLarge?.copyWith(
+              color: log.logLevel.color,
             ),
           ),
-          Text(
+          SelectableText(
             log.dateTime,
             style: context.textTheme.bodySmall?.copyWith(
               color: context.colorScheme.onSurfaceVariant,

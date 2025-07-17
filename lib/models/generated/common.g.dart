@@ -73,7 +73,7 @@ Map<String, dynamic> _$$ConnectionImplToJson(_$ConnectionImpl instance) =>
 
 _$LogImpl _$$LogImplFromJson(Map<String, dynamic> json) => _$LogImpl(
       logLevel: $enumDecodeNullable(_$LogLevelEnumMap, json['LogLevel']) ??
-          LogLevel.app,
+          LogLevel.info,
       payload: json['Payload'] as String? ?? '',
       dateTime: _logDateTime(json['dateTime']),
     );
@@ -90,7 +90,6 @@ const _$LogLevelEnumMap = {
   LogLevel.warning: 'warning',
   LogLevel.error: 'error',
   LogLevel.silent: 'silent',
-  LogLevel.app: 'app',
 };
 
 _$DAVImpl _$$DAVImplFromJson(Map<String, dynamic> json) => _$DAVImpl(
