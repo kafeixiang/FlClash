@@ -879,13 +879,15 @@ TrackerInfo _$TrackerInfoFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$TrackerInfo {
   String get id => throw _privateConstructorUsedError;
-  int? get upload => throw _privateConstructorUsedError;
-  int? get download => throw _privateConstructorUsedError;
+  int get upload => throw _privateConstructorUsedError;
+  int get download => throw _privateConstructorUsedError;
   DateTime get start => throw _privateConstructorUsedError;
   Metadata get metadata => throw _privateConstructorUsedError;
   List<String> get chains => throw _privateConstructorUsedError;
   String get rule => throw _privateConstructorUsedError;
   String get rulePayload => throw _privateConstructorUsedError;
+  int? get downloadSpeed => throw _privateConstructorUsedError;
+  int? get uploadSpeed => throw _privateConstructorUsedError;
 
   /// Serializes this TrackerInfo to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -905,13 +907,15 @@ abstract class $TrackerInfoCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
-      int? upload,
-      int? download,
+      int upload,
+      int download,
       DateTime start,
       Metadata metadata,
       List<String> chains,
       String rule,
-      String rulePayload});
+      String rulePayload,
+      int? downloadSpeed,
+      int? uploadSpeed});
 
   $MetadataCopyWith<$Res> get metadata;
 }
@@ -932,27 +936,29 @@ class _$TrackerInfoCopyWithImpl<$Res, $Val extends TrackerInfo>
   @override
   $Res call({
     Object? id = null,
-    Object? upload = freezed,
-    Object? download = freezed,
+    Object? upload = null,
+    Object? download = null,
     Object? start = null,
     Object? metadata = null,
     Object? chains = null,
     Object? rule = null,
     Object? rulePayload = null,
+    Object? downloadSpeed = freezed,
+    Object? uploadSpeed = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      upload: freezed == upload
+      upload: null == upload
           ? _value.upload
           : upload // ignore: cast_nullable_to_non_nullable
-              as int?,
-      download: freezed == download
+              as int,
+      download: null == download
           ? _value.download
           : download // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as int,
       start: null == start
           ? _value.start
           : start // ignore: cast_nullable_to_non_nullable
@@ -973,6 +979,14 @@ class _$TrackerInfoCopyWithImpl<$Res, $Val extends TrackerInfo>
           ? _value.rulePayload
           : rulePayload // ignore: cast_nullable_to_non_nullable
               as String,
+      downloadSpeed: freezed == downloadSpeed
+          ? _value.downloadSpeed
+          : downloadSpeed // ignore: cast_nullable_to_non_nullable
+              as int?,
+      uploadSpeed: freezed == uploadSpeed
+          ? _value.uploadSpeed
+          : uploadSpeed // ignore: cast_nullable_to_non_nullable
+              as int?,
     ) as $Val);
   }
 
@@ -997,13 +1011,15 @@ abstract class _$$TrackerInfoImplCopyWith<$Res>
   @useResult
   $Res call(
       {String id,
-      int? upload,
-      int? download,
+      int upload,
+      int download,
       DateTime start,
       Metadata metadata,
       List<String> chains,
       String rule,
-      String rulePayload});
+      String rulePayload,
+      int? downloadSpeed,
+      int? uploadSpeed});
 
   @override
   $MetadataCopyWith<$Res> get metadata;
@@ -1023,27 +1039,29 @@ class __$$TrackerInfoImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? upload = freezed,
-    Object? download = freezed,
+    Object? upload = null,
+    Object? download = null,
     Object? start = null,
     Object? metadata = null,
     Object? chains = null,
     Object? rule = null,
     Object? rulePayload = null,
+    Object? downloadSpeed = freezed,
+    Object? uploadSpeed = freezed,
   }) {
     return _then(_$TrackerInfoImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      upload: freezed == upload
+      upload: null == upload
           ? _value.upload
           : upload // ignore: cast_nullable_to_non_nullable
-              as int?,
-      download: freezed == download
+              as int,
+      download: null == download
           ? _value.download
           : download // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as int,
       start: null == start
           ? _value.start
           : start // ignore: cast_nullable_to_non_nullable
@@ -1064,6 +1082,14 @@ class __$$TrackerInfoImplCopyWithImpl<$Res>
           ? _value.rulePayload
           : rulePayload // ignore: cast_nullable_to_non_nullable
               as String,
+      downloadSpeed: freezed == downloadSpeed
+          ? _value.downloadSpeed
+          : downloadSpeed // ignore: cast_nullable_to_non_nullable
+              as int?,
+      uploadSpeed: freezed == uploadSpeed
+          ? _value.uploadSpeed
+          : uploadSpeed // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 }
@@ -1073,13 +1099,15 @@ class __$$TrackerInfoImplCopyWithImpl<$Res>
 class _$TrackerInfoImpl implements _TrackerInfo {
   const _$TrackerInfoImpl(
       {required this.id,
-      this.upload,
-      this.download,
+      this.upload = 0,
+      this.download = 0,
       required this.start,
       required this.metadata,
       required final List<String> chains,
       required this.rule,
-      required this.rulePayload})
+      required this.rulePayload,
+      this.downloadSpeed,
+      this.uploadSpeed})
       : _chains = chains;
 
   factory _$TrackerInfoImpl.fromJson(Map<String, dynamic> json) =>
@@ -1088,9 +1116,11 @@ class _$TrackerInfoImpl implements _TrackerInfo {
   @override
   final String id;
   @override
-  final int? upload;
+  @JsonKey()
+  final int upload;
   @override
-  final int? download;
+  @JsonKey()
+  final int download;
   @override
   final DateTime start;
   @override
@@ -1107,10 +1137,14 @@ class _$TrackerInfoImpl implements _TrackerInfo {
   final String rule;
   @override
   final String rulePayload;
+  @override
+  final int? downloadSpeed;
+  @override
+  final int? uploadSpeed;
 
   @override
   String toString() {
-    return 'TrackerInfo(id: $id, upload: $upload, download: $download, start: $start, metadata: $metadata, chains: $chains, rule: $rule, rulePayload: $rulePayload)';
+    return 'TrackerInfo(id: $id, upload: $upload, download: $download, start: $start, metadata: $metadata, chains: $chains, rule: $rule, rulePayload: $rulePayload, downloadSpeed: $downloadSpeed, uploadSpeed: $uploadSpeed)';
   }
 
   @override
@@ -1128,7 +1162,11 @@ class _$TrackerInfoImpl implements _TrackerInfo {
             const DeepCollectionEquality().equals(other._chains, _chains) &&
             (identical(other.rule, rule) || other.rule == rule) &&
             (identical(other.rulePayload, rulePayload) ||
-                other.rulePayload == rulePayload));
+                other.rulePayload == rulePayload) &&
+            (identical(other.downloadSpeed, downloadSpeed) ||
+                other.downloadSpeed == downloadSpeed) &&
+            (identical(other.uploadSpeed, uploadSpeed) ||
+                other.uploadSpeed == uploadSpeed));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1142,7 +1180,9 @@ class _$TrackerInfoImpl implements _TrackerInfo {
       metadata,
       const DeepCollectionEquality().hash(_chains),
       rule,
-      rulePayload);
+      rulePayload,
+      downloadSpeed,
+      uploadSpeed);
 
   /// Create a copy of TrackerInfo
   /// with the given fields replaced by the non-null parameter values.
@@ -1163,13 +1203,15 @@ class _$TrackerInfoImpl implements _TrackerInfo {
 abstract class _TrackerInfo implements TrackerInfo {
   const factory _TrackerInfo(
       {required final String id,
-      final int? upload,
-      final int? download,
+      final int upload,
+      final int download,
       required final DateTime start,
       required final Metadata metadata,
       required final List<String> chains,
       required final String rule,
-      required final String rulePayload}) = _$TrackerInfoImpl;
+      required final String rulePayload,
+      final int? downloadSpeed,
+      final int? uploadSpeed}) = _$TrackerInfoImpl;
 
   factory _TrackerInfo.fromJson(Map<String, dynamic> json) =
       _$TrackerInfoImpl.fromJson;
@@ -1177,9 +1219,9 @@ abstract class _TrackerInfo implements TrackerInfo {
   @override
   String get id;
   @override
-  int? get upload;
+  int get upload;
   @override
-  int? get download;
+  int get download;
   @override
   DateTime get start;
   @override
@@ -1190,6 +1232,10 @@ abstract class _TrackerInfo implements TrackerInfo {
   String get rule;
   @override
   String get rulePayload;
+  @override
+  int? get downloadSpeed;
+  @override
+  int? get uploadSpeed;
 
   /// Create a copy of TrackerInfo
   /// with the given fields replaced by the non-null parameter values.

@@ -55,14 +55,16 @@ Map<String, dynamic> _$$MetadataImplToJson(_$MetadataImpl instance) =>
 _$TrackerInfoImpl _$$TrackerInfoImplFromJson(Map<String, dynamic> json) =>
     _$TrackerInfoImpl(
       id: json['id'] as String,
-      upload: (json['upload'] as num?)?.toInt(),
-      download: (json['download'] as num?)?.toInt(),
+      upload: (json['upload'] as num?)?.toInt() ?? 0,
+      download: (json['download'] as num?)?.toInt() ?? 0,
       start: DateTime.parse(json['start'] as String),
       metadata: Metadata.fromJson(json['metadata'] as Map<String, dynamic>),
       chains:
           (json['chains'] as List<dynamic>).map((e) => e as String).toList(),
       rule: json['rule'] as String,
       rulePayload: json['rulePayload'] as String,
+      downloadSpeed: (json['downloadSpeed'] as num?)?.toInt(),
+      uploadSpeed: (json['uploadSpeed'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$$TrackerInfoImplToJson(_$TrackerInfoImpl instance) =>
@@ -75,6 +77,8 @@ Map<String, dynamic> _$$TrackerInfoImplToJson(_$TrackerInfoImpl instance) =>
       'chains': instance.chains,
       'rule': instance.rule,
       'rulePayload': instance.rulePayload,
+      'downloadSpeed': instance.downloadSpeed,
+      'uploadSpeed': instance.uploadSpeed,
     };
 
 _$LogImpl _$$LogImplFromJson(Map<String, dynamic> json) => _$LogImpl(

@@ -40,13 +40,13 @@ class TrackerInfoItem extends ConsumerWidget {
     return await app?.getPackageIcon(connection.metadata.process);
   }
 
-  String _getSourceText(TrackerInfo connection) {
-    final metadata = connection.metadata;
-    final progress =
-        metadata.process.isNotEmpty ? '${metadata.process} · ' : '';
+  String _getSourceText(TrackerInfo trackerInfo) {
+    final progress = trackerInfo.progressText.isNotEmpty
+        ? '${trackerInfo.progressText} · '
+        : '';
     final traffic = Traffic(
-      up: connection.upload,
-      down: connection.download,
+      up: trackerInfo.upload,
+      down: trackerInfo.download,
     );
     return '$progress${traffic.toString()}';
   }
@@ -86,7 +86,7 @@ class TrackerInfoItem extends ConsumerWidget {
           ],
         ),
         const SizedBox(
-          height: 8,
+          height: 6,
         ),
         Text(
           _getSourceText(trackerInfo),
@@ -139,8 +139,8 @@ class TrackerInfoItem extends ConsumerWidget {
             },
             child: Container(
               margin: const EdgeInsets.only(top: 4),
-              width: 48,
-              height: 48,
+              width: 40,
+              height: 40,
               child: FutureBuilder<ImageProvider?>(
                 future: _getPackageIcon(trackerInfo),
                 builder: (_, snapshot) {
@@ -150,8 +150,8 @@ class TrackerInfoItem extends ConsumerWidget {
                     return Image(
                       image: snapshot.data!,
                       gaplessPlayback: true,
-                      width: 48,
-                      height: 48,
+                      width: 40,
+                      height: 40,
                     );
                   }
                 },
@@ -310,11 +310,11 @@ class TrackerInfoDetailView extends StatelessWidget {
           desc: _getDestinationText(),
         ),
       _buildItem(
-        title: '上传',
+        title: '上传量',
         desc: TrafficValue(value: trackerInfo.upload).show,
       ),
       _buildItem(
-        title: '下载',
+        title: '下载量',
         desc: TrafficValue(value: trackerInfo.download).show,
       ),
     ];

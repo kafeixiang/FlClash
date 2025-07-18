@@ -65,13 +65,15 @@ class Metadata with _$Metadata {
 class TrackerInfo with _$TrackerInfo {
   const factory TrackerInfo({
     required String id,
-    int? upload,
-    int? download,
+    @Default(0) int upload,
+    @Default(0) int download,
     required DateTime start,
     required Metadata metadata,
     required List<String> chains,
     required String rule,
     required String rulePayload,
+    int? downloadSpeed,
+    int? uploadSpeed,
   }) = _TrackerInfo;
 
   factory TrackerInfo.fromJson(Map<String, Object?> json) =>
@@ -88,6 +90,15 @@ extension TrackerInfoExt on TrackerInfo {
     text += ips.join('/');
     text += ':${metadata.destinationPort}';
     return text;
+  }
+
+  String get progressText {
+    final process = metadata.process;
+    final uid = metadata.uid;
+    if (uid != 0) {
+      return '$process($uid)';
+    }
+    return process;
   }
 }
 
@@ -233,6 +244,10 @@ class Traffic {
       up: map['up'],
       down: map['down'],
     );
+  }
+
+  String toSpeedText() {
+    return '↑ $up/s   ↓ $down/s';
   }
 
   @override
