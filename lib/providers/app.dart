@@ -45,7 +45,7 @@ class Logs extends _$Logs with AutoDisposeNotifierMixin {
 @riverpod
 class Requests extends _$Requests with AutoDisposeNotifierMixin {
   @override
-  FixedList<Connection> build() {
+  FixedList<TrackerInfo> build() {
     return globalState.appState.requests;
   }
 
@@ -56,7 +56,7 @@ class Requests extends _$Requests with AutoDisposeNotifierMixin {
     );
   }
 
-  void addRequest(Connection value) {
+  void addRequest(TrackerInfo value) {
     state = state.copyWith()..add(value);
   }
 }

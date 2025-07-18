@@ -41,15 +41,20 @@ class Package with _$Package {
 @freezed
 class Metadata with _$Metadata {
   const factory Metadata({
-    required int uid,
-    required String network,
-    required String sourceIP,
-    required String sourcePort,
-    required String destinationIP,
-    required String destinationPort,
-    required String host,
-    required String process,
-    required String remoteDestination,
+    @Default(0) int uid,
+    @Default('') String network,
+    @Default('') String sourceIP,
+    @Default('') String sourcePort,
+    @Default('') String destinationIP,
+    @Default('') String destinationPort,
+    @Default('') String host,
+    @Default('') String process,
+    @Default('') String processPath,
+    @Default('') String remoteDestination,
+    // @Default('') String sourceGeoIP,
+    // @Default('') String destinationGeoIP,
+    // @Default('') String destinationIPASN,
+    // @Default('') String sourceIPASN,
   }) = _Metadata;
 
   factory Metadata.fromJson(Map<String, Object?> json) =>
@@ -57,21 +62,23 @@ class Metadata with _$Metadata {
 }
 
 @freezed
-class Connection with _$Connection {
-  const factory Connection({
+class TrackerInfo with _$TrackerInfo {
+  const factory TrackerInfo({
     required String id,
     int? upload,
     int? download,
     required DateTime start,
     required Metadata metadata,
     required List<String> chains,
-  }) = _Connection;
+    required String rule,
+    required String rulePayload,
+  }) = _TrackerInfo;
 
-  factory Connection.fromJson(Map<String, Object?> json) =>
-      _$ConnectionFromJson(json);
+  factory TrackerInfo.fromJson(Map<String, Object?> json) =>
+      _$TrackerInfoFromJson(json);
 }
 
-extension ConnectionExt on Connection {
+extension TrackerInfoExt on TrackerInfo {
   String get desc {
     var text = '${metadata.network}://';
     final ips = [
@@ -139,26 +146,27 @@ extension LogsStateExt on LogsState {
 }
 
 @freezed
-class ConnectionsState with _$ConnectionsState {
-  const factory ConnectionsState({
-    @Default([]) List<Connection> connections,
+class TrackerInfosState with _$TrackerInfosState {
+  const factory TrackerInfosState({
+    @Default([]) List<TrackerInfo> trackerInfos,
     @Default([]) List<String> keywords,
     @Default('') String query,
     @Default(true) bool autoScrollToEnd,
-  }) = _ConnectionsState;
+  }) = _TrackerInfosState;
 }
 
-extension ConnectionsStateExt on ConnectionsState {
-  List<Connection> get list {
+extension TrackerInfosStateExt on TrackerInfosState {
+  List<TrackerInfo> get list {
     final lowerQuery = query.toLowerCase().trim();
     final lowQuery = query.toLowerCase();
-    return connections.where((connection) {
-      final chains = connection.chains;
-      final process = connection.metadata.process;
-      final networkText = connection.metadata.network.toLowerCase();
-      final hostText = connection.metadata.host.toLowerCase();
-      final destinationIPText = connection.metadata.destinationIP.toLowerCase();
-      final processText = connection.metadata.process.toLowerCase();
+    return trackerInfos.where((trackerInfo) {
+      final chains = trackerInfo.chains;
+      final process = trackerInfo.metadata.process;
+      final networkText = trackerInfo.metadata.network.toLowerCase();
+      final hostText = trackerInfo.metadata.host.toLowerCase();
+      final destinationIPText =
+          trackerInfo.metadata.destinationIP.toLowerCase();
+      final processText = trackerInfo.metadata.process.toLowerCase();
       final chainsText = chains.join('').toLowerCase();
       return {...chains, process}.containsAll(keywords) &&
           (networkText.contains(lowerQuery) ||

@@ -30,7 +30,7 @@ mixin _$AppState {
   int? get runTime => throw _privateConstructorUsedError;
   List<ExternalProvider> get providers => throw _privateConstructorUsedError;
   String? get localIp => throw _privateConstructorUsedError;
-  FixedList<Connection> get requests => throw _privateConstructorUsedError;
+  FixedList<TrackerInfo> get requests => throw _privateConstructorUsedError;
   int get version => throw _privateConstructorUsedError;
   FixedList<Log> get logs => throw _privateConstructorUsedError;
   FixedList<Traffic> get traffics => throw _privateConstructorUsedError;
@@ -66,7 +66,7 @@ abstract class $AppStateCopyWith<$Res> {
       int? runTime,
       List<ExternalProvider> providers,
       String? localIp,
-      FixedList<Connection> requests,
+      FixedList<TrackerInfo> requests,
       int version,
       FixedList<Log> logs,
       FixedList<Traffic> traffics,
@@ -169,7 +169,7 @@ class _$AppStateCopyWithImpl<$Res, $Val extends AppState>
       requests: null == requests
           ? _value.requests
           : requests // ignore: cast_nullable_to_non_nullable
-              as FixedList<Connection>,
+              as FixedList<TrackerInfo>,
       version: null == version
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
@@ -224,7 +224,7 @@ abstract class _$$AppStateImplCopyWith<$Res>
       int? runTime,
       List<ExternalProvider> providers,
       String? localIp,
-      FixedList<Connection> requests,
+      FixedList<TrackerInfo> requests,
       int version,
       FixedList<Log> logs,
       FixedList<Traffic> traffics,
@@ -325,7 +325,7 @@ class __$$AppStateImplCopyWithImpl<$Res>
       requests: null == requests
           ? _value.requests
           : requests // ignore: cast_nullable_to_non_nullable
-              as FixedList<Connection>,
+              as FixedList<TrackerInfo>,
       version: null == version
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
@@ -448,7 +448,7 @@ class _$AppStateImpl implements _AppState {
   @override
   final String? localIp;
   @override
-  final FixedList<Connection> requests;
+  final FixedList<TrackerInfo> requests;
   @override
   final int version;
   @override
@@ -560,7 +560,7 @@ abstract class _AppState implements AppState {
           final int? runTime,
           final List<ExternalProvider> providers,
           final String? localIp,
-          required final FixedList<Connection> requests,
+          required final FixedList<TrackerInfo> requests,
           required final int version,
           required final FixedList<Log> logs,
           required final FixedList<Traffic> traffics,
@@ -597,7 +597,7 @@ abstract class _AppState implements AppState {
   @override
   String? get localIp;
   @override
-  FixedList<Connection> get requests;
+  FixedList<TrackerInfo> get requests;
   @override
   int get version;
   @override

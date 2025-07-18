@@ -133,11 +133,11 @@ class ClashCore {
     return await clashInterface.changeProxy(changeProxyParams);
   }
 
-  Future<List<Connection>> getConnections() async {
+  Future<List<TrackerInfo>> getConnections() async {
     final res = await clashInterface.getConnections();
     final connectionsData = json.decode(res) as Map;
     final connectionsRaw = connectionsData['connections'] as List? ?? [];
-    return connectionsRaw.map((e) => Connection.fromJson(e)).toList();
+    return connectionsRaw.map((e) => TrackerInfo.fromJson(e)).toList();
   }
 
   void closeConnection(String id) {

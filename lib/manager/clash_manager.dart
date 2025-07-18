@@ -90,9 +90,9 @@ class _ClashContainerState extends ConsumerState<ClashManager>
   }
 
   @override
-  void onRequest(Connection connection) async {
-    ref.read(requestsProvider.notifier).addRequest(connection);
-    super.onRequest(connection);
+  void onRequest(TrackerInfo trackerInfo) async {
+    ref.read(requestsProvider.notifier).addRequest(trackerInfo);
+    super.onRequest(trackerInfo);
   }
 
   @override

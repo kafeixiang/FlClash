@@ -17,8 +17,8 @@ class ConnectionsView extends ConsumerStatefulWidget {
 }
 
 class _ConnectionsViewState extends ConsumerState<ConnectionsView> {
-  final _connectionsStateNotifier = ValueNotifier<ConnectionsState>(
-    const ConnectionsState(),
+  final _connectionsStateNotifier = ValueNotifier<TrackerInfosState>(
+    const TrackerInfosState(),
   );
   final ScrollController _scrollController = ScrollController();
 
@@ -29,10 +29,7 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView> {
       IconButton(
         onPressed: () async {
           clashCore.closeConnections();
-          _connectionsStateNotifier.value =
-              _connectionsStateNotifier.value.copyWith(
-            connections: await clashCore.getConnections(),
-          );
+          await _updateConnections();
         },
         icon: const Icon(Icons.delete_sweep_outlined),
       ),
@@ -50,15 +47,12 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView> {
         _connectionsStateNotifier.value.copyWith(keywords: keywords);
   }
 
-  Future<void> _updateConnections() async {
+  Future<void> _updateConnectionsTask() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (mounted) {
-        _connectionsStateNotifier.value =
-            _connectionsStateNotifier.value.copyWith(
-          connections: await clashCore.getConnections(),
-        );
+        await _updateConnections();
         timer = Timer(Duration(seconds: 1), () async {
-          _updateConnections();
+          _updateConnectionsTask();
         });
       }
     });
@@ -67,14 +61,18 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView> {
   @override
   void initState() {
     super.initState();
-    _updateConnections();
+    _updateConnectionsTask();
+  }
+
+  Future<void> _updateConnections() async {
+    _connectionsStateNotifier.value = _connectionsStateNotifier.value.copyWith(
+      trackerInfos: await clashCore.getConnections(),
+    );
   }
 
   Future<void> _handleBlockConnection(String id) async {
     clashCore.closeConnection(id);
-    _connectionsStateNotifier.value = _connectionsStateNotifier.value.copyWith(
-      connections: await clashCore.getConnections(),
-    );
+    await _updateConnections();
   }
 
   @override
@@ -93,7 +91,7 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView> {
       onKeywordsUpdate: _onKeywordsUpdate,
       searchState: AppBarSearchState(onSearch: _onSearch),
       actions: _buildActions(),
-      body: ValueListenableBuilder<ConnectionsState>(
+      body: ValueListenableBuilder<TrackerInfosState>(
         valueListenable: _connectionsStateNotifier,
         builder: (context, state, __) {
           final connections = state.list;
@@ -104,9 +102,9 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView> {
           }
           final items = connections
               .map<Widget>(
-                (connection) => ConnectionItem(
-                  key: Key(connection.id),
-                  connection: connection,
+                (trackerInfo) => TrackerInfoItem(
+                  key: Key(trackerInfo.id),
+                  trackerInfo: trackerInfo,
                   onClickKeyword: (value) {
                     context.commonScaffoldState?.addKeyword(value);
                   },
@@ -114,7 +112,7 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView> {
                     visualDensity: VisualDensity.compact,
                     icon: const Icon(Icons.block),
                     onPressed: () {
-                      _handleBlockConnection(connection.id);
+                      _handleBlockConnection(trackerInfo.id);
                     },
                   ),
                 ),
@@ -134,7 +132,7 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView> {
               if (index.isOdd) {
                 return 0;
               }
-              return ConnectionItem.height;
+              return TrackerInfoItem.height;
             },
             itemCount: connections.length,
           );

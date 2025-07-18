@@ -26,15 +26,16 @@ Map<String, dynamic> _$$PackageImplToJson(_$PackageImpl instance) =>
 
 _$MetadataImpl _$$MetadataImplFromJson(Map<String, dynamic> json) =>
     _$MetadataImpl(
-      uid: (json['uid'] as num).toInt(),
-      network: json['network'] as String,
-      sourceIP: json['sourceIP'] as String,
-      sourcePort: json['sourcePort'] as String,
-      destinationIP: json['destinationIP'] as String,
-      destinationPort: json['destinationPort'] as String,
-      host: json['host'] as String,
-      process: json['process'] as String,
-      remoteDestination: json['remoteDestination'] as String,
+      uid: (json['uid'] as num?)?.toInt() ?? 0,
+      network: json['network'] as String? ?? '',
+      sourceIP: json['sourceIP'] as String? ?? '',
+      sourcePort: json['sourcePort'] as String? ?? '',
+      destinationIP: json['destinationIP'] as String? ?? '',
+      destinationPort: json['destinationPort'] as String? ?? '',
+      host: json['host'] as String? ?? '',
+      process: json['process'] as String? ?? '',
+      processPath: json['processPath'] as String? ?? '',
+      remoteDestination: json['remoteDestination'] as String? ?? '',
     );
 
 Map<String, dynamic> _$$MetadataImplToJson(_$MetadataImpl instance) =>
@@ -47,11 +48,12 @@ Map<String, dynamic> _$$MetadataImplToJson(_$MetadataImpl instance) =>
       'destinationPort': instance.destinationPort,
       'host': instance.host,
       'process': instance.process,
+      'processPath': instance.processPath,
       'remoteDestination': instance.remoteDestination,
     };
 
-_$ConnectionImpl _$$ConnectionImplFromJson(Map<String, dynamic> json) =>
-    _$ConnectionImpl(
+_$TrackerInfoImpl _$$TrackerInfoImplFromJson(Map<String, dynamic> json) =>
+    _$TrackerInfoImpl(
       id: json['id'] as String,
       upload: (json['upload'] as num?)?.toInt(),
       download: (json['download'] as num?)?.toInt(),
@@ -59,9 +61,11 @@ _$ConnectionImpl _$$ConnectionImplFromJson(Map<String, dynamic> json) =>
       metadata: Metadata.fromJson(json['metadata'] as Map<String, dynamic>),
       chains:
           (json['chains'] as List<dynamic>).map((e) => e as String).toList(),
+      rule: json['rule'] as String,
+      rulePayload: json['rulePayload'] as String,
     );
 
-Map<String, dynamic> _$$ConnectionImplToJson(_$ConnectionImpl instance) =>
+Map<String, dynamic> _$$TrackerInfoImplToJson(_$TrackerInfoImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'upload': instance.upload,
@@ -69,6 +73,8 @@ Map<String, dynamic> _$$ConnectionImplToJson(_$ConnectionImpl instance) =>
       'start': instance.start.toIso8601String(),
       'metadata': instance.metadata,
       'chains': instance.chains,
+      'rule': instance.rule,
+      'rulePayload': instance.rulePayload,
     };
 
 _$LogImpl _$$LogImplFromJson(Map<String, dynamic> json) => _$LogImpl(

@@ -26,7 +26,7 @@ class AppState with _$AppState {
     int? runTime,
     @Default([]) List<ExternalProvider> providers,
     String? localIp,
-    required FixedList<Connection> requests,
+    required FixedList<TrackerInfo> requests,
     required int version,
     required FixedList<Log> logs,
     required FixedList<Traffic> traffics,

@@ -12,7 +12,7 @@ abstract mixin class AppMessageListener {
 
   void onDelay(Delay delay) {}
 
-  void onRequest(Connection connection) {}
+  void onRequest(TrackerInfo connection) {}
 
   void onLoaded(String providerName) {}
 }

@@ -10,14 +10,14 @@ import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ConnectionItem extends ConsumerWidget {
-  final Connection connection;
+class TrackerInfoItem extends ConsumerWidget {
+  final TrackerInfo trackerInfo;
   final Function(String)? onClickKeyword;
   final Widget? trailing;
 
-  const ConnectionItem({
+  const TrackerInfoItem({
     super.key,
-    required this.connection,
+    required this.trackerInfo,
     this.onClickKeyword,
     this.trailing,
   });
@@ -36,11 +36,11 @@ class ConnectionItem extends ConsumerWidget {
         16 * 2;
   }
 
-  Future<ImageProvider?> _getPackageIcon(Connection connection) async {
+  Future<ImageProvider?> _getPackageIcon(TrackerInfo connection) async {
     return await app?.getPackageIcon(connection.metadata.process);
   }
 
-  String _getSourceText(Connection connection) {
+  String _getSourceText(TrackerInfo connection) {
     final metadata = connection.metadata;
     final progress =
         metadata.process.isNotEmpty ? '${metadata.process} · ' : '';
@@ -48,7 +48,7 @@ class ConnectionItem extends ConsumerWidget {
       up: connection.upload,
       down: connection.download,
     );
-    return '$progress ${traffic.toString()}';
+    return '$progress${traffic.toString()}';
   }
 
   @override
@@ -71,14 +71,14 @@ class ConnectionItem extends ConsumerWidget {
             Flexible(
               flex: 1,
               child: Text(
-                connection.desc,
+                trackerInfo.desc,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: context.textTheme.bodyLarge,
               ),
             ),
             Text(
-              connection.start.lastUpdateTimeDesc,
+              trackerInfo.start.lastUpdateTimeDesc,
               style: context.textTheme.bodySmall?.copyWith(
                 color: context.colorScheme.onSurfaceVariant,
               ),
@@ -89,7 +89,7 @@ class ConnectionItem extends ConsumerWidget {
           height: 8,
         ),
         Text(
-          _getSourceText(connection),
+          _getSourceText(trackerInfo),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: context.textTheme.bodyMedium?.copyWith(
@@ -112,9 +112,9 @@ class ConnectionItem extends ConsumerWidget {
               ),
               padding: EdgeInsets.zero,
               scrollDirection: Axis.horizontal,
-              itemCount: connection.chains.length,
+              itemCount: trackerInfo.chains.length,
               itemBuilder: (_, index) {
-                final chain = connection.chains[index];
+                final chain = trackerInfo.chains[index];
                 return CommonChip(
                   label: chain,
                   onPressed: () {
@@ -133,7 +133,7 @@ class ConnectionItem extends ConsumerWidget {
         ? GestureDetector(
             onTap: () {
               if (onClickKeyword == null) return;
-              final process = connection.metadata.process;
+              final process = trackerInfo.metadata.process;
               if (process.isEmpty) return;
               onClickKeyword!(process);
             },
@@ -142,7 +142,7 @@ class ConnectionItem extends ConsumerWidget {
               width: 48,
               height: 48,
               child: FutureBuilder<ImageProvider?>(
-                future: _getPackageIcon(connection),
+                future: _getPackageIcon(trackerInfo),
                 builder: (_, snapshot) {
                   if (!snapshot.hasData && snapshot.data == null) {
                     return Container();
@@ -164,7 +164,20 @@ class ConnectionItem extends ConsumerWidget {
         horizontal: 16,
         vertical: 4,
       ),
-      onTap: () {},
+      onTap: () {
+        showExtend(
+          context,
+          builder: (_, type) {
+            return AdaptiveSheetScaffold(
+              type: type,
+              body: TrackerInfoDetailView(
+                trackerInfo: trackerInfo,
+              ),
+              title: '连接详情',
+            );
+          },
+        );
+      },
       title: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -185,6 +198,132 @@ class ConnectionItem extends ConsumerWidget {
           ),
           subTitle,
         ],
+      ),
+    );
+  }
+}
+
+class TrackerInfoDetailView extends StatelessWidget {
+  final TrackerInfo trackerInfo;
+
+  const TrackerInfoDetailView({
+    super.key,
+    required this.trackerInfo,
+  });
+
+  String _getRuleText() {
+    final rule = trackerInfo.rule;
+    final rulePayload = trackerInfo.rulePayload;
+    if (rulePayload.isNotEmpty) {
+      return '$rule($rulePayload)';
+    }
+    return rule;
+  }
+
+  String _getProgressText() {
+    final process = trackerInfo.metadata.process;
+    final uid = trackerInfo.metadata.uid;
+    if (uid != 0) {
+      return '$process($uid)';
+    }
+    return process;
+  }
+
+  String _getSourceText() {
+    final sourceIP = trackerInfo.metadata.sourceIP;
+    if (sourceIP.isEmpty) {
+      return '';
+    }
+    final sourcePort = trackerInfo.metadata.sourcePort;
+    if (sourcePort.isNotEmpty) {
+      return '$sourceIP:$sourcePort';
+    }
+    return sourceIP;
+  }
+
+  String _getDestinationText() {
+    final destinationIP = trackerInfo.metadata.destinationIP;
+    if (destinationIP.isEmpty) {
+      return '';
+    }
+    final destinationPort = trackerInfo.metadata.destinationPort;
+    if (destinationPort.isNotEmpty) {
+      return '$destinationIP:$destinationPort';
+    }
+    return destinationIP;
+  }
+
+  Widget _buildItem({
+    required String title,
+    required String desc,
+  }) {
+    return ListItem(
+      title: Row(
+        spacing: 72,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(title),
+          Flexible(
+            child: Text(
+              desc,
+              textAlign: TextAlign.end,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final items = [
+      _buildItem(
+        title: '创建时间',
+        desc: trackerInfo.start.showFull,
+      ),
+      if (_getProgressText().isNotEmpty)
+        _buildItem(
+          title: '进程',
+          desc: _getProgressText(),
+        ),
+      _buildItem(
+        title: '连接类型',
+        desc: trackerInfo.metadata.network,
+      ),
+      _buildItem(
+        title: '规则',
+        desc: _getRuleText(),
+      ),
+      if (trackerInfo.metadata.host.isNotEmpty)
+        _buildItem(
+          title: '域名',
+          desc: trackerInfo.metadata.host,
+        ),
+      if (_getSourceText().isNotEmpty)
+        _buildItem(
+          title: '来源',
+          desc: _getSourceText(),
+        ),
+      if (_getDestinationText().isNotEmpty)
+        _buildItem(
+          title: '目标',
+          desc: _getDestinationText(),
+        ),
+      _buildItem(
+        title: '上传',
+        desc: TrafficValue(value: trackerInfo.upload).show,
+      ),
+      _buildItem(
+        title: '下载',
+        desc: TrafficValue(value: trackerInfo.download).show,
+      ),
+    ];
+    return SelectionArea(
+      child: ListView.builder(
+        itemCount: items.length,
+        itemBuilder: (_, index) {
+          return items[index];
+        },
       ),
     );
   }

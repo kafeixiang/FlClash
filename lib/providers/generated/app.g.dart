@@ -100,12 +100,12 @@ final logsProvider = AutoDisposeNotifierProvider<Logs, FixedList<Log>>.internal(
 );
 
 typedef _$Logs = AutoDisposeNotifier<FixedList<Log>>;
-String _$requestsHash() => r'96fd89353c2f1e5e50f62e4b0244e543eab77261';
+String _$requestsHash() => r'526f2c1da1347fd2e6e3e23aac0335fcfe0cb28a';
 
 /// See also [Requests].
 @ProviderFor(Requests)
 final requestsProvider =
-    AutoDisposeNotifierProvider<Requests, FixedList<Connection>>.internal(
+    AutoDisposeNotifierProvider<Requests, FixedList<TrackerInfo>>.internal(
   Requests.new,
   name: r'requestsProvider',
   debugGetCreateSourceHash:
@@ -114,7 +114,7 @@ final requestsProvider =
   allTransitiveDependencies: null,
 );
 
-typedef _$Requests = AutoDisposeNotifier<FixedList<Connection>>;
+typedef _$Requests = AutoDisposeNotifier<FixedList<TrackerInfo>>;
 String _$providersHash() => r'4292240629a99470b2e72426dde3b9049b9b57e0';
 
 /// See also [Providers].

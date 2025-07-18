@@ -17,10 +17,10 @@ class RequestsView extends ConsumerStatefulWidget {
 }
 
 class _RequestsViewState extends ConsumerState<RequestsView> {
-  final _requestsStateNotifier = ValueNotifier<ConnectionsState>(
-    const ConnectionsState(),
+  final _requestsStateNotifier = ValueNotifier<TrackerInfosState>(
+    const TrackerInfosState(),
   );
-  List<Connection> _requests = [];
+  List<TrackerInfo> _requests = [];
   late ScrollController _scrollController;
 
   void _onSearch(String value) {
@@ -39,10 +39,10 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
     super.initState();
     _requests = globalState.appState.requests.list;
     _scrollController = ScrollController(
-      initialScrollOffset: _requests.length * ConnectionItem.height,
+      initialScrollOffset: _requests.length * TrackerInfoItem.height,
     );
     _requestsStateNotifier.value = _requestsStateNotifier.value.copyWith(
-      connections: _requests,
+      trackerInfos: _requests,
     );
     ref.listenManual(
       requestsProvider.select((state) => state.list),
@@ -64,9 +64,9 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
       if (!mounted) {
         return;
       }
-      final isEquality = connectionListEquality.equals(
+      final isEquality = trackerInfoListEquality.equals(
         _requests,
-        _requestsStateNotifier.value.connections,
+        _requestsStateNotifier.value.trackerInfos,
       );
       if (isEquality) {
         return;
@@ -74,7 +74,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           _requestsStateNotifier.value = _requestsStateNotifier.value.copyWith(
-            connections: _requests,
+            trackerInfos: _requests,
           );
         }
       });
@@ -116,7 +116,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
       actions: _buildActions(),
       searchState: AppBarSearchState(onSearch: _onSearch),
       onKeywordsUpdate: _onKeywordsUpdate,
-      body: ValueListenableBuilder<ConnectionsState>(
+      body: ValueListenableBuilder<TrackerInfosState>(
         valueListenable: _requestsStateNotifier,
         builder: (context, state, __) {
           final requests = state.list;
@@ -127,9 +127,9 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
           }
           final items = requests
               .map<Widget>(
-                (connection) => ConnectionItem(
-                  key: Key(connection.id),
-                  connection: connection,
+                (trackerInfo) => TrackerInfoItem(
+                  key: Key(trackerInfo.id),
+                  trackerInfo: trackerInfo,
                   onClickKeyword: (value) {
                     context.commonScaffoldState?.addKeyword(value);
                   },
@@ -168,7 +168,7 @@ class _RequestsViewState extends ConsumerState<RequestsView> {
                     if (index.isOdd) {
                       return 0;
                     }
-                    return ConnectionItem.height;
+                    return TrackerInfoItem.height;
                   },
                   itemCount: items.length,
                 ),

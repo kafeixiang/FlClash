@@ -527,6 +527,7 @@ mixin _$Metadata {
   String get destinationPort => throw _privateConstructorUsedError;
   String get host => throw _privateConstructorUsedError;
   String get process => throw _privateConstructorUsedError;
+  String get processPath => throw _privateConstructorUsedError;
   String get remoteDestination => throw _privateConstructorUsedError;
 
   /// Serializes this Metadata to a JSON map.
@@ -553,6 +554,7 @@ abstract class $MetadataCopyWith<$Res> {
       String destinationPort,
       String host,
       String process,
+      String processPath,
       String remoteDestination});
 }
 
@@ -579,6 +581,7 @@ class _$MetadataCopyWithImpl<$Res, $Val extends Metadata>
     Object? destinationPort = null,
     Object? host = null,
     Object? process = null,
+    Object? processPath = null,
     Object? remoteDestination = null,
   }) {
     return _then(_value.copyWith(
@@ -614,6 +617,10 @@ class _$MetadataCopyWithImpl<$Res, $Val extends Metadata>
           ? _value.process
           : process // ignore: cast_nullable_to_non_nullable
               as String,
+      processPath: null == processPath
+          ? _value.processPath
+          : processPath // ignore: cast_nullable_to_non_nullable
+              as String,
       remoteDestination: null == remoteDestination
           ? _value.remoteDestination
           : remoteDestination // ignore: cast_nullable_to_non_nullable
@@ -639,6 +646,7 @@ abstract class _$$MetadataImplCopyWith<$Res>
       String destinationPort,
       String host,
       String process,
+      String processPath,
       String remoteDestination});
 }
 
@@ -663,6 +671,7 @@ class __$$MetadataImplCopyWithImpl<$Res>
     Object? destinationPort = null,
     Object? host = null,
     Object? process = null,
+    Object? processPath = null,
     Object? remoteDestination = null,
   }) {
     return _then(_$MetadataImpl(
@@ -698,6 +707,10 @@ class __$$MetadataImplCopyWithImpl<$Res>
           ? _value.process
           : process // ignore: cast_nullable_to_non_nullable
               as String,
+      processPath: null == processPath
+          ? _value.processPath
+          : processPath // ignore: cast_nullable_to_non_nullable
+              as String,
       remoteDestination: null == remoteDestination
           ? _value.remoteDestination
           : remoteDestination // ignore: cast_nullable_to_non_nullable
@@ -710,41 +723,54 @@ class __$$MetadataImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$MetadataImpl implements _Metadata {
   const _$MetadataImpl(
-      {required this.uid,
-      required this.network,
-      required this.sourceIP,
-      required this.sourcePort,
-      required this.destinationIP,
-      required this.destinationPort,
-      required this.host,
-      required this.process,
-      required this.remoteDestination});
+      {this.uid = 0,
+      this.network = '',
+      this.sourceIP = '',
+      this.sourcePort = '',
+      this.destinationIP = '',
+      this.destinationPort = '',
+      this.host = '',
+      this.process = '',
+      this.processPath = '',
+      this.remoteDestination = ''});
 
   factory _$MetadataImpl.fromJson(Map<String, dynamic> json) =>
       _$$MetadataImplFromJson(json);
 
   @override
+  @JsonKey()
   final int uid;
   @override
+  @JsonKey()
   final String network;
   @override
+  @JsonKey()
   final String sourceIP;
   @override
+  @JsonKey()
   final String sourcePort;
   @override
+  @JsonKey()
   final String destinationIP;
   @override
+  @JsonKey()
   final String destinationPort;
   @override
+  @JsonKey()
   final String host;
   @override
+  @JsonKey()
   final String process;
   @override
+  @JsonKey()
+  final String processPath;
+  @override
+  @JsonKey()
   final String remoteDestination;
 
   @override
   String toString() {
-    return 'Metadata(uid: $uid, network: $network, sourceIP: $sourceIP, sourcePort: $sourcePort, destinationIP: $destinationIP, destinationPort: $destinationPort, host: $host, process: $process, remoteDestination: $remoteDestination)';
+    return 'Metadata(uid: $uid, network: $network, sourceIP: $sourceIP, sourcePort: $sourcePort, destinationIP: $destinationIP, destinationPort: $destinationPort, host: $host, process: $process, processPath: $processPath, remoteDestination: $remoteDestination)';
   }
 
   @override
@@ -764,6 +790,8 @@ class _$MetadataImpl implements _Metadata {
                 other.destinationPort == destinationPort) &&
             (identical(other.host, host) || other.host == host) &&
             (identical(other.process, process) || other.process == process) &&
+            (identical(other.processPath, processPath) ||
+                other.processPath == processPath) &&
             (identical(other.remoteDestination, remoteDestination) ||
                 other.remoteDestination == remoteDestination));
   }
@@ -780,6 +808,7 @@ class _$MetadataImpl implements _Metadata {
       destinationPort,
       host,
       process,
+      processPath,
       remoteDestination);
 
   /// Create a copy of Metadata
@@ -800,15 +829,16 @@ class _$MetadataImpl implements _Metadata {
 
 abstract class _Metadata implements Metadata {
   const factory _Metadata(
-      {required final int uid,
-      required final String network,
-      required final String sourceIP,
-      required final String sourcePort,
-      required final String destinationIP,
-      required final String destinationPort,
-      required final String host,
-      required final String process,
-      required final String remoteDestination}) = _$MetadataImpl;
+      {final int uid,
+      final String network,
+      final String sourceIP,
+      final String sourcePort,
+      final String destinationIP,
+      final String destinationPort,
+      final String host,
+      final String process,
+      final String processPath,
+      final String remoteDestination}) = _$MetadataImpl;
 
   factory _Metadata.fromJson(Map<String, dynamic> json) =
       _$MetadataImpl.fromJson;
@@ -830,6 +860,8 @@ abstract class _Metadata implements Metadata {
   @override
   String get process;
   @override
+  String get processPath;
+  @override
   String get remoteDestination;
 
   /// Create a copy of Metadata
@@ -840,34 +872,36 @@ abstract class _Metadata implements Metadata {
       throw _privateConstructorUsedError;
 }
 
-Connection _$ConnectionFromJson(Map<String, dynamic> json) {
-  return _Connection.fromJson(json);
+TrackerInfo _$TrackerInfoFromJson(Map<String, dynamic> json) {
+  return _TrackerInfo.fromJson(json);
 }
 
 /// @nodoc
-mixin _$Connection {
+mixin _$TrackerInfo {
   String get id => throw _privateConstructorUsedError;
   int? get upload => throw _privateConstructorUsedError;
   int? get download => throw _privateConstructorUsedError;
   DateTime get start => throw _privateConstructorUsedError;
   Metadata get metadata => throw _privateConstructorUsedError;
   List<String> get chains => throw _privateConstructorUsedError;
+  String get rule => throw _privateConstructorUsedError;
+  String get rulePayload => throw _privateConstructorUsedError;
 
-  /// Serializes this Connection to a JSON map.
+  /// Serializes this TrackerInfo to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
-  /// Create a copy of Connection
+  /// Create a copy of TrackerInfo
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $ConnectionCopyWith<Connection> get copyWith =>
+  $TrackerInfoCopyWith<TrackerInfo> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $ConnectionCopyWith<$Res> {
-  factory $ConnectionCopyWith(
-          Connection value, $Res Function(Connection) then) =
-      _$ConnectionCopyWithImpl<$Res, Connection>;
+abstract class $TrackerInfoCopyWith<$Res> {
+  factory $TrackerInfoCopyWith(
+          TrackerInfo value, $Res Function(TrackerInfo) then) =
+      _$TrackerInfoCopyWithImpl<$Res, TrackerInfo>;
   @useResult
   $Res call(
       {String id,
@@ -875,22 +909,24 @@ abstract class $ConnectionCopyWith<$Res> {
       int? download,
       DateTime start,
       Metadata metadata,
-      List<String> chains});
+      List<String> chains,
+      String rule,
+      String rulePayload});
 
   $MetadataCopyWith<$Res> get metadata;
 }
 
 /// @nodoc
-class _$ConnectionCopyWithImpl<$Res, $Val extends Connection>
-    implements $ConnectionCopyWith<$Res> {
-  _$ConnectionCopyWithImpl(this._value, this._then);
+class _$TrackerInfoCopyWithImpl<$Res, $Val extends TrackerInfo>
+    implements $TrackerInfoCopyWith<$Res> {
+  _$TrackerInfoCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of Connection
+  /// Create a copy of TrackerInfo
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -901,6 +937,8 @@ class _$ConnectionCopyWithImpl<$Res, $Val extends Connection>
     Object? start = null,
     Object? metadata = null,
     Object? chains = null,
+    Object? rule = null,
+    Object? rulePayload = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -927,10 +965,18 @@ class _$ConnectionCopyWithImpl<$Res, $Val extends Connection>
           ? _value.chains
           : chains // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      rule: null == rule
+          ? _value.rule
+          : rule // ignore: cast_nullable_to_non_nullable
+              as String,
+      rulePayload: null == rulePayload
+          ? _value.rulePayload
+          : rulePayload // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 
-  /// Create a copy of Connection
+  /// Create a copy of TrackerInfo
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -942,11 +988,11 @@ class _$ConnectionCopyWithImpl<$Res, $Val extends Connection>
 }
 
 /// @nodoc
-abstract class _$$ConnectionImplCopyWith<$Res>
-    implements $ConnectionCopyWith<$Res> {
-  factory _$$ConnectionImplCopyWith(
-          _$ConnectionImpl value, $Res Function(_$ConnectionImpl) then) =
-      __$$ConnectionImplCopyWithImpl<$Res>;
+abstract class _$$TrackerInfoImplCopyWith<$Res>
+    implements $TrackerInfoCopyWith<$Res> {
+  factory _$$TrackerInfoImplCopyWith(
+          _$TrackerInfoImpl value, $Res Function(_$TrackerInfoImpl) then) =
+      __$$TrackerInfoImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -955,21 +1001,23 @@ abstract class _$$ConnectionImplCopyWith<$Res>
       int? download,
       DateTime start,
       Metadata metadata,
-      List<String> chains});
+      List<String> chains,
+      String rule,
+      String rulePayload});
 
   @override
   $MetadataCopyWith<$Res> get metadata;
 }
 
 /// @nodoc
-class __$$ConnectionImplCopyWithImpl<$Res>
-    extends _$ConnectionCopyWithImpl<$Res, _$ConnectionImpl>
-    implements _$$ConnectionImplCopyWith<$Res> {
-  __$$ConnectionImplCopyWithImpl(
-      _$ConnectionImpl _value, $Res Function(_$ConnectionImpl) _then)
+class __$$TrackerInfoImplCopyWithImpl<$Res>
+    extends _$TrackerInfoCopyWithImpl<$Res, _$TrackerInfoImpl>
+    implements _$$TrackerInfoImplCopyWith<$Res> {
+  __$$TrackerInfoImplCopyWithImpl(
+      _$TrackerInfoImpl _value, $Res Function(_$TrackerInfoImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of Connection
+  /// Create a copy of TrackerInfo
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -980,8 +1028,10 @@ class __$$ConnectionImplCopyWithImpl<$Res>
     Object? start = null,
     Object? metadata = null,
     Object? chains = null,
+    Object? rule = null,
+    Object? rulePayload = null,
   }) {
-    return _then(_$ConnectionImpl(
+    return _then(_$TrackerInfoImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -1006,24 +1056,34 @@ class __$$ConnectionImplCopyWithImpl<$Res>
           ? _value._chains
           : chains // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      rule: null == rule
+          ? _value.rule
+          : rule // ignore: cast_nullable_to_non_nullable
+              as String,
+      rulePayload: null == rulePayload
+          ? _value.rulePayload
+          : rulePayload // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$ConnectionImpl implements _Connection {
-  const _$ConnectionImpl(
+class _$TrackerInfoImpl implements _TrackerInfo {
+  const _$TrackerInfoImpl(
       {required this.id,
       this.upload,
       this.download,
       required this.start,
       required this.metadata,
-      required final List<String> chains})
+      required final List<String> chains,
+      required this.rule,
+      required this.rulePayload})
       : _chains = chains;
 
-  factory _$ConnectionImpl.fromJson(Map<String, dynamic> json) =>
-      _$$ConnectionImplFromJson(json);
+  factory _$TrackerInfoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$TrackerInfoImplFromJson(json);
 
   @override
   final String id;
@@ -1044,15 +1104,20 @@ class _$ConnectionImpl implements _Connection {
   }
 
   @override
+  final String rule;
+  @override
+  final String rulePayload;
+
+  @override
   String toString() {
-    return 'Connection(id: $id, upload: $upload, download: $download, start: $start, metadata: $metadata, chains: $chains)';
+    return 'TrackerInfo(id: $id, upload: $upload, download: $download, start: $start, metadata: $metadata, chains: $chains, rule: $rule, rulePayload: $rulePayload)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ConnectionImpl &&
+            other is _$TrackerInfoImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.upload, upload) || other.upload == upload) &&
             (identical(other.download, download) ||
@@ -1060,41 +1125,54 @@ class _$ConnectionImpl implements _Connection {
             (identical(other.start, start) || other.start == start) &&
             (identical(other.metadata, metadata) ||
                 other.metadata == metadata) &&
-            const DeepCollectionEquality().equals(other._chains, _chains));
+            const DeepCollectionEquality().equals(other._chains, _chains) &&
+            (identical(other.rule, rule) || other.rule == rule) &&
+            (identical(other.rulePayload, rulePayload) ||
+                other.rulePayload == rulePayload));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, upload, download, start,
-      metadata, const DeepCollectionEquality().hash(_chains));
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      upload,
+      download,
+      start,
+      metadata,
+      const DeepCollectionEquality().hash(_chains),
+      rule,
+      rulePayload);
 
-  /// Create a copy of Connection
+  /// Create a copy of TrackerInfo
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$ConnectionImplCopyWith<_$ConnectionImpl> get copyWith =>
-      __$$ConnectionImplCopyWithImpl<_$ConnectionImpl>(this, _$identity);
+  _$$TrackerInfoImplCopyWith<_$TrackerInfoImpl> get copyWith =>
+      __$$TrackerInfoImplCopyWithImpl<_$TrackerInfoImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$ConnectionImplToJson(
+    return _$$TrackerInfoImplToJson(
       this,
     );
   }
 }
 
-abstract class _Connection implements Connection {
-  const factory _Connection(
+abstract class _TrackerInfo implements TrackerInfo {
+  const factory _TrackerInfo(
       {required final String id,
       final int? upload,
       final int? download,
       required final DateTime start,
       required final Metadata metadata,
-      required final List<String> chains}) = _$ConnectionImpl;
+      required final List<String> chains,
+      required final String rule,
+      required final String rulePayload}) = _$TrackerInfoImpl;
 
-  factory _Connection.fromJson(Map<String, dynamic> json) =
-      _$ConnectionImpl.fromJson;
+  factory _TrackerInfo.fromJson(Map<String, dynamic> json) =
+      _$TrackerInfoImpl.fromJson;
 
   @override
   String get id;
@@ -1108,12 +1186,16 @@ abstract class _Connection implements Connection {
   Metadata get metadata;
   @override
   List<String> get chains;
+  @override
+  String get rule;
+  @override
+  String get rulePayload;
 
-  /// Create a copy of Connection
+  /// Create a copy of TrackerInfo
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$ConnectionImplCopyWith<_$ConnectionImpl> get copyWith =>
+  _$$TrackerInfoImplCopyWith<_$TrackerInfoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -1533,57 +1615,57 @@ abstract class _LogsState implements LogsState {
 }
 
 /// @nodoc
-mixin _$ConnectionsState {
-  List<Connection> get connections => throw _privateConstructorUsedError;
+mixin _$TrackerInfosState {
+  List<TrackerInfo> get trackerInfos => throw _privateConstructorUsedError;
   List<String> get keywords => throw _privateConstructorUsedError;
   String get query => throw _privateConstructorUsedError;
   bool get autoScrollToEnd => throw _privateConstructorUsedError;
 
-  /// Create a copy of ConnectionsState
+  /// Create a copy of TrackerInfosState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $ConnectionsStateCopyWith<ConnectionsState> get copyWith =>
+  $TrackerInfosStateCopyWith<TrackerInfosState> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $ConnectionsStateCopyWith<$Res> {
-  factory $ConnectionsStateCopyWith(
-          ConnectionsState value, $Res Function(ConnectionsState) then) =
-      _$ConnectionsStateCopyWithImpl<$Res, ConnectionsState>;
+abstract class $TrackerInfosStateCopyWith<$Res> {
+  factory $TrackerInfosStateCopyWith(
+          TrackerInfosState value, $Res Function(TrackerInfosState) then) =
+      _$TrackerInfosStateCopyWithImpl<$Res, TrackerInfosState>;
   @useResult
   $Res call(
-      {List<Connection> connections,
+      {List<TrackerInfo> trackerInfos,
       List<String> keywords,
       String query,
       bool autoScrollToEnd});
 }
 
 /// @nodoc
-class _$ConnectionsStateCopyWithImpl<$Res, $Val extends ConnectionsState>
-    implements $ConnectionsStateCopyWith<$Res> {
-  _$ConnectionsStateCopyWithImpl(this._value, this._then);
+class _$TrackerInfosStateCopyWithImpl<$Res, $Val extends TrackerInfosState>
+    implements $TrackerInfosStateCopyWith<$Res> {
+  _$TrackerInfosStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of ConnectionsState
+  /// Create a copy of TrackerInfosState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? connections = null,
+    Object? trackerInfos = null,
     Object? keywords = null,
     Object? query = null,
     Object? autoScrollToEnd = null,
   }) {
     return _then(_value.copyWith(
-      connections: null == connections
-          ? _value.connections
-          : connections // ignore: cast_nullable_to_non_nullable
-              as List<Connection>,
+      trackerInfos: null == trackerInfos
+          ? _value.trackerInfos
+          : trackerInfos // ignore: cast_nullable_to_non_nullable
+              as List<TrackerInfo>,
       keywords: null == keywords
           ? _value.keywords
           : keywords // ignore: cast_nullable_to_non_nullable
@@ -1601,43 +1683,43 @@ class _$ConnectionsStateCopyWithImpl<$Res, $Val extends ConnectionsState>
 }
 
 /// @nodoc
-abstract class _$$ConnectionsStateImplCopyWith<$Res>
-    implements $ConnectionsStateCopyWith<$Res> {
-  factory _$$ConnectionsStateImplCopyWith(_$ConnectionsStateImpl value,
-          $Res Function(_$ConnectionsStateImpl) then) =
-      __$$ConnectionsStateImplCopyWithImpl<$Res>;
+abstract class _$$TrackerInfosStateImplCopyWith<$Res>
+    implements $TrackerInfosStateCopyWith<$Res> {
+  factory _$$TrackerInfosStateImplCopyWith(_$TrackerInfosStateImpl value,
+          $Res Function(_$TrackerInfosStateImpl) then) =
+      __$$TrackerInfosStateImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
-      {List<Connection> connections,
+      {List<TrackerInfo> trackerInfos,
       List<String> keywords,
       String query,
       bool autoScrollToEnd});
 }
 
 /// @nodoc
-class __$$ConnectionsStateImplCopyWithImpl<$Res>
-    extends _$ConnectionsStateCopyWithImpl<$Res, _$ConnectionsStateImpl>
-    implements _$$ConnectionsStateImplCopyWith<$Res> {
-  __$$ConnectionsStateImplCopyWithImpl(_$ConnectionsStateImpl _value,
-      $Res Function(_$ConnectionsStateImpl) _then)
+class __$$TrackerInfosStateImplCopyWithImpl<$Res>
+    extends _$TrackerInfosStateCopyWithImpl<$Res, _$TrackerInfosStateImpl>
+    implements _$$TrackerInfosStateImplCopyWith<$Res> {
+  __$$TrackerInfosStateImplCopyWithImpl(_$TrackerInfosStateImpl _value,
+      $Res Function(_$TrackerInfosStateImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of ConnectionsState
+  /// Create a copy of TrackerInfosState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? connections = null,
+    Object? trackerInfos = null,
     Object? keywords = null,
     Object? query = null,
     Object? autoScrollToEnd = null,
   }) {
-    return _then(_$ConnectionsStateImpl(
-      connections: null == connections
-          ? _value._connections
-          : connections // ignore: cast_nullable_to_non_nullable
-              as List<Connection>,
+    return _then(_$TrackerInfosStateImpl(
+      trackerInfos: null == trackerInfos
+          ? _value._trackerInfos
+          : trackerInfos // ignore: cast_nullable_to_non_nullable
+              as List<TrackerInfo>,
       keywords: null == keywords
           ? _value._keywords
           : keywords // ignore: cast_nullable_to_non_nullable
@@ -1656,22 +1738,22 @@ class __$$ConnectionsStateImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$ConnectionsStateImpl implements _ConnectionsState {
-  const _$ConnectionsStateImpl(
-      {final List<Connection> connections = const [],
+class _$TrackerInfosStateImpl implements _TrackerInfosState {
+  const _$TrackerInfosStateImpl(
+      {final List<TrackerInfo> trackerInfos = const [],
       final List<String> keywords = const [],
       this.query = '',
       this.autoScrollToEnd = true})
-      : _connections = connections,
+      : _trackerInfos = trackerInfos,
         _keywords = keywords;
 
-  final List<Connection> _connections;
+  final List<TrackerInfo> _trackerInfos;
   @override
   @JsonKey()
-  List<Connection> get connections {
-    if (_connections is EqualUnmodifiableListView) return _connections;
+  List<TrackerInfo> get trackerInfos {
+    if (_trackerInfos is EqualUnmodifiableListView) return _trackerInfos;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_connections);
+    return EqualUnmodifiableListView(_trackerInfos);
   }
 
   final List<String> _keywords;
@@ -1692,16 +1774,16 @@ class _$ConnectionsStateImpl implements _ConnectionsState {
 
   @override
   String toString() {
-    return 'ConnectionsState(connections: $connections, keywords: $keywords, query: $query, autoScrollToEnd: $autoScrollToEnd)';
+    return 'TrackerInfosState(trackerInfos: $trackerInfos, keywords: $keywords, query: $query, autoScrollToEnd: $autoScrollToEnd)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ConnectionsStateImpl &&
+            other is _$TrackerInfosStateImpl &&
             const DeepCollectionEquality()
-                .equals(other._connections, _connections) &&
+                .equals(other._trackerInfos, _trackerInfos) &&
             const DeepCollectionEquality().equals(other._keywords, _keywords) &&
             (identical(other.query, query) || other.query == query) &&
             (identical(other.autoScrollToEnd, autoScrollToEnd) ||
@@ -1711,30 +1793,30 @@ class _$ConnectionsStateImpl implements _ConnectionsState {
   @override
   int get hashCode => Object.hash(
       runtimeType,
-      const DeepCollectionEquality().hash(_connections),
+      const DeepCollectionEquality().hash(_trackerInfos),
       const DeepCollectionEquality().hash(_keywords),
       query,
       autoScrollToEnd);
 
-  /// Create a copy of ConnectionsState
+  /// Create a copy of TrackerInfosState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$ConnectionsStateImplCopyWith<_$ConnectionsStateImpl> get copyWith =>
-      __$$ConnectionsStateImplCopyWithImpl<_$ConnectionsStateImpl>(
+  _$$TrackerInfosStateImplCopyWith<_$TrackerInfosStateImpl> get copyWith =>
+      __$$TrackerInfosStateImplCopyWithImpl<_$TrackerInfosStateImpl>(
           this, _$identity);
 }
 
-abstract class _ConnectionsState implements ConnectionsState {
-  const factory _ConnectionsState(
-      {final List<Connection> connections,
+abstract class _TrackerInfosState implements TrackerInfosState {
+  const factory _TrackerInfosState(
+      {final List<TrackerInfo> trackerInfos,
       final List<String> keywords,
       final String query,
-      final bool autoScrollToEnd}) = _$ConnectionsStateImpl;
+      final bool autoScrollToEnd}) = _$TrackerInfosStateImpl;
 
   @override
-  List<Connection> get connections;
+  List<TrackerInfo> get trackerInfos;
   @override
   List<String> get keywords;
   @override
@@ -1742,11 +1824,11 @@ abstract class _ConnectionsState implements ConnectionsState {
   @override
   bool get autoScrollToEnd;
 
-  /// Create a copy of ConnectionsState
+  /// Create a copy of TrackerInfosState
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$ConnectionsStateImplCopyWith<_$ConnectionsStateImpl> get copyWith =>
+  _$$TrackerInfosStateImplCopyWith<_$TrackerInfosStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
