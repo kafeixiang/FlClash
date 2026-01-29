@@ -106,7 +106,6 @@ flutter:
     - assets/data/
     - assets/fonts/
     - assets/images/
-    - assets/images/avatar/
     - assets/images/empty/
     - assets/images/icon/
   fonts:
