@@ -4,8 +4,12 @@ on:
   push:
     tags:
       - 'v*'
+    branches:
+      - 'dev*'
+  workflow_dispatch:
+
 env:
-  IS_STABLE: ${{ !contains(github.ref, '-') }}
+  IS_STABLE: ${{ startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '-') }}
   FLUTTER_VERSION: '3.44.4'
 
 jobs:
@@ -103,7 +107,7 @@ jobs:
         run: cargo test --manifest-path services/helper/Cargo.toml --features windows-service
 
   build:
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    if: github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/v') || startsWith(github.ref, 'refs/heads/dev'))
     needs: [ test, windows-helper-test ]
     runs-on: ${{ matrix.os }}
     strategy:
@@ -149,7 +153,6 @@ jobs:
         if: startsWith(matrix.platform,'android')
         run: |
           echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/app/keystore.jks
-          echo "${{ secrets.SERVICE_JSON }}" | base64 --decode > android/app/google-services.json
           {
             echo "keyAlias=${{ secrets.KEY_ALIAS }}"
             echo "storePassword=${{ secrets.STORE_PASSWORD }}"
@@ -194,7 +197,7 @@ jobs:
           flutter pub get
 
       - name: Setup
-        run: dart setup.dart ${{ matrix.platform }} ${{ env.IS_STABLE == 'true' && '--env stable' || '' }} -v
+        run: dart setup.dart ${{ matrix.platform }} --env stable -v
 
       - name: Upload
         uses: actions/upload-artifact@v4
@@ -204,7 +207,7 @@ jobs:
           overwrite: true
 
   changelog:
-    if: ${{ !contains(github.ref, '-') }}
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '-')
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -244,8 +247,6 @@ jobs:
           git add CHANGELOG.md
           if ! git diff --cached --quiet; then
             echo "Commit pushing"
-            git config --local user.email "chen08209@gmail.com"
-            git config --local user.name "chen08209"
             git commit -m "Update changelog"
             if git push; then
               echo "Push succeeded"
@@ -259,18 +260,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   upload:
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: write
     needs: [ build ]
     runs-on: ubuntu-latest
-    services:
-      telegram-bot-api:
-        image: aiogram/telegram-bot-api:latest
-        env:
-          TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
-          TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
-        ports:
-          - 8081:8081
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -292,15 +286,6 @@ jobs:
               sed -nE 's/.*"tag_name": "([^"]+)".*/\1/p'
           )
           bash .github/scripts/generate_release_notes.sh "$pre_tag" release.md
-      - name: Push to telegram
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TAG: ${{ github.ref_name }}
-          RUN_ID: ${{ github.run_id }}
-        run: |
-          python -m pip install --upgrade pip
-          pip install requests
-          python release_telegram.py
 
       - name: Patch release.md
         run: |
@@ -348,25 +333,3 @@ jobs:
           target-branch: main
           commit-message: Update Homebrew cask from ${{ github.ref_name }}
           target-directory: /
-
-      - name: Create Fdroid Source Dir
-        if: ${{ env.IS_STABLE == 'true' }}
-        run: |
-          mkdir -p ./tmp
-          cp ./dist/*android-arm64-v8a* ./tmp/ || true
-          echo "Files copied successfully"
-
-      - name: Push to fdroid repo
-        if: ${{ env.IS_STABLE == 'true' }}
-        uses: cpina/github-action-push-to-another-repository@v1.7.2
-        env:
-          SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
-        with:
-          source-directory: ./tmp/
-          destination-github-username: chen08209
-          destination-repository-name: FlClash-fdroid-repo
-          user-name: 'chen08029'
-          user-email: 'chen08209@gmail.com'
-          target-branch: main
-          commit-message: Update from ${{ github.ref_name }}
-          target-directory: /tmp/
