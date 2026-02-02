@@ -8,7 +8,33 @@ env:
   IS_STABLE: ${{ !contains(github.ref, '-') }}
 
 jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.41.9
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos
+
+      - name: Run tests
+        run: flutter test --reporter expanded
+
   build:
+    needs: [ test ]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -27,9 +53,9 @@ jobs:
           - platform: macos
             os: macos-latest
             arch: arm64
-          #          - platform: windows
-          #            os: windows-11-arm
-          #            arch: arm64
+          - platform: windows
+            os: windows-11-arm
+            arch: arm64
           - platform: linux
             os: ubuntu-24.04-arm
             arch: arm64
@@ -64,20 +90,32 @@ jobs:
           cache-dependency-path: |
             core/go.sum
 
+      - name: Enable git long paths (Windows)
+        if: startsWith(matrix.os, 'windows')
+        run: git config --global core.longpaths true
+
       - name: Setup Flutter
         if: ${{ !(startsWith(matrix.os, 'windows-11-arm') || startsWith(matrix.os, 'ubuntu-24.04-arm')) }}
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 3.35.7
+          flutter-version: 3.41.9
           cache: true
       - name: Setup Flutter With Other
         if: startsWith(matrix.os, 'windows-11-arm') || startsWith(matrix.os, 'ubuntu-24.04-arm')
         uses: subosito/flutter-action@v2
         with:
           channel: master
-          flutter-version: 3.35.7
+          flutter-version: 3.44.0-0.1.pre
           cache: true
+
+      - name: Setup NDK
+        if: startsWith(matrix.platform,'android')
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r28c
+          add-to-path: true
+          link-to-sdk: true
 
       - name: Get Flutter Dependency
         run: |
@@ -85,7 +123,7 @@ jobs:
           flutter pub get
 
       - name: Setup
-        run: dart setup.dart ${{ matrix.platform }} ${{ matrix.arch && format('--arch {0}', matrix.arch) }} ${{ env.IS_STABLE == 'true' && '--env stable' || '' }}
+        run: dart setup.dart ${{ matrix.platform }} ${{ env.IS_STABLE == 'true' && '--env stable' || '' }} -v
 
       - name: Upload
         uses: actions/upload-artifact@v4
@@ -213,15 +251,18 @@ jobs:
         if: env.IS_STABLE == 'true'
         run: |
           cd ./dist
-          for file in $(find . -type f -not -name "*.sha256"); do
-            sha256sum "$file" > "${file}.sha256"
-          done  
+          mkdir -p checksums
+          for file in $(find . -maxdepth 1 -type f); do
+            sha256sum "$file" > "checksums/$(basename "$file").sha256"
+          done
 
       - name: Release
         if: ${{ env.IS_STABLE == 'true' }}
         uses: softprops/action-gh-release@v2
         with:
-          files: ./dist/*
+          files: |
+            ./dist/*
+            ./dist/checksums/*
           body_path: './release.md'
 
       - name: Create Fdroid Source Dir
@@ -245,4 +286,3 @@ jobs:
           target-branch: main
           commit-message: Update from ${{ github.ref_name }}
           target-directory: /tmp/
-
