@@ -1,8 +1,10 @@
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/common.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/dialog.dart';
+import 'package:fl_clash/widgets/inherited.dart';
 import 'package:fl_clash/widgets/null_status.dart';
 import 'package:fl_clash/widgets/pop_scope.dart';
 import 'package:fl_clash/widgets/scaffold.dart';
@@ -80,6 +82,8 @@ class CommonCheckBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Checkbox(
+      materialTapTargetSize: MaterialTapTargetSize.padded,
+      visualDensity: VisualDensity.standard,
       shape: isCircle ? const CircleBorder() : null,
       value: value,
       onChanged: onChanged,
@@ -153,6 +157,7 @@ class _InputDialogState extends State<InputDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final appLocalizations = context.appLocalizations;
     return CommonDialog(
       title: title,
       actions: [
@@ -245,7 +250,7 @@ class _ListInputPageState extends ConsumerState<ListInputPage> {
   }
 
   void _handleSelected(String value) {
-    ref.read(selectedItemsProvider(_key).notifier).update((state) {
+    ref.read(itemsProvider(_key).notifier).update((state) {
       final newState = Set<String>.from(state)..addOrRemove(value);
       return newState;
     });
@@ -253,13 +258,14 @@ class _ListInputPageState extends ConsumerState<ListInputPage> {
 
   void _handleSelectAll() {
     final ids = _items.toSet();
-    ref.read(selectedItemsProvider(_key).notifier).update((selected) {
+    ref.read(itemsProvider(_key).notifier).update((selected) {
       return selected.containsAll(ids) ? {} : ids;
     });
   }
 
   Future<void> _handleAddOrEdit([String? item]) async {
-    uniqueValidator(String? value) {
+    final appLocalizations = context.appLocalizations;
+    String? uniqueValidator(String? value) {
       final index = _items.indexWhere((entry) {
         return entry == value;
       });
@@ -296,18 +302,18 @@ class _ListInputPageState extends ConsumerState<ListInputPage> {
   }
 
   void _handleDelete() {
-    final selectedItems = ref.read(selectedItemsProvider(_key));
+    final selectedItems = ref.read(itemsProvider(_key));
     final newItems = _items
         .where((item) => !selectedItems.contains(item))
         .toList();
     _items = newItems;
-    ref.read(selectedItemsProvider(_key).notifier).value = {};
+    ref.read(itemsProvider(_key).notifier).value = {};
     setState(() {});
   }
 
   Future<void> _handleReset() async {
     final res = await globalState.showMessage(
-      message: TextSpan(text: appLocalizations.resetPageChangesTip),
+      message: TextSpan(text: context.appLocalizations.resetPageChangesTip),
     );
     if (res != true) {
       return;
@@ -319,46 +325,45 @@ class _ListInputPageState extends ConsumerState<ListInputPage> {
   Widget _buildItem({
     required String value,
     required int index,
-    required int totalLength,
+    required int length,
     required bool isSelected,
     required bool isEditing,
-    isDecorator = false,
   }) {
-    final isFirst = index == 0;
-    final isLast = index == totalLength - 1;
+    final position = ItemPosition.get(index, length);
     return ReorderableDelayedDragStartListener(
       key: ValueKey(value),
       index: index,
-      child: CommonSelectedInputListItem(
-        isDecorator: isDecorator,
-        isLast: isLast,
-        isFirst: isFirst,
-        title: widget.titleBuilder(value),
-        isSelected: isSelected,
-        isEditing: isEditing,
-        onSelected: () {
-          _handleSelected(value);
-        },
-        onPressed: () {
-          _handleAddOrEdit(value);
-        },
-        leading: widget.leadingBuilder != null
-            ? widget.leadingBuilder!(value)
-            : null,
-        subtitle: widget.subtitleBuilder != null
-            ? widget.subtitleBuilder!(value)
-            : null,
+      child: ItemPositionProvider(
+        position: position,
+        child: SelectedDecorationListItem(
+          title: widget.titleBuilder(value),
+          isSelected: isSelected,
+          isEditing: isEditing,
+          onSelected: () {
+            _handleSelected(value);
+          },
+          onPressed: () {
+            _handleAddOrEdit(value);
+          },
+          leading: widget.leadingBuilder != null
+              ? widget.leadingBuilder!(value)
+              : null,
+          subtitle: widget.subtitleBuilder != null
+              ? widget.subtitleBuilder!(value)
+              : null,
+        ),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final selectedItems = ref.watch(selectedItemsProvider(_key));
+    final appLocalizations = context.appLocalizations;
+    final selectedItems = ref.watch(itemsProvider(_key));
     return CommonPopScope(
       onPop: (_) {
         if (selectedItems.isNotEmpty) {
-          ref.read(selectedItemsProvider(_key).notifier).value = {};
+          ref.read(itemsProvider(_key).notifier).value = {};
           return false;
         }
         Navigator.of(context).pop(_items);
@@ -371,10 +376,10 @@ class _ListInputPageState extends ConsumerState<ListInputPage> {
             CommonMinIconButtonTheme(
               child: IconButton.filledTonal(
                 onPressed: _handleDelete,
-                icon: Icon(Icons.delete),
+                icon: const Icon(Icons.delete),
               ),
             ),
-            SizedBox(width: 2),
+            const SizedBox(width: 2),
           ] else if (!stringListEquality.equals(_items, _originItems)) ...[
             CommonMinIconButtonTheme(
               child: IconButton.filledTonal(
@@ -382,7 +387,7 @@ class _ListInputPageState extends ConsumerState<ListInputPage> {
                 icon: const Icon(Icons.replay),
               ),
             ),
-            SizedBox(width: 2),
+            const SizedBox(width: 2),
           ],
           CommonMinFilledButtonTheme(
             child: selectedItems.isNotEmpty
@@ -397,7 +402,7 @@ class _ListInputPageState extends ConsumerState<ListInputPage> {
                     child: Text(appLocalizations.add),
                   ),
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
         ],
         body: _items.isEmpty
             ? NullStatus(label: appLocalizations.noData)
@@ -415,7 +420,7 @@ class _ListInputPageState extends ConsumerState<ListInputPage> {
                   return _buildItem(
                     value: value,
                     index: index,
-                    totalLength: _items.length,
+                    length: _items.length,
                     isSelected: selectedItems.contains(value),
                     isEditing: selectedItems.isNotEmpty,
                   );
@@ -426,8 +431,7 @@ class _ListInputPageState extends ConsumerState<ListInputPage> {
                     _buildItem(
                       value: value,
                       index: index,
-                      totalLength: _items.length,
-                      isDecorator: true,
+                      length: _items.length,
                       isSelected: selectedItems.contains(value),
                       isEditing: selectedItems.isNotEmpty,
                     ),
@@ -490,7 +494,7 @@ class _MapInputPageState extends ConsumerState<MapInputPage> {
   }
 
   void _handleSelected(MapEntry<String, String> value) {
-    ref.read(selectedItemsProvider(_key).notifier).update((state) {
+    ref.read(itemsProvider(_key).notifier).update((state) {
       final newState = Set<String>.from(state)..addOrRemove(value.key);
       return newState;
     });
@@ -498,13 +502,14 @@ class _MapInputPageState extends ConsumerState<MapInputPage> {
 
   void _handleSelectAll() {
     final ids = _items.map((item) => item.key).toSet();
-    ref.read(selectedItemsProvider(_key).notifier).update((selected) {
+    ref.read(itemsProvider(_key).notifier).update((selected) {
       return selected.containsAll(ids) ? {} : ids;
     });
   }
 
   Future<void> _handleAddOrEdit([MapEntry<String, String>? item]) async {
-    uniqueValidator(String? value) {
+    final appLocalizations = context.appLocalizations;
+    String? uniqueValidator(String? value) {
       final index = _items.indexWhere((entry) {
         return entry.key == value;
       });
@@ -549,18 +554,18 @@ class _MapInputPageState extends ConsumerState<MapInputPage> {
   }
 
   void _handleDelete() {
-    final selectedItems = ref.read(selectedItemsProvider(_key));
+    final selectedItems = ref.read(itemsProvider(_key));
     final newItems = _items
         .where((item) => !selectedItems.contains(item.key))
         .toList();
     _items = newItems;
-    ref.read(selectedItemsProvider(_key).notifier).value = {};
+    ref.read(itemsProvider(_key).notifier).value = {};
     setState(() {});
   }
 
   Future<void> _handleReset() async {
     final res = await globalState.showMessage(
-      message: TextSpan(text: appLocalizations.resetPageChangesTip),
+      message: TextSpan(text: context.appLocalizations.resetPageChangesTip),
     );
     if (res != true) {
       return;
@@ -572,46 +577,45 @@ class _MapInputPageState extends ConsumerState<MapInputPage> {
   Widget _buildItem({
     required MapEntry<String, String> value,
     required int index,
-    required int totalLength,
+    required int length,
     required bool isSelected,
     required bool isEditing,
-    isDecorator = false,
   }) {
-    final isFirst = index == 0;
-    final isLast = index == totalLength - 1;
+    final position = ItemPosition.get(index, length);
     return ReorderableDelayedDragStartListener(
       key: ValueKey(value),
       index: index,
-      child: CommonSelectedInputListItem(
-        isDecorator: isDecorator,
-        isLast: isLast,
-        isFirst: isFirst,
-        title: widget.titleBuilder(value),
-        leading: widget.leadingBuilder != null
-            ? widget.leadingBuilder!(value)
-            : null,
-        subtitle: widget.subtitleBuilder != null
-            ? widget.subtitleBuilder!(value)
-            : null,
-        isSelected: isSelected,
-        isEditing: isEditing,
-        onSelected: () {
-          _handleSelected(value);
-        },
-        onPressed: () {
-          _handleAddOrEdit(value);
-        },
+      child: ItemPositionProvider(
+        position: position,
+        child: SelectedDecorationListItem(
+          title: widget.titleBuilder(value),
+          leading: widget.leadingBuilder != null
+              ? widget.leadingBuilder!(value)
+              : null,
+          subtitle: widget.subtitleBuilder != null
+              ? widget.subtitleBuilder!(value)
+              : null,
+          isSelected: isSelected,
+          isEditing: isEditing,
+          onSelected: () {
+            _handleSelected(value);
+          },
+          onPressed: () {
+            _handleAddOrEdit(value);
+          },
+        ),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final selectedItems = ref.watch(selectedItemsProvider(_key));
+    final appLocalizations = context.appLocalizations;
+    final selectedItems = ref.watch(itemsProvider(_key));
     return CommonPopScope(
       onPop: (_) {
         if (selectedItems.isNotEmpty) {
-          ref.read(selectedItemsProvider(_key).notifier).value = {};
+          ref.read(itemsProvider(_key).notifier).value = {};
           return false;
         }
         Navigator.of(context).pop(Map<String, String>.fromEntries(_items));
@@ -624,10 +628,10 @@ class _MapInputPageState extends ConsumerState<MapInputPage> {
             CommonMinIconButtonTheme(
               child: IconButton.filledTonal(
                 onPressed: _handleDelete,
-                icon: Icon(Icons.delete),
+                icon: const Icon(Icons.delete),
               ),
             ),
-            SizedBox(width: 2),
+            const SizedBox(width: 2),
           ] else if (!stringAndStringMapEntryListEquality.equals(
             _items,
             _originItems,
@@ -638,7 +642,7 @@ class _MapInputPageState extends ConsumerState<MapInputPage> {
                 icon: const Icon(Icons.replay),
               ),
             ),
-            SizedBox(width: 2),
+            const SizedBox(width: 2),
           ],
           CommonMinFilledButtonTheme(
             child: selectedItems.isNotEmpty
@@ -653,7 +657,7 @@ class _MapInputPageState extends ConsumerState<MapInputPage> {
                     child: Text(appLocalizations.add),
                   ),
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
         ],
         body: _items.isEmpty
             ? NullStatus(label: appLocalizations.noData)
@@ -671,7 +675,7 @@ class _MapInputPageState extends ConsumerState<MapInputPage> {
                   return _buildItem(
                     value: value,
                     index: index,
-                    totalLength: _items.length,
+                    length: _items.length,
                     isSelected: selectedItems.contains(value.key),
                     isEditing: selectedItems.isNotEmpty,
                   );
@@ -682,8 +686,7 @@ class _MapInputPageState extends ConsumerState<MapInputPage> {
                     _buildItem(
                       value: value,
                       index: index,
-                      totalLength: _items.length,
-                      isDecorator: true,
+                      length: _items.length,
                       isSelected: selectedItems.contains(value.key),
                       isEditing: selectedItems.isNotEmpty,
                     ),
@@ -752,6 +755,7 @@ class _AddDialogState extends State<AddDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final appLocalizations = context.appLocalizations;
     return CommonDialog(
       title: widget.title,
       actions: [
@@ -817,4 +821,53 @@ class _AddDialogState extends State<AddDialog> {
       ),
     );
   }
+}
+
+class NoInputBorder extends InputBorder {
+  const NoInputBorder() : super(borderSide: BorderSide.none);
+
+  @override
+  NoInputBorder copyWith({BorderSide? borderSide}) => const NoInputBorder();
+
+  @override
+  bool get isOutline => false;
+
+  @override
+  EdgeInsetsGeometry get dimensions => EdgeInsets.zero;
+
+  @override
+  NoInputBorder scale(double t) => const NoInputBorder();
+
+  @override
+  Path getInnerPath(Rect rect, {TextDirection? textDirection}) {
+    return Path()..addRect(rect);
+  }
+
+  @override
+  Path getOuterPath(Rect rect, {TextDirection? textDirection}) {
+    return Path()..addRect(rect);
+  }
+
+  @override
+  void paintInterior(
+    Canvas canvas,
+    Rect rect,
+    Paint paint, {
+    TextDirection? textDirection,
+  }) {
+    canvas.drawRect(rect, paint);
+  }
+
+  @override
+  bool get preferPaintInterior => true;
+
+  @override
+  void paint(
+    Canvas canvas,
+    Rect rect, {
+    double? gapStart,
+    double gapExtent = 0.0,
+    double gapPercentage = 0.0,
+    TextDirection? textDirection,
+  }) {}
 }

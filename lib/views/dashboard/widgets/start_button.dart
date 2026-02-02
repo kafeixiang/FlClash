@@ -1,7 +1,5 @@
 import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/controller.dart';
 import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/providers/database.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:flutter/material.dart';
@@ -52,7 +50,9 @@ class _StartButtonState extends ConsumerState<StartButton>
     isStart = !isStart;
     updateController();
     debouncer.call(FunctionTag.updateStatus, () {
-      appController.updateStatus(isStart, isInit: !ref.read(initProvider));
+      globalState.container
+          .read(setupActionProvider.notifier)
+          .updateStatus(isStart, isInit: !ref.read(initProvider));
     }, duration: commonDuration);
   }
 
@@ -74,62 +74,64 @@ class _StartButtonState extends ConsumerState<StartButton>
     if (!hasProfile) {
       return Container();
     }
-    return Theme(
-      data: Theme.of(context).copyWith(
-        floatingActionButtonTheme: Theme.of(context).floatingActionButtonTheme
-            .copyWith(
-              sizeConstraints: BoxConstraints(minWidth: 56, maxWidth: 200),
-            ),
-      ),
-      child: AnimatedBuilder(
-        animation: _controller!.view,
-        builder: (_, child) {
-          final textWidth =
-              globalState.measure
-                  .computeTextSize(
-                    Text(
-                      utils.getTimeDifference(DateTime.now()),
-                      style: context.textTheme.titleMedium?.toSoftBold,
+    final theme = Theme.of(context);
+    return RepaintBoundary(
+      child: Theme(
+        data: theme.copyWith(
+          floatingActionButtonTheme: theme.floatingActionButtonTheme.copyWith(
+            sizeConstraints: const BoxConstraints(minWidth: 56, maxWidth: 200),
+          ),
+        ),
+        child: AnimatedBuilder(
+          animation: _controller!.view,
+          builder: (_, child) {
+            final textWidth =
+                globalState.measure
+                    .computeTextSize(
+                      Text(
+                        utils.getTimeDifference(DateTime.now()),
+                        style: context.textTheme.titleMedium?.toSoftBold,
+                      ),
+                    )
+                    .width +
+                16;
+            return FloatingActionButton(
+              clipBehavior: Clip.antiAlias,
+              materialTapTargetSize: MaterialTapTargetSize.padded,
+              heroTag: null,
+              onPressed: () {
+                handleSwitchStart();
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    height: 56,
+                    width: 56,
+                    alignment: Alignment.center,
+                    child: AnimatedIcon(
+                      icon: AnimatedIcons.play_pause,
+                      progress: _animation,
                     ),
-                  )
-                  .width +
-              16;
-          return FloatingActionButton(
-            clipBehavior: Clip.antiAlias,
-            materialTapTargetSize: MaterialTapTargetSize.padded,
-            heroTag: null,
-            onPressed: () {
-              handleSwitchStart();
-            },
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  height: 56,
-                  width: 56,
-                  alignment: Alignment.center,
-                  child: AnimatedIcon(
-                    icon: AnimatedIcons.play_pause,
-                    progress: _animation,
                   ),
-                ),
-                SizedBox(width: textWidth * _animation.value, child: child!),
-              ],
-            ),
-          );
-        },
-        child: Consumer(
-          builder: (_, ref, _) {
-            final runTime = ref.watch(runTimeProvider);
-            final text = utils.getTimeText(runTime);
-            return Text(
-              text,
-              maxLines: 1,
-              overflow: TextOverflow.visible,
-              style: Theme.of(context).textTheme.titleMedium?.toSoftBold
-                  .copyWith(color: context.colorScheme.onPrimaryContainer),
+                  SizedBox(width: textWidth * _animation.value, child: child!),
+                ],
+              ),
             );
           },
+          child: Consumer(
+            builder: (_, ref, _) {
+              final runTime = ref.watch(runTimeProvider);
+              final text = utils.getTimeText(runTime);
+              return Text(
+                text,
+                maxLines: 1,
+                overflow: TextOverflow.visible,
+                style: Theme.of(context).textTheme.titleMedium?.toSoftBold
+                    .copyWith(color: context.colorScheme.onPrimaryContainer),
+              );
+            },
+          ),
         ),
       ),
     );

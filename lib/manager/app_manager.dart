@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/controller.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/manager/window_manager.dart';
 import 'package:fl_clash/providers/providers.dart';
@@ -33,12 +32,16 @@ class _AppStateManagerState extends ConsumerState<AppStateManager>
     });
     ref.listenManual(configProvider, (prev, next) {
       if (prev != next) {
-        appController.savePreferencesDebounce();
+        globalState.container
+            .read(storeActionProvider.notifier)
+            .savePreferencesDebounce();
       }
     });
     ref.listenManual(needUpdateGroupsProvider, (prev, next) {
       if (prev != next) {
-        appController.updateGroupsDebounce();
+        globalState.container
+            .read(proxiesActionProvider.notifier)
+            .updateGroupsDebounce();
       }
     });
     if (window == null) {
@@ -66,11 +69,15 @@ class _AppStateManagerState extends ConsumerState<AppStateManager>
   Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
     commonPrint.log('$state');
     if (state == AppLifecycleState.resumed) {
+      Future.delayed(const Duration(milliseconds: 1500), () {
+        globalState.checkTaskPermissions();
+      });
       render?.resume();
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        appController.tryCheckIp();
+        final ref = globalState.container;
+        ref.read(setupActionProvider.notifier).tryCheckIp();
         if (system.isAndroid) {
-          appController.tryStartCore();
+          ref.read(coreActionProvider.notifier).tryStartCore();
         }
       });
     }
@@ -78,7 +85,7 @@ class _AppStateManagerState extends ConsumerState<AppStateManager>
 
   @override
   void didChangePlatformBrightness() {
-    appController.updateBrightness();
+    globalState.container.read(themeActionProvider.notifier).updateBrightness();
   }
 
   @override
@@ -164,6 +171,12 @@ class AppSidebarContainer extends ConsumerWidget {
     });
   }
 
+  void _handleToPage(PageLabel pageLabel) {
+    globalState.container
+        .read(currentPageLabelProvider.notifier)
+        .toPage(pageLabel);
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final navigationState = ref.watch(navigationStateProvider);
@@ -182,11 +195,11 @@ class AppSidebarContainer extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                if (system.isMacOS) SizedBox(height: 22),
-                SizedBox(height: 10),
+                if (system.isMacOS) const SizedBox(height: 22),
+                const SizedBox(height: 10),
                 if (!system.isMacOS) ...[
-                  ClipRect(child: AppIcon()),
-                  SizedBox(height: 12),
+                  const ClipRect(child: AppIcon()),
+                  const SizedBox(height: 12),
                 ],
                 Expanded(
                   child: ScrollConfiguration(
@@ -216,9 +229,7 @@ class AppSidebarContainer extends ConsumerWidget {
                                 )
                                 .toList(),
                             onDestinationSelected: (index) {
-                              appController.toPage(
-                                navigationItems[index].label,
-                              );
+                              _handleToPage(navigationItems[index].label);
                             },
                             extended: false,
                             selectedIndex: currentIndex,

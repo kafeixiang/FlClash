@@ -41,9 +41,8 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 
-#AI generated
-CLAUDE.md
-/.claude
+# Claude Code - ignore user-specific settings only
+.claude/settings.local.json
 
 
 # Android Studio will place build artifacts here

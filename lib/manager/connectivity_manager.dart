@@ -1,7 +1,10 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/enum/enum.dart';
 import 'package:flutter/material.dart';
+import 'package:wifi_ssid/wifi_ssid.dart';
 
 class ConnectivityManager extends StatefulWidget {
   final Function(List<ConnectivityResult> results)? onConnectivityChanged;
@@ -24,6 +27,11 @@ class _ConnectivityManagerState extends State<ConnectivityManager> {
   void initState() {
     super.initState();
     subscription = Connectivity().onConnectivityChanged.listen((results) async {
+      if (results.contains(ConnectivityResult.wifi)) {
+        WifiSsidManager.instance.getSsid().then((ssid) {
+          commonPrint.log('Wifi ssid $ssid', logLevel: LogLevel.info);
+        });
+      }
       if (widget.onConnectivityChanged != null) {
         widget.onConnectivityChanged!(results);
       }

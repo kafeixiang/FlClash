@@ -9,6 +9,8 @@ import android.content.pm.ComponentInfo
 import android.content.pm.PackageManager
 import android.net.VpnService
 import android.os.Build
+import android.os.PowerManager
+import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
@@ -157,6 +159,18 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
                 result.success(true)
             }
 
+            "isBatteryOptimizationDisabled" -> {
+                result.success(isBatteryOptimizationDisabled())
+            }
+
+            "openBatteryOptimizationSettings" -> {
+                result.success(openBatteryOptimizationSettings())
+            }
+
+            "openAppSettings" -> {
+                result.success(openAppSettings())
+            }
+
             else -> {
                 result.notImplemented()
             }
@@ -194,6 +208,36 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
 
     private fun tip(message: String?) {
         GlobalState.application.showToast(message)
+    }
+
+    private fun isBatteryOptimizationDisabled(): Boolean {
+        val powerManager = getSystemService(GlobalState.application, PowerManager::class.java)
+        return powerManager?.isIgnoringBatteryOptimizations(GlobalState.application.packageName)
+            ?: false
+    }
+
+    private fun openBatteryOptimizationSettings(): Boolean {
+        return try {
+            val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
+                data = android.net.Uri.parse("package:${GlobalState.application.packageName}")
+            }
+            activityRef?.get()?.startActivity(intent)
+            true
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    private fun openAppSettings(): Boolean {
+        return try {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = android.net.Uri.parse("package:${GlobalState.application.packageName}")
+            }
+            activityRef?.get()?.startActivity(intent)
+            true
+        } catch (_: Exception) {
+            false
+        }
     }
 
     @Suppress("DEPRECATION")

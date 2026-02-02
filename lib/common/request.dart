@@ -6,7 +6,6 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/controller.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/state.dart';
@@ -24,7 +23,7 @@ class Request {
       createHttpClient: () {
         final client = HttpClient();
         client.findProxy = (Uri uri) {
-          client.userAgent = appController.ua;
+          client.userAgent = globalState.ua;
           return FlClashHttpOverrides.handleFindProxy(uri);
         };
         return client;
@@ -42,13 +41,13 @@ class Request {
       commonPrint.log('getFileResponseForUrl error ${e.toString()}');
       if (e is DioException) {
         if (e.type == DioExceptionType.unknown) {
-          throw appLocalizations.unknownNetworkError;
+          throw currentAppLocalizations.unknownNetworkError;
         } else if (e.type == DioExceptionType.badResponse) {
-          throw appLocalizations.networkException;
+          throw currentAppLocalizations.networkException;
         }
         rethrow;
       }
-      throw appLocalizations.unknownNetworkError;
+      throw currentAppLocalizations.unknownNetworkError;
     }
   }
 
@@ -106,7 +105,7 @@ class Request {
     final token = cancelToken ?? CancelToken();
     final futures = _ipInfoSources.entries.map((source) async {
       final Completer<Result<IpInfo?>> completer = Completer();
-      handleFailRes() {
+      void handleFailRes() {
         if (!completer.isCompleted && failureCount == _ipInfoSources.length) {
           completer.complete(Result.success(null));
         }
@@ -125,6 +124,7 @@ class Request {
               completer.complete(Result.success(source.value(res.data!)));
               return;
             }
+            commonPrint.log('checkIp data empty', logLevel: LogLevel.info);
             failureCount++;
             handleFailRes();
           })
@@ -132,7 +132,9 @@ class Request {
             failureCount++;
             if (e is DioException && e.type == DioExceptionType.cancel) {
               completer.complete(Result.error('cancelled'));
+              return;
             }
+            commonPrint.log('checkIp error $e', logLevel: LogLevel.warning);
             handleFailRes();
           });
       return completer.future;

@@ -18,7 +18,7 @@ class AdvancedConfigView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appLocalizations = context.appLocalizations;
-    List<Widget> items = [
+    final List<Widget> items = [
       ListItem.open(
         title: Text(appLocalizations.network),
         subtitle: Text(appLocalizations.networkDesc),
@@ -31,8 +31,14 @@ class AdvancedConfigView extends StatelessWidget {
           ),
         ),
       ),
+      // ListItem.open(
+      //   title: Text(appLocalizations.onDemand),
+      //   subtitle: Text(appLocalizations.onDemandDesc),
+      //   leading: const Icon(Icons.ssid_chart, fontWeight: FontWeight.w900),
+      //   delegate: const OpenDelegate(widget: RunView(), blur: false),
+      // ),
       ListItem.open(
-        title: Text('DNS'),
+        title: const Text('DNS'),
         subtitle: Text(appLocalizations.dnsDesc),
         leading: const Icon(Icons.dns),
         delegate: OpenDelegate(
@@ -69,13 +75,13 @@ class AdvancedConfigView extends StatelessWidget {
         title: Text(appLocalizations.addedRules),
         subtitle: Text(appLocalizations.controlGlobalAddedRules),
         leading: const Icon(Icons.library_books),
-        delegate: OpenDelegate(widget: const AddedRulesView(), blur: false),
+        delegate: const OpenDelegate(widget: AddedRulesView(), blur: false),
       ),
       ListItem.open(
         title: Text(appLocalizations.script),
         subtitle: Text(appLocalizations.overrideScript),
         leading: const Icon(Icons.rocket, fontWeight: FontWeight.w900),
-        delegate: OpenDelegate(widget: const ScriptsView(), blur: false),
+        delegate: const OpenDelegate(widget: ScriptsView(), blur: false),
       ),
     ];
     return BaseScaffold(

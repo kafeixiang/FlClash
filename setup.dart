@@ -370,10 +370,7 @@ class BuildCommand extends Command {
       .toList();
 
   Future<void> _buildEnvFile(String env, {String? coreSha256}) async {
-    final data = {
-      'APP_ENV': env,
-      if (coreSha256 != null) 'CORE_SHA256': coreSha256,
-    };
+    final data = {'APP_ENV': env, 'CORE_SHA256': ?coreSha256};
     final envFile = File(join(current, 'env.json'))..create();
     await envFile.writeAsString(json.encode(data));
   }

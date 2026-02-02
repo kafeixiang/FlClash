@@ -12,10 +12,13 @@ list(APPEND FLUTTER_PLUGIN_LIST
   sqlite3_flutter_libs
   tray_manager
   url_launcher_linux
+  wifi_ssid
   window_manager
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
+  jni
+  rust_api
 )
 
 set(PLUGIN_BUNDLED_LIBRARIES)
