@@ -1,0 +1,73 @@
+name: Update Clash-Core and Go Modules
+on:
+  repository_dispatch:
+    types:
+      - core-updated
+  workflow_dispatch:
+
+jobs:
+  update-dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Update submodules
+        run: |
+          git submodule update --init --recursive --remote --force
+          cd core/Clash.Meta
+          echo "CORE_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+          check-latest: true
+
+      - name: Install update-go-mod-replace
+        run: |
+          go install github.com/metacubex/update-go-mod-replace@latest
+
+      - name: Update Core Gomod
+        run: |
+          cd core
+          # 使用工具同步 Clash.Meta 的依赖到 core/go.mod
+          update-go-mod-replace ./Clash.Meta/go.mod ./go.mod
+          # 确保依赖落地并更新 go.sum
+          go mod tidy
+
+      - name: Generate Token
+        uses: tibdex/github-app-token@v2
+        id: generate-token
+        with:
+          app_id: ${{ secrets.MAINTAINER_APPID }}
+          private_key: ${{ secrets.MAINTAINER_APP_PRIVATE_KEY }}
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+          commit-message: "chore: update core to ${{ env.CORE_SHA }} and sync dependencies"
+          branch: update-dependencies
+          delete-branch: true
+          title: 'Update Core to ${{ env.CORE_SHA }}'
+          draft: false
+          body: |
+            ### Description
+            - Updated `core/Clash.Meta` submodule to the latest commit.
+            - Synced `core/go.mod` and `core/go.sum` with the new core version.
+            
+            Core Version: `${{ env.CORE_SHA }}`
+          labels: |
+            dependencies
+            automated pr
+
+      - name: PR result
+        if: ${{ steps.cpr.outputs.pull-request-number }}
+        run: |
+          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
+          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
