@@ -37,6 +37,28 @@ var (
 	mBatch, _     = batch.New[bool](context.Background(), batch.WithConcurrencyNum[bool](50))
 )
 
+func proxiesWithProviders() map[string]constant.Proxy {
+	allProxies := make(map[string]constant.Proxy)
+	for name, proxy := range tunnel.Proxies() {
+		allProxies[name] = proxy
+	}
+	for _, p := range tunnel.Providers() {
+		for _, proxy := range p.Proxies() {
+			allProxies[proxy.Name()] = proxy
+		}
+	}
+	return allProxies
+}
+
+func getProxyNameList() []string {
+	allProxies := proxiesWithProviders()
+	names := make([]string, 0, len(allProxies))
+	for name := range allProxies {
+		names = append(names, name)
+	}
+	return names
+}
+
 func getExternalProvidersRaw() map[string]cp.Provider {
 	eps := make(map[string]cp.Provider)
 	for n, p := range tunnel.Providers() {
@@ -138,7 +160,7 @@ func stopListeners() {
 }
 
 func patchSelectGroup(mapping map[string]string) {
-	for name, proxy := range tunnel.ProxiesWithProviders() {
+	for name, proxy := range proxiesWithProviders() {
 		outbound, ok := proxy.(*adapter.Proxy)
 		if !ok {
 			continue
