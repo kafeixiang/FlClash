@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
-          fetch-depth: 0
+          fetch-depth: 0 # 必须获取完整历史以支持变基和压缩
 
       - name: Update submodules
         run: |
@@ -44,19 +44,72 @@ jobs:
           app_id: ${{ secrets.MAINTAINER_APPID }}
           private_key: ${{ secrets.MAINTAINER_APP_PRIVATE_KEY }}
 
-      - name: Squash previous update commit
+      - name: Sync and Push or Prepare PR
+        id: sync
         run: |
           git config --local user.email "kafeixiang@example.com"
           git config --local user.name "kafeixiang"
           
-          # 检查最后一次提交是否包含 "chore: update core to"
-          LAST_MSG=$(git log -1 --pretty=%B)
-          if [[ "$LAST_MSG" == "chore: update core to"* ]]; then
-            echo "Detecting previous core update commit, squashing..."
-            git reset --soft HEAD~1
+          git add .
+          if git diff --staged --quiet; then
+            echo "No changes detected."
+            echo "synced=true" >> $GITHUB_OUTPUT
+            exit 0
           fi
 
+          # 1. 检查是否需要压缩
+          LAST_MSG=$(git log -1 --pretty=%B)
+          SQUASHED=false
+          if [[ "$LAST_MSG" == "chore: update core to"* ]]; then
+            echo "Detected previous core update commit. Squashing..."
+            git reset --soft HEAD~1
+            SQUASHED=true
+            git add .
+          fi
+          
+          git commit -m "chore: update core to ${{ env.CORE_SHA }} and sync dependencies"
+          
+          # 2. 尝试直接推送
+          echo "Attempting direct push..."
+          PUSH_SUCCESS=false
+          if [ "$SQUASHED" = "true" ]; then
+            # 如果压缩了，必须使用 force-with-lease 确保安全地替换上一个提交
+            if git push --force-with-lease origin HEAD:${{ github.ref_name }}; then
+              PUSH_SUCCESS=true
+            fi
+          else
+            if git push origin HEAD:${{ github.ref_name }}; then
+              PUSH_SUCCESS=true
+            fi
+          fi
+          
+          if [ "$PUSH_SUCCESS" = "true" ]; then
+            echo "Successfully synced directly."
+            echo "synced=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # 3. 如果直接推送失败（可能远程有新提交），尝试变基同步
+          echo "Direct push failed, trying rebase sync..."
+          if git pull --rebase origin ${{ github.ref_name }}; then
+            echo "Rebase successful, attempting to push..."
+            if git push origin HEAD:${{ github.ref_name }}; then
+              echo "Successfully synced after rebase."
+              echo "synced=true" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+          else
+            echo "Rebase failed due to conflicts."
+            git rebase --abort
+          fi
+          
+          # 4. 如果以上都失败（有冲突），撤销本地提交，保留更改，交给下方的 PR 步骤
+          echo "Falling back to Pull Request mode."
+          git reset HEAD~1
+          echo "synced=false" >> $GITHUB_OUTPUT
+
       - name: Create Pull Request
+        if: steps.sync.outputs.synced != 'true'
         id: cpr
         uses: peter-evans/create-pull-request@v6
         with:
@@ -72,12 +125,14 @@ jobs:
             - Synced `core/go.mod` and `core/go.sum` with the new core version.
             
             Core Version: `${{ env.CORE_SHA }}`
+            
+            > Note: Automated direct sync failed (possibly due to conflicts), so this PR was created.
           labels: |
             dependencies
             automated pr
 
       - name: PR result
-        if: ${{ steps.cpr.outputs.pull-request-number }}
+        if: steps.sync.outputs.synced != 'true' && steps.cpr.outputs.pull-request-number
         run: |
           echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
           echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
