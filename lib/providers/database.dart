@@ -326,6 +326,17 @@ class ProxyGroups extends _$ProxyGroups with AsyncNotifierMixin {
         value.indexWhere((item) => item.name == proxyGroup.name) != -1) {
       return false;
     }
+    if (index != -1) {
+      final oldName = value[index].name;
+      final newName = proxyGroup.name;
+      if (oldName != newName) {
+        database.rulesDao.renameCustomRuleTarget(
+          profileId,
+          oldName: oldName,
+          newName: newName,
+        );
+      }
+    }
     database.proxyGroups.put(proxyGroup.toCompanion(profileId));
     final newList = [...value];
     if (index != -1) {

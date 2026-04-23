@@ -207,6 +207,26 @@ class RulesDao extends DatabaseAccessor<Database> with _$RulesDaoMixin {
     );
   }
 
+  Future<int> renameCustomRuleTarget(
+    int profileId, {
+    required String oldName,
+    required String newName,
+  }) {
+    final stmt = rules.update()
+      ..where((t) => t.ruleTarget.equals(oldName))
+      ..where(
+        (t) => t.id.isInQuery(
+          selectOnly(profileRuleLinks)
+            ..addColumns([profileRuleLinks.ruleId])
+            ..where(
+              profileRuleLinks.profileId.equals(profileId) &
+                  profileRuleLinks.scene.equalsValue(RuleScene.custom),
+            ),
+        ),
+      );
+    return stmt.write(RulesCompanion(ruleTarget: Value(newName)));
+  }
+
   JoinedSelectStatement<HasResultSet, dynamic> _getSelectStatement({
     int? profileId,
     RuleScene? scene,
