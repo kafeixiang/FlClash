@@ -69,6 +69,17 @@ extension ListExt<T> on List<T> {
     return res;
   }
 
+  List<T> copyAndPut(T data, bool Function(T element) test) {
+    var newList = List<T>.from(this);
+    final index = newList.indexWhere(test);
+    if (index != -1) {
+      newList[index] = data;
+    } else {
+      newList.insert(0, data);
+    }
+    return newList;
+  }
+
   List<T> safeSublist(int start, [int? end]) {
     if (start <= 0) return this;
     if (start > length) return [];

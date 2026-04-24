@@ -30,20 +30,20 @@ class Rules extends Table {
 class RulesDao extends DatabaseAccessor<Database> with _$RulesDaoMixin {
   RulesDao(super.attachedDatabase);
 
-  Selectable<Rule> allGlobalAddedRules() {
-    return _get();
+  Selectable<Rule> queryGlobalAddedRules() {
+    return _query();
   }
 
-  Selectable<Rule> allProfileAddedRules(int profileId) {
-    return _get(profileId: profileId, scene: RuleScene.added);
+  Selectable<Rule> queryProfileAddedRules(int profileId) {
+    return _query(profileId: profileId, scene: RuleScene.added);
   }
 
-  Selectable<Rule> allProfileDisabledRules(int profileId) {
-    return _get(profileId: profileId, scene: RuleScene.disabled);
+  Selectable<Rule> queryProfileDisabledRules(int profileId) {
+    return _query(profileId: profileId, scene: RuleScene.disabled);
   }
 
-  Selectable<Rule> allProfileCustomRules(int profileId) {
-    return _get(profileId: profileId, scene: RuleScene.custom);
+  Selectable<Rule> queryProfileCustomRules(int profileId) {
+    return _query(profileId: profileId, scene: RuleScene.custom);
   }
 
   Selectable<int> profileCustomRulesCount(int profileId) {
@@ -54,7 +54,7 @@ class RulesDao extends DatabaseAccessor<Database> with _$RulesDaoMixin {
     return query.count;
   }
 
-  Selectable<Rule> allAddedRules(int profileId) {
+  Selectable<Rule> queryAddedRules(int profileId) {
     final disabledIdsQuery = selectOnly(profileRuleLinks)
       ..addColumns([profileRuleLinks.ruleId])
       ..where(
@@ -247,7 +247,7 @@ class RulesDao extends DatabaseAccessor<Database> with _$RulesDaoMixin {
     return query;
   }
 
-  Selectable<Rule> _get({int? profileId, RuleScene? scene}) {
+  Selectable<Rule> _query({int? profileId, RuleScene? scene}) {
     final query = _getSelectStatement(profileId: profileId, scene: scene);
 
     return query.map((row) {

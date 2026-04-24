@@ -100,7 +100,7 @@ class GlobalState {
     final container = ProviderContainer(
       overrides: [...appStateOverrides, ...configOverrides],
     );
-    final profiles = await database.profilesDao.all().get();
+    final profiles = await database.profilesDao.query().get();
     container.read(profilesProvider.notifier).setAndReorder(profiles);
     await AppLocalizations.load(
       utils.getLocaleForString(config.appSettingProps.locale) ??

@@ -46,7 +46,7 @@ final class ProfilesStreamProvider
   }
 }
 
-String _$profilesStreamHash() => r'483907aa6c324209b5202369300a4a53230f83db';
+String _$profilesStreamHash() => r'ea944e081294567f0f63286e95e4e66cdc650383';
 
 @ProviderFor(addedRulesStream)
 const addedRulesStreamProvider = AddedRulesStreamFamily._();
@@ -102,7 +102,7 @@ final class AddedRulesStreamProvider
   }
 }
 
-String _$addedRulesStreamHash() => r'3147271d6149b9c3861e99671fe7ac1f8a8fa23b';
+String _$addedRulesStreamHash() => r'5d37e4f080094a44c2f6f84dda60d6796f4b3c99';
 
 final class AddedRulesStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<Rule>>, int> {
@@ -292,7 +292,7 @@ final class ProfilesProvider
   }
 }
 
-String _$profilesHash() => r'9ba0fedd671eab4aa809eb2ce7962f8a7a71665d';
+String _$profilesHash() => r'a37c94a2b4f8c9aabb25e1c90b22a760507611f8';
 
 abstract class _$Profiles extends $Notifier<List<Profile>> {
   List<Profile> build();
@@ -324,7 +324,7 @@ final class ScriptsProvider
         argument: null,
         retry: null,
         name: r'scriptsProvider',
-        isAutoDispose: false,
+        isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -337,7 +337,7 @@ final class ScriptsProvider
   Scripts create() => Scripts();
 }
 
-String _$scriptsHash() => r'98a863294234784416db948db1f02852678ccecf';
+String _$scriptsHash() => r'c5c3c1a4529be6e13a9516ca0b6f98a2e0e127b4';
 
 abstract class _$Scripts extends $StreamNotifier<List<Script>> {
   Stream<List<Script>> build();
@@ -356,6 +356,75 @@ abstract class _$Scripts extends $StreamNotifier<List<Script>> {
             >;
     element.handleValue(ref, created);
   }
+}
+
+@ProviderFor(script)
+const scriptProvider = ScriptFamily._();
+
+final class ScriptProvider
+    extends $FunctionalProvider<AsyncValue<Script?>, Script?, FutureOr<Script?>>
+    with $FutureModifier<Script?>, $FutureProvider<Script?> {
+  const ScriptProvider._({
+    required ScriptFamily super.from,
+    required int? super.argument,
+  }) : super(
+         retry: null,
+         name: r'scriptProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$scriptHash();
+
+  @override
+  String toString() {
+    return r'scriptProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<Script?> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<Script?> create(Ref ref) {
+    final argument = this.argument as int?;
+    return script(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ScriptProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$scriptHash() => r'c97b48d58cef1bc928cdcfc1b292fd84ef515593';
+
+final class ScriptFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<Script?>, int?> {
+  const ScriptFamily._()
+    : super(
+        retry: null,
+        name: r'scriptProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  ScriptProvider call(int? scriptId) =>
+      ScriptProvider._(argument: scriptId, from: this);
+
+  @override
+  String toString() => r'scriptProvider';
 }
 
 @ProviderFor(GlobalRules)
@@ -382,7 +451,7 @@ final class GlobalRulesProvider
   GlobalRules create() => GlobalRules();
 }
 
-String _$globalRulesHash() => r'39d27f04f14d4498dc9dd89cea8e9cc2cc9da548';
+String _$globalRulesHash() => r'fcded4e1dc862ac0ddd3223df9b723072d6f2fd5';
 
 abstract class _$GlobalRules extends $StreamNotifier<List<Rule>> {
   Stream<List<Rule>> build();
@@ -444,7 +513,7 @@ final class ProfileAddedRulesProvider
   }
 }
 
-String _$profileAddedRulesHash() => r'6909191ccf493d8b9dd657265f3da1ae27485d73';
+String _$profileAddedRulesHash() => r'276c520db54aec72ade2544260f26a43cbb71960';
 
 final class ProfileAddedRulesFamily extends $Family
     with
@@ -535,7 +604,7 @@ final class ProfileCustomRulesProvider
 }
 
 String _$profileCustomRulesHash() =>
-    r'b267939b552c7967a85caff5a249c0534686753b';
+    r'3f4871fe309c1525ae65699eb1eb5fbcb1474acd';
 
 final class ProfileCustomRulesFamily extends $Family
     with
@@ -625,7 +694,7 @@ final class ProxyGroupsProvider
   }
 }
 
-String _$proxyGroupsHash() => r'c7aa5150b238bd60b824ddff96fdbb21d84bbd73';
+String _$proxyGroupsHash() => r'eba936a7da2b308eac2ffe81be1ec2f4f82302a0';
 
 final class ProxyGroupsFamily extends $Family
     with
@@ -718,7 +787,7 @@ final class ProfileDisabledRuleIdsProvider
 }
 
 String _$profileDisabledRuleIdsHash() =>
-    r'5093cc1d77ec69a2c1db6efa86a3f5916475d4f0';
+    r'230fb8adbc54c80de6fe7c233e6c3bae1f853277';
 
 final class ProfileDisabledRuleIdsFamily extends $Family
     with

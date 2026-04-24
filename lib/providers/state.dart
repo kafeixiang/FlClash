@@ -669,17 +669,6 @@ OverwriteType overwriteType(Ref ref, int? profileId) {
 }
 
 @riverpod
-Future<Script?> script(Ref ref, int? scriptId) async {
-  final script = await ref.read(
-    (scriptsProvider.future.select((state) async {
-      final scripts = await state;
-      return scripts.get(scriptId);
-    })),
-  );
-  return script;
-}
-
-@riverpod
 Future<ClashConfig> clashConfig(Ref ref, int profileId) async {
   final configMap = await coreController.getConfig(profileId);
   final clashConfig = ClashConfig.fromJson(configMap);
@@ -710,7 +699,7 @@ Future<SetupState> setupState(Ref ref, int? profileId) async {
     if (overwriteType == OverwriteType.standard) {
       addedRules = reactive
           ? await ref.watch(addedRulesStreamProvider(profileId).future)
-          : await database.rulesDao.allAddedRules(profileId).get();
+          : await database.rulesDao.queryAddedRules(profileId).get();
     } else if (overwriteType == OverwriteType.script) {
       script = reactive
           ? await ref.watch(scriptProvider(scriptId).future)
@@ -720,10 +709,10 @@ Future<SetupState> setupState(Ref ref, int? profileId) async {
     } else {
       rules = reactive
           ? await ref.watch(profileCustomRulesProvider(profileId).future)
-          : await database.rulesDao.allProfileCustomRules(profileId).get();
+          : await database.rulesDao.queryProfileCustomRules(profileId).get();
       proxyGroups = reactive
           ? await ref.watch(proxyGroupsProvider(profileId).future)
-          : await database.proxyGroupsDao.all(profileId).get();
+          : await database.proxyGroupsDao.query(profileId).get();
     }
   }
   return SetupState(

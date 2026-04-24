@@ -415,6 +415,13 @@ abstract class Rule with _$Rule {
 }
 
 extension RuleExt on Rule {
+  Rule autoOrder(Rule rule, String? a, String? b) {
+    final newRule = rule.order?.isNotEmpty != true
+        ? rule.copyWith(order: indexing.generateKeyBetween(a, b))
+        : rule;
+    return newRule;
+  }
+
   String? get realContent {
     return switch (ruleAction == RuleAction.RULE_SET) {
       true => ruleProvider,
@@ -439,19 +446,6 @@ extension RuleExt on Rule {
         if (noResolve) 'no-resolve',
       ],
     ].join(',');
-  }
-}
-
-extension RulesExt on List<Rule> {
-  List<Rule> copyAndPut(Rule rule) {
-    var newList = List<Rule>.from(this);
-    final index = newList.indexWhere((item) => item.id == rule.id);
-    if (index != -1) {
-      rule = newList[index] = rule;
-    } else {
-      newList.insert(0, rule);
-    }
-    return newList;
   }
 }
 

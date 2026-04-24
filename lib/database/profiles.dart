@@ -57,7 +57,7 @@ class SubscriptionInfoConverter
 class ProfilesDao extends DatabaseAccessor<Database> with _$ProfilesDaoMixin {
   ProfilesDao(super.attachedDatabase);
 
-  Selectable<Profile> all() {
+  Selectable<Profile> query() {
     final stmt = profiles.select();
     stmt.orderBy([
       (t) => OrderingTerm(expression: t.order, nulls: NullsOrder.last),
@@ -85,6 +85,11 @@ class ProfilesDao extends DatabaseAccessor<Database> with _$ProfilesDaoMixin {
     Iterable<Insertable<D>> items,
   ) {
     batch.insertAllOnConflictUpdate(profiles, items);
+  }
+
+  Selectable<String> fileNames() {
+    final query = profiles.selectOnly()..addColumns([profiles.label]);
+    return query.map((row) => '${row.read(profiles.label)}.yaml');
   }
 
   void setAllWithBatch(Batch batch, Iterable<Profile> profiles) {

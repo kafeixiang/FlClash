@@ -1000,14 +1000,12 @@ extension BackupControllerExt on AppController {
   }
 
   Future<String> backup() async {
-    final profileFileNames = _ref.read(
-      profilesProvider.select((state) => state.map((item) => item.fileName)),
-    );
-    final scriptFileNames = await _ref.read(
-      scriptsProvider.future.select(
-        (state) async => (await state).map((item) => item.fileName),
-      ),
-    );
+    final res = await Future.wait([
+      database.profilesDao.fileNames().get(),
+      database.scriptsDao.fileNames().get(),
+    ]);
+    final profileFileNames = res[0];
+    final scriptFileNames = res[1];
     final configMap = _ref.read(configProvider).toJson();
     configMap['version'] = await preferences.getVersion();
     return await backupTask(configMap, [

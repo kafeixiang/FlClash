@@ -5,18 +5,41 @@ import 'package:drift/drift.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/database/database.dart';
 import 'package:fl_clash/models/models.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'generated/database.g.dart';
 
+class RollbackScope<T> {
+  final T _originData;
+  final Future Function() _handler;
+
+  RollbackScope(this._originData, this._handler);
+
+  void onRollback(void Function(T data) callback) {
+    try {
+      _handler().catchError((e) {
+        callback(_originData);
+      });
+    } catch (e) {
+      callback(_originData);
+      rethrow;
+    }
+  }
+}
+
+RollbackScope<T> withRollback<T>(T originData, Future Function() handler) {
+  return RollbackScope(originData, handler);
+}
+
 @riverpod
 Stream<List<Profile>> profilesStream(Ref ref) {
-  return database.profilesDao.all().watch();
+  return database.profilesDao.query().watch();
 }
 
 @riverpod
 Stream<List<Rule>> addedRulesStream(Ref ref, int profileId) {
-  return database.rulesDao.allAddedRules(profileId).watch();
+  return database.rulesDao.queryAddedRules(profileId).watch();
 }
 
 @riverpod
@@ -37,47 +60,50 @@ class Profiles extends _$Profiles {
   }
 
   void put(Profile profile) {
-    final vm2 = state.copyAndAddProfile(profile);
-    final nextProfiles = vm2.a;
-    final newProfile = vm2.b;
-    state = nextProfiles;
-    database.profiles.put(newProfile.toCompanion());
+    withRollback(state, () {
+      final newProfile = state.optimizeLabel(profile);
+      state.copyAndPut(newProfile, (item) => item.id == newProfile.id);
+      return database.profiles.put(newProfile.toCompanion());
+    }).onRollback((v) => state = v);
   }
 
   void del(int id) {
-    final newProfiles = state.where((element) => element.id != id).toList();
-    state = newProfiles;
-    database.profiles.remove((t) => t.id.equals(id));
+    withRollback(state, () {
+      state = state.where((e) => e.id != id).toList();
+      return database.profiles.remove((t) => t.id.equals(id));
+    }).onRollback((v) => state = v);
   }
 
   void updateProfile(int profileId, Profile Function(Profile profile) builder) {
     final index = state.indexWhere((element) => element.id == profileId);
-    if (index == -1) {
-      return;
-    }
-    final List<Profile> profilesTemp = List.from(state);
-    final newProfile = builder(profilesTemp[index]);
-    profilesTemp[index] = newProfile;
-    state = profilesTemp;
-    database.profiles.put(newProfile.toCompanion());
+    if (index == -1) return;
+    final newProfile = builder(state[index]);
+    withRollback(state, () {
+      final temp = List<Profile>.from(state);
+      temp[index] = newProfile;
+      state = temp;
+      return database.profiles.put(newProfile.toCompanion());
+    }).onRollback((v) => state = v);
   }
 
   void setAndReorder(List<Profile> profiles) {
-    final newProfiles = List<Profile>.from(profiles);
-    state = newProfiles;
-    database.profilesDao.setAll(profiles);
+    withRollback(state, () {
+      state = List<Profile>.from(profiles);
+      return database.profilesDao.setAll(profiles);
+    }).onRollback((v) => state = v);
   }
 
   void reorder(List<Profile> profiles) {
-    final newProfiles = List<Profile>.from(profiles);
-    state = newProfiles;
-    final List<ProfilesCompanion> needUpdateProfiles = [];
-    newProfiles.forEachIndexed((index, item) {
-      if (item.order != index) {
-        needUpdateProfiles.add(item.toCompanion(index));
-      }
-    });
-    database.profilesDao.putAll(needUpdateProfiles);
+    withRollback(state, () {
+      state = List<Profile>.from(profiles);
+      final needUpdate = <ProfilesCompanion>[];
+      state.forEachIndexed((index, item) {
+        if (item.order != index) {
+          needUpdate.add(item.toCompanion(index));
+        }
+      });
+      return database.profilesDao.putAll(needUpdate);
+    }).onRollback((v) => state = v);
   }
 
   @override
@@ -86,37 +112,39 @@ class Profiles extends _$Profiles {
   }
 }
 
-@Riverpod(keepAlive: true)
+@riverpod
 class Scripts extends _$Scripts with AsyncNotifierMixin {
   @override
   Stream<List<Script>> build() {
-    return database.scriptsDao.all().watch();
+    return database.scriptsDao.query().watch();
   }
 
   @override
   List<Script> get value => state.value ?? [];
 
   void put(Script script) {
-    final list = List<Script>.from(value);
     final index = value.indexWhere((item) => item.id == script.id);
-    if (index != -1) {
-      list[index] = script;
-    } else {
-      list.add(script);
-    }
-    value = list;
-    database.scripts.put(script.toCompanion());
+    withRollback(value, () {
+      final list = List<Script>.from(value);
+      if (index != -1) {
+        list[index] = script;
+      } else {
+        list.add(script);
+      }
+      value = list;
+      return database.scripts.put(script.toCompanion());
+    }).onRollback((v) => value = v);
   }
 
   void del(int id) {
     final index = value.indexWhere((item) => item.id == id);
-    if (index == -1) {
-      return;
-    }
-    final list = List<Script>.from(value);
-    list.removeAt(index);
-    value = list;
-    database.scripts.remove((t) => t.id.equals(id));
+    if (index == -1) return;
+    withRollback(value, () {
+      final list = List<Script>.from(value);
+      list.removeAt(index);
+      value = list;
+      return database.scripts.remove((t) => t.id.equals(id));
+    }).onRollback((v) => value = v);
   }
 
   bool isExits(String label) {
@@ -133,10 +161,21 @@ class Scripts extends _$Scripts with AsyncNotifierMixin {
 }
 
 @riverpod
+Future<Script?> script(Ref ref, int? scriptId) async {
+  final script = ref.watch(
+    scriptsProvider.future.select((state) async {
+      final scripts = await state;
+      return scripts.get(scriptId);
+    }),
+  );
+  return script;
+}
+
+@riverpod
 class GlobalRules extends _$GlobalRules with AsyncNotifierMixin {
   @override
   Stream<List<Rule>> build() {
-    return database.rulesDao.allGlobalAddedRules().watch();
+    return database.rulesDao.queryGlobalAddedRules().watch();
   }
 
   @override
@@ -151,36 +190,36 @@ class GlobalRules extends _$GlobalRules with AsyncNotifierMixin {
   }
 
   void delAll(Iterable<int> ruleIds) {
-    value = List<Rule>.from(value.where((item) => !ruleIds.contains(item.id)));
-    database.rulesDao.delRules(ruleIds);
+    withRollback(value, () {
+      value = List.from(value.where((item) => !ruleIds.contains(item.id)));
+      return database.rulesDao.delRules(ruleIds);
+    }).onRollback((v) => value = v);
   }
 
   void put(Rule rule) {
-    final Rule newRule;
-    if (rule.order?.isNotEmpty != true) {
-      newRule = rule.copyWith(
-        order: indexing.generateKeyBetween(null, value.firstOrNull?.order),
-      );
-    } else {
-      newRule = rule;
-    }
-    value = value.copyAndPut(newRule);
-    database.rulesDao.putGlobalRule(newRule);
+    withRollback(value, () {
+      final newRule = rule.autoOrder(rule, null, value.firstOrNull?.order);
+      value = value.copyAndPut(newRule, (rule) => rule.id == newRule.id);
+      return database.rulesDao.putGlobalRule(newRule);
+    }).onRollback((v) => value = v);
   }
 
   void order(int oldIndex, int newIndex) {
-    int insertIndex = newIndex;
-    if (oldIndex < newIndex) {
-      insertIndex -= 1;
-    }
-    final nextItems = List<Rule>.from(value);
-    final item = nextItems.removeAt(oldIndex);
-    nextItems.insert(insertIndex, item);
-    value = nextItems;
-    final preOrder = nextItems.safeGet(insertIndex - 1)?.order;
-    final nextOrder = nextItems.safeGet(insertIndex + 1)?.order;
-    final newOrder = indexing.generateKeyBetween(preOrder, nextOrder)!;
-    database.rulesDao.orderGlobalRule(ruleId: item.id, order: newOrder);
+    withRollback(value, () {
+      int insertIndex = newIndex;
+      if (oldIndex < newIndex) insertIndex -= 1;
+      final nextItems = List<Rule>.from(value);
+      final item = nextItems.removeAt(oldIndex);
+      nextItems.insert(insertIndex, item);
+      value = nextItems;
+      final preOrder = nextItems.safeGet(insertIndex - 1)?.order;
+      final nextOrder = nextItems.safeGet(insertIndex + 1)?.order;
+      final newOrder = indexing.generateKeyBetween(preOrder, nextOrder)!;
+      return database.rulesDao.orderGlobalRule(
+        ruleId: item.id,
+        order: newOrder,
+      );
+    }).onRollback((v) => value = v);
   }
 }
 
@@ -188,7 +227,7 @@ class GlobalRules extends _$GlobalRules with AsyncNotifierMixin {
 class ProfileAddedRules extends _$ProfileAddedRules with AsyncNotifierMixin {
   @override
   Stream<List<Rule>> build(int profileId) {
-    return database.rulesDao.allProfileAddedRules(profileId).watch();
+    return database.rulesDao.queryProfileAddedRules(profileId).watch();
   }
 
   @override
@@ -203,40 +242,37 @@ class ProfileAddedRules extends _$ProfileAddedRules with AsyncNotifierMixin {
   }
 
   void put(Rule rule) {
-    final Rule newRule;
-    if (rule.order?.isNotEmpty != true) {
-      newRule = rule.copyWith(
-        order: indexing.generateKeyBetween(null, value.firstOrNull?.order),
-      );
-    } else {
-      newRule = rule;
-    }
-    value = value.copyAndPut(newRule);
-    database.rulesDao.putProfileAddedRule(profileId, newRule);
+    withRollback(value, () {
+      final newRule = rule.autoOrder(rule, null, value.firstOrNull?.order);
+      value = value.copyAndPut(newRule, (rule) => rule.id == newRule.id);
+      return database.rulesDao.putProfileAddedRule(profileId, newRule);
+    }).onRollback((v) => value = v);
   }
 
   void delAll(Iterable<int> ruleIds) {
-    value = List<Rule>.from(value.where((item) => !ruleIds.contains(item.id)));
-    database.rulesDao.delRules(ruleIds);
+    withRollback(value, () {
+      value = List.from(value.where((item) => !ruleIds.contains(item.id)));
+      return database.rulesDao.delRules(ruleIds);
+    }).onRollback((v) => value = v);
   }
 
   void order(int oldIndex, int newIndex) {
-    int insertIndex = newIndex;
-    if (oldIndex < newIndex) {
-      insertIndex -= 1;
-    }
-    final nextItems = List<Rule>.from(value);
-    final item = nextItems.removeAt(oldIndex);
-    nextItems.insert(insertIndex, item);
-    value = nextItems;
-    final preOrder = nextItems.safeGet(insertIndex - 1)?.order;
-    final nextOrder = nextItems.safeGet(insertIndex + 1)?.order;
-    final newOrder = indexing.generateKeyBetween(preOrder, nextOrder)!;
-    database.rulesDao.orderProfileAddedRule(
-      profileId,
-      ruleId: item.id,
-      order: newOrder,
-    );
+    withRollback(value, () {
+      int insertIndex = newIndex;
+      if (oldIndex < newIndex) insertIndex -= 1;
+      final nextItems = List<Rule>.from(value);
+      final item = nextItems.removeAt(oldIndex);
+      nextItems.insert(insertIndex, item);
+      value = nextItems;
+      final preOrder = nextItems.safeGet(insertIndex - 1)?.order;
+      final nextOrder = nextItems.safeGet(insertIndex + 1)?.order;
+      final newOrder = indexing.generateKeyBetween(preOrder, nextOrder)!;
+      return database.rulesDao.orderProfileAddedRule(
+        profileId,
+        ruleId: item.id,
+        order: newOrder,
+      );
+    }).onRollback((v) => value = v);
   }
 }
 
@@ -244,7 +280,7 @@ class ProfileAddedRules extends _$ProfileAddedRules with AsyncNotifierMixin {
 class ProfileCustomRules extends _$ProfileCustomRules with AsyncNotifierMixin {
   @override
   Stream<List<Rule>> build(int profileId) {
-    return database.rulesDao.allProfileCustomRules(profileId).watch();
+    return database.rulesDao.queryProfileCustomRules(profileId).watch();
   }
 
   @override
@@ -259,40 +295,37 @@ class ProfileCustomRules extends _$ProfileCustomRules with AsyncNotifierMixin {
   }
 
   void put(Rule rule) {
-    final Rule newRule;
-    if (rule.order?.isNotEmpty != true) {
-      newRule = rule.copyWith(
-        order: indexing.generateKeyBetween(null, value.firstOrNull?.order),
-      );
-    } else {
-      newRule = rule;
-    }
-    value = value.copyAndPut(newRule);
-    database.rulesDao.putProfileCustomRule(profileId, newRule);
+    withRollback(value, () {
+      final newRule = rule.autoOrder(rule, null, value.firstOrNull?.order);
+      value = value.copyAndPut(newRule, (rule) => rule.id == newRule.id);
+      return database.rulesDao.putProfileCustomRule(profileId, newRule);
+    }).onRollback((v) => value = v);
   }
 
   void delAll(Iterable<int> ruleIds) {
-    value = List<Rule>.from(value.where((item) => !ruleIds.contains(item.id)));
-    database.rulesDao.delRules(ruleIds);
+    withRollback(value, () {
+      value = List.from(value.where((item) => !ruleIds.contains(item.id)));
+      return database.rulesDao.delRules(ruleIds);
+    }).onRollback((v) => value = v);
   }
 
   void order(int oldIndex, int newIndex) {
-    int insertIndex = newIndex;
-    if (oldIndex < newIndex) {
-      insertIndex -= 1;
-    }
-    final nextItems = List<Rule>.from(value);
-    final item = nextItems.removeAt(oldIndex);
-    nextItems.insert(insertIndex, item);
-    value = nextItems;
-    final preOrder = nextItems.safeGet(insertIndex - 1)?.order;
-    final nextOrder = nextItems.safeGet(insertIndex + 1)?.order;
-    final newOrder = indexing.generateKeyBetween(preOrder, nextOrder)!;
-    database.rulesDao.orderProfileCustomRule(
-      profileId,
-      ruleId: item.id,
-      order: newOrder,
-    );
+    withRollback(value, () {
+      int insertIndex = newIndex;
+      if (oldIndex < newIndex) insertIndex -= 1;
+      final nextItems = List<Rule>.from(value);
+      final item = nextItems.removeAt(oldIndex);
+      nextItems.insert(insertIndex, item);
+      value = nextItems;
+      final preOrder = nextItems.safeGet(insertIndex - 1)?.order;
+      final nextOrder = nextItems.safeGet(insertIndex + 1)?.order;
+      final newOrder = indexing.generateKeyBetween(preOrder, nextOrder)!;
+      return database.rulesDao.orderProfileCustomRule(
+        profileId,
+        ruleId: item.id,
+        order: newOrder,
+      );
+    }).onRollback((v) => value = v);
   }
 }
 
@@ -300,7 +333,7 @@ class ProfileCustomRules extends _$ProfileCustomRules with AsyncNotifierMixin {
 class ProxyGroups extends _$ProxyGroups with AsyncNotifierMixin {
   @override
   Stream<List<ProxyGroup>> build(int profileId) {
-    return database.proxyGroupsDao.all(profileId).watch();
+    return database.proxyGroupsDao.query(profileId).watch();
   }
 
   @override
@@ -312,12 +345,12 @@ class ProxyGroups extends _$ProxyGroups with AsyncNotifierMixin {
   }
 
   void del(String name) {
-    database.proxyGroups.remove(
-      (t) => t.profileId.equals(profileId) & t.name.equals(name),
-    );
-    List<ProxyGroup> newList = List.from(value);
-    newList = newList.where((item) => item.name != name).toList();
-    value = newList;
+    withRollback(value, () {
+      value = List.from(value.where((item) => item.name != name));
+      return database.proxyGroups.remove(
+        (t) => t.profileId.equals(profileId) & t.name.equals(name),
+      );
+    }).onRollback((v) => value = v);
   }
 
   bool put(ProxyGroup proxyGroup) {
@@ -337,33 +370,40 @@ class ProxyGroups extends _$ProxyGroups with AsyncNotifierMixin {
         );
       }
     }
-    database.proxyGroups.put(proxyGroup.toCompanion(profileId));
-    final newList = [...value];
-    if (index != -1) {
-      newList[index] = proxyGroup;
-    } else {
-      newList.add(
-        proxyGroup.copyWith(
-          order: indexing.generateKeyBetween(null, proxyGroup.order),
-        ),
-      );
-    }
-    value = newList;
+    withRollback(value, () {
+      final newList = [...value];
+      if (index != -1) {
+        newList[index] = proxyGroup;
+      } else {
+        newList.add(
+          proxyGroup.copyWith(
+            order: indexing.generateKeyBetween(null, proxyGroup.order),
+          ),
+        );
+      }
+      value = newList;
+      return database.proxyGroups.put(proxyGroup.toCompanion(profileId));
+    }).onRollback((v) => value = v);
     return true;
   }
 
   void order(int oldIndex, int newIndex) {
-    if (oldIndex < newIndex) {
-      newIndex -= 1;
-    }
-    final nextItems = List<ProxyGroup>.from(value);
-    final item = nextItems.removeAt(oldIndex);
-    nextItems.insert(newIndex, item);
-    value = nextItems;
-    final preOrder = nextItems.safeGet(newIndex - 1)?.order;
-    final nextOrder = nextItems.safeGet(newIndex + 1)?.order;
-    final newOrder = indexing.generateKeyBetween(preOrder, nextOrder)!;
-    database.proxyGroupsDao.order(profileId, proxyGroup: item, order: newOrder);
+    withRollback(value, () {
+      int insertIndex = newIndex;
+      if (oldIndex < newIndex) insertIndex -= 1;
+      final nextItems = List<ProxyGroup>.from(value);
+      final item = nextItems.removeAt(oldIndex);
+      nextItems.insert(insertIndex, item);
+      value = nextItems;
+      final preOrder = nextItems.safeGet(insertIndex - 1)?.order;
+      final nextOrder = nextItems.safeGet(insertIndex + 1)?.order;
+      final newOrder = indexing.generateKeyBetween(preOrder, nextOrder)!;
+      return database.proxyGroupsDao.order(
+        profileId,
+        proxyGroup: item,
+        order: newOrder,
+      );
+    }).onRollback((v) => value = v);
   }
 
   @override
@@ -379,7 +419,7 @@ class ProfileDisabledRuleIds extends _$ProfileDisabledRuleIds
   @override
   Stream<List<int>> build(int profileId) {
     return database.rulesDao
-        .allProfileDisabledRules(profileId)
+        .queryProfileDisabledRules(profileId)
         .map((item) => item.id)
         .watch();
   }
@@ -404,14 +444,16 @@ class ProfileDisabledRuleIds extends _$ProfileDisabledRuleIds
   }
 
   void del(int ruleId) {
-    List<int> newList = List.from(value);
-    newList = newList.where((item) => item != ruleId).toList();
-    value = newList;
-    database.rulesDao.delDisabledLink(profileId, ruleId);
+    withRollback(value, () {
+      value = List.from(value.where((item) => item != ruleId));
+      return database.rulesDao.delDisabledLink(profileId, ruleId);
+    }).onRollback((v) => value = v);
   }
 
   void put(int ruleId) {
-    _put(ruleId);
-    database.rulesDao.putDisabledLink(profileId, ruleId);
+    withRollback(value, () {
+      _put(ruleId);
+      return database.rulesDao.putDisabledLink(profileId, ruleId);
+    }).onRollback((v) => value = v);
   }
 }

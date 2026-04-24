@@ -67,7 +67,7 @@ class ProxyGroupsDao extends DatabaseAccessor<Database>
     with _$ProxyGroupsDaoMixin {
   ProxyGroupsDao(super.attachedDatabase);
 
-  Selectable<ProxyGroup> all(int profileId) {
+  Selectable<ProxyGroup> query(int profileId) {
     final stmt = proxyGroups.select();
     stmt.where((row) => row.profileId.equals(profileId));
     stmt.orderBy([
@@ -83,14 +83,6 @@ class ProxyGroupsDao extends DatabaseAccessor<Database>
       (t) => OrderingTerm(expression: t.order, nulls: NullsOrder.last),
     ]);
     return stmt.count;
-  }
-
-  Selectable<ProxyGroup> get(int profileId, String name) {
-    final stmt = proxyGroups.select();
-    stmt.where(
-      (row) => row.profileId.equals(profileId) & row.name.equals(name),
-    );
-    return stmt.map((item) => item.toProxyGroup());
   }
 
   Future<int> order(

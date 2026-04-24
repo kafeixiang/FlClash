@@ -351,6 +351,7 @@ abstract class MigrationData with _$MigrationData {
     @Default([]) List<Script> scripts,
     @Default([]) List<Profile> profiles,
     @Default([]) List<ProfileRuleLink> links,
+    @Default([]) List<ProxyGroup> proxyGroups,
   }) = _MigrationData;
 }
 

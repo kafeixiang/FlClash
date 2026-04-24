@@ -582,10 +582,11 @@ Future<MigrationData> _restoreTask(RootIsolateToken token) async {
     ),
   );
   final results = await Future.wait([
-    database.profilesDao.all().get(),
-    database.scriptsDao.all().get(),
+    database.profilesDao.query().get(),
+    database.scriptsDao.query().get(),
     database.rules.all().map((item) => item.toRule()).get(),
     database.profileRuleLinks.all().map((item) => item.toLink()).get(),
+    database.proxyGroups.all().map((item) => item.toProxyGroup()).get(),
   ]);
   final profiles = results[0].cast<Profile>();
   final scripts = results[1].cast<Script>();
