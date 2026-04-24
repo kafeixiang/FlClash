@@ -183,7 +183,7 @@ class _IconEditViewState extends ConsumerState<IconEditView>
       backAction: () {
         Navigator.of(context).pop(_srcController.text);
       },
-      title: '图标',
+      title: appLocalizations.icon,
       body: SizedBox(
         height: height,
         child: ValueListenableBuilder(
@@ -247,7 +247,7 @@ class _IconEditViewState extends ConsumerState<IconEditView>
                                 },
                                 decoration: InputDecoration.collapsed(
                                   border: NoInputBorder(),
-                                  hintText: '图标链接',
+                                  hintText: appLocalizations.iconUrl,
                                 ),
                               ),
                             ),
@@ -260,7 +260,7 @@ class _IconEditViewState extends ConsumerState<IconEditView>
                 if (records.isNotEmpty) ...[
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: InfoHeader(info: Info(label: '图标记录')),
+                    child: InfoHeader(info: Info(label: appLocalizations.iconRecords)),
                   ),
                   Expanded(
                     child: ListView.builder(
@@ -284,7 +284,7 @@ class _IconEditViewState extends ConsumerState<IconEditView>
                     ),
                   ),
                 ] else
-                  Expanded(child: NullStatus(label: '暂无记录')),
+                  Expanded(child: NullStatus(label: appLocalizations.noRecords)),
                 SizedBox(height: 20),
               ],
             );

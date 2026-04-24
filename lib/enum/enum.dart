@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:fl_clash/common/app_localizations.dart';
 import 'package:fl_clash/common/color.dart';
 import 'package:fl_clash/common/system.dart';
 import 'package:fl_clash/views/dashboard/widgets/widgets.dart';
@@ -80,14 +81,6 @@ extension GroupTypeExtension on GroupType {
     if (index == -1) return null;
     return GroupType.values[index];
   }
-
-  String get value => switch (this) {
-    GroupType.URLTest => 'url-test',
-    GroupType.Selector => 'select',
-    GroupType.Fallback => 'fallback',
-    GroupType.LoadBalance => 'load-balance',
-    GroupType.Relay => 'relay',
-  };
 }
 
 enum UsedProxy { GLOBAL, DIRECT, REJECT }
@@ -413,39 +406,41 @@ extension RuleActionExt on RuleAction {
 
   String get desc {
     return switch (this) {
-      RuleAction.DOMAIN => '匹配完整域名',
-      RuleAction.DOMAIN_SUFFIX => '匹配域名后缀',
-      RuleAction.DOMAIN_KEYWORD => '匹配域名关键字',
-      RuleAction.DOMAIN_REGEX => '通配符匹配，仅支持*和?通配符',
-      RuleAction.GEOSITE => '匹配 Geosite 内的域名',
-      RuleAction.IP_CIDR => '匹配 IP 地址范围',
-      RuleAction.IP_CIDR6 => '匹配 IP 地址范围, IP-CIDR6 只是一个别名',
-      RuleAction.IP_SUFFIX => '匹配 IP 后缀范围',
-      RuleAction.IP_ASN => '匹配 IP 所属 ASN',
-      RuleAction.GEOIP => '匹配 IP 所属国家代码',
-      RuleAction.SRC_GEOIP => '匹配来源 IP 所属国家代码',
-      RuleAction.SRC_IP_ASN => '匹配来源 IP 所属 ASN',
-      RuleAction.SRC_IP_CIDR => '匹配来源 IP 地址范围',
-      RuleAction.SRC_IP_SUFFIX => '匹配来源 IP 后缀范围',
-      RuleAction.DST_PORT => '匹配请求目标端口范围',
-      RuleAction.SRC_PORT => '匹配请求来源端口范围',
-      RuleAction.IN_PORT => '匹配入站端口',
-      RuleAction.IN_TYPE => '匹配入站类型',
-      RuleAction.IN_USER => '匹配入站用户名，支持使用 / 分隔多个用户名',
-      RuleAction.IN_NAME => '匹配入站名称',
-      RuleAction.PROCESS_PATH => '使用完整进程路径匹配',
-      RuleAction.PROCESS_PATH_REGEX => '使用进程路径正则表达式匹配',
-      RuleAction.PROCESS_NAME => '使用进程匹配，在Android平台可以匹配包名',
-      RuleAction.PROCESS_NAME_REGEX => '使用进程名称正则表达式匹配，在Android平台可以匹配包名',
-      RuleAction.UID => '匹配 Linux USER ID',
-      RuleAction.NETWORK => '匹配TCP或者UDP',
-      RuleAction.DSCP => '匹配DSCP标记 (仅限 tproxy udp 入站)',
-      RuleAction.RULE_SET => '引用规则集合，需配置rule-providers',
-      RuleAction.AND => '逻辑规则 AND',
-      RuleAction.OR => '逻辑规则 OR',
-      RuleAction.NOT => '逻辑规则 NOT',
-      RuleAction.SUB_RULE => '匹配至子规则,需要注意括号的使用',
-      RuleAction.MATCH => '匹配所有请求，无需条件',
+      RuleAction.DOMAIN => appLocalizations.ruleActionDomainDesc,
+      RuleAction.DOMAIN_SUFFIX => appLocalizations.ruleActionDomainSuffixDesc,
+      RuleAction.DOMAIN_KEYWORD => appLocalizations.ruleActionDomainKeywordDesc,
+      RuleAction.DOMAIN_REGEX => appLocalizations.ruleActionDomainRegexDesc,
+      RuleAction.GEOSITE => appLocalizations.ruleActionGeositeDesc,
+      RuleAction.IP_CIDR => appLocalizations.ruleActionIpCidrDesc,
+      RuleAction.IP_CIDR6 => appLocalizations.ruleActionIpCidr6Desc,
+      RuleAction.IP_SUFFIX => appLocalizations.ruleActionIpSuffixDesc,
+      RuleAction.IP_ASN => appLocalizations.ruleActionIpAsnDesc,
+      RuleAction.GEOIP => appLocalizations.ruleActionGeoipDesc,
+      RuleAction.SRC_GEOIP => appLocalizations.ruleActionSrcGeoipDesc,
+      RuleAction.SRC_IP_ASN => appLocalizations.ruleActionSrcIpAsnDesc,
+      RuleAction.SRC_IP_CIDR => appLocalizations.ruleActionSrcIpCidrDesc,
+      RuleAction.SRC_IP_SUFFIX => appLocalizations.ruleActionSrcIpSuffixDesc,
+      RuleAction.DST_PORT => appLocalizations.ruleActionDstPortDesc,
+      RuleAction.SRC_PORT => appLocalizations.ruleActionSrcPortDesc,
+      RuleAction.IN_PORT => appLocalizations.ruleActionInPortDesc,
+      RuleAction.IN_TYPE => appLocalizations.ruleActionInTypeDesc,
+      RuleAction.IN_USER => appLocalizations.ruleActionInUserDesc,
+      RuleAction.IN_NAME => appLocalizations.ruleActionInNameDesc,
+      RuleAction.PROCESS_PATH => appLocalizations.ruleActionProcessPathDesc,
+      RuleAction.PROCESS_PATH_REGEX =>
+        appLocalizations.ruleActionProcessPathRegexDesc,
+      RuleAction.PROCESS_NAME => appLocalizations.ruleActionProcessNameDesc,
+      RuleAction.PROCESS_NAME_REGEX =>
+        appLocalizations.ruleActionProcessNameRegexDesc,
+      RuleAction.UID => appLocalizations.ruleActionUidDesc,
+      RuleAction.NETWORK => appLocalizations.ruleActionNetworkDesc,
+      RuleAction.DSCP => appLocalizations.ruleActionDscpDesc,
+      RuleAction.RULE_SET => appLocalizations.ruleActionRuleSetDesc,
+      RuleAction.AND => appLocalizations.ruleActionAndDesc,
+      RuleAction.OR => appLocalizations.ruleActionOrDesc,
+      RuleAction.NOT => appLocalizations.ruleActionNotDesc,
+      RuleAction.SUB_RULE => appLocalizations.ruleActionSubRuleDesc,
+      RuleAction.MATCH => appLocalizations.ruleActionMatchDesc,
     };
   }
 }

@@ -162,7 +162,7 @@ class _CustomRulesViewState extends ConsumerState<CustomRulesView>
         SizedBox(width: 8),
       ],
       body: rules.isEmpty
-          ? NullStatus(label: '规则为空')
+          ? NullStatus(label: appLocalizations.ruleEmpty)
           : CommonScrollBar(
               controller: _scrollController,
               child: ReorderableListView.builder(
@@ -242,7 +242,7 @@ class _AddOrEditRuleNestedSheetState
     final state = _nestedNavigatorKey.currentState;
     if (state != null && state.canPop()) {
       final res = await globalState.showMessage(
-        message: TextSpan(text: '确定要退出当前窗口吗?'),
+        message: TextSpan(text: appLocalizations.confirmExitWindow),
       );
       if (res != true) {
         return;
@@ -260,7 +260,7 @@ class _AddOrEditRuleNestedSheetState
       return;
     }
     final res = await globalState.showMessage(
-      message: TextSpan(text: '检测到数据有更改，是否保存'),
+      message: TextSpan(text: appLocalizations.dataChangedSave),
     );
     if (!mounted) {
       return;
@@ -394,7 +394,7 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
 
   Widget _buildTypeItem(RuleAction action) {
     return _buildItem(
-      title: Text('类型'),
+      title: Text(appLocalizations.proxyType),
       onPressed: () {
         _handleSelectedType();
       },
@@ -416,7 +416,7 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
 
   Widget _buildContentItem(String? content) {
     return _buildItem(
-      title: Text('内容'),
+      title: Text(appLocalizations.content),
       trailing: TextFormField(
         initialValue: content,
         keyboardType: TextInputType.name,
@@ -428,7 +428,7 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
         textAlign: TextAlign.end,
         decoration: InputDecoration.collapsed(
           border: NoInputBorder(),
-          hintText: '输入规则内容',
+          hintText: appLocalizations.inputRuleContent,
         ),
       ),
     );
@@ -448,7 +448,7 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
 
   Widget _buildRuleProviderItem(String? ruleProvider) {
     return _buildItem(
-      title: Text('规则集'),
+      title: Text(appLocalizations.ruleSet),
       onPressed: _handleSelectedRuleProvider,
       trailing: Row(
         spacing: 4,
@@ -456,7 +456,7 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
         children: [
           TooltipText(
             text: Text(
-              ruleProvider ?? '请选择规则集',
+              ruleProvider ?? appLocalizations.selectRuleSet,
               maxLines: 1,
               style: context.textTheme.bodyLarge?.copyWith(
                 color: context.colorScheme.onSurfaceVariant,
@@ -484,7 +484,7 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
 
   Widget _buildTargetItem(String? target) {
     return _buildItem(
-      title: Text('分流策略'),
+      title: Text(appLocalizations.splitStrategy),
       onPressed: _handleSelectedTarget,
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
@@ -494,7 +494,7 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
             flex: 1,
             child: TooltipText(
               text: Text(
-                target ?? '请选择分流策略',
+                target ?? appLocalizations.selectSplitStrategy,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: context.textTheme.bodyLarge?.copyWith(
@@ -525,7 +525,7 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
     return Consumer(
       builder: (_, ref, _) {
         return _buildItem(
-          title: Text('子规则'),
+          title: Text(appLocalizations.subRule),
           onPressed: _handleSelectedSubRule,
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
@@ -535,7 +535,7 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
                 flex: 1,
                 child: TooltipText(
                   text: Text(
-                    subRule ?? '请选择子规则',
+                    subRule ?? appLocalizations.selectSubRule,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: context.textTheme.bodyLarge?.copyWith(
@@ -554,14 +554,14 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
 
   Widget _buildNoResolveItem(bool? noResolve) {
     return _buildItem(
-      title: Text('不解析主机名'),
+      title: Text(appLocalizations.noResolveHostname),
       trailing: Switch(value: noResolve ?? false, onChanged: (_) {}),
     );
   }
 
   Widget _buildSrcItem(bool? src) {
     return _buildItem(
-      title: Text('匹配来源IP'),
+      title: Text(appLocalizations.matchSourceIp),
       trailing: Switch(value: src ?? false, onChanged: (_) {}),
     );
   }
@@ -597,7 +597,7 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
           ).copyWith(bottom: 20, top: context.sheetTopPadding),
           children: [
             generateSectionV3(
-              title: '基础信息',
+              title: appLocalizations.basicInfo,
               items: [
                 _buildTypeItem(rule.ruleAction),
                 if (rule.ruleAction != RuleAction.MATCH)
@@ -611,19 +611,19 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
             ),
             if (rule.ruleAction.hasParams)
               generateSectionV3(
-                title: '附加参数',
+                title: appLocalizations.additionalParameters,
                 items: [
                   _buildNoResolveItem(rule.noResolve),
                   _buildSrcItem(rule.src),
                 ],
               ),
             generateSectionV3(
-              title: '操作',
+              title: appLocalizations.action,
               items: [
                 if (rule.id != -1)
                   _buildItem(
                     title: Text(
-                      '删除',
+                      appLocalizations.delete,
                       style: context.textTheme.bodyLarge?.copyWith(
                         color: context.colorScheme.error,
                       ),
@@ -637,7 +637,9 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
           ],
         ),
       ),
-      title: rule.id == -1 ? '添加规则' : '编辑规则',
+      title: rule.id == -1
+          ? appLocalizations.addRule
+          : appLocalizations.editRule,
     );
   }
 }
@@ -686,7 +688,7 @@ class _RuleTypeSelectedView extends ConsumerWidget {
           },
         ),
       ),
-      title: '代理类型',
+      title: appLocalizations.proxyType,
     );
   }
 }
@@ -752,7 +754,9 @@ class _RuleTargetSelectedView extends ConsumerWidget {
             SliverPadding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               sliver: SliverToBoxAdapter(
-                child: InfoHeader(info: Info(label: '基础策略')),
+                child: InfoHeader(
+                  info: Info(label: appLocalizations.basicStrategy),
+                ),
               ),
             ),
             SliverPadding(
@@ -779,7 +783,9 @@ class _RuleTargetSelectedView extends ConsumerWidget {
             SliverPadding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               sliver: SliverToBoxAdapter(
-                child: InfoHeader(info: Info(label: '策略组')),
+                child: InfoHeader(
+                  info: Info(label: appLocalizations.proxyGroup),
+                ),
               ),
             ),
             SliverPadding(
@@ -804,7 +810,7 @@ class _RuleTargetSelectedView extends ConsumerWidget {
             SliverPadding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               sliver: SliverToBoxAdapter(
-                child: InfoHeader(info: Info(label: '代理')),
+                child: InfoHeader(info: Info(label: appLocalizations.proxies)),
               ),
             ),
             SliverPadding(
@@ -830,7 +836,7 @@ class _RuleTargetSelectedView extends ConsumerWidget {
           ],
         ),
       ),
-      title: '分流策略',
+      title: appLocalizations.splitStrategy,
     );
   }
 }
@@ -874,7 +880,7 @@ class _RuleProviderSelectedView extends ConsumerWidget {
       body: SizedBox(
         height: height,
         child: ruleProviders.isEmpty
-            ? NullStatus(label: '代理集为空')
+            ? NullStatus(label: appLocalizations.proxyProvidersEmpty)
             : ListView.builder(
                 padding: EdgeInsets.symmetric(
                   horizontal: 16,
@@ -899,7 +905,7 @@ class _RuleProviderSelectedView extends ConsumerWidget {
                 },
               ),
       ),
-      title: '规则集',
+      title: appLocalizations.ruleSet,
     );
   }
 }
@@ -943,7 +949,7 @@ class _SubRuleSelectedView extends ConsumerWidget {
       body: SizedBox(
         height: height,
         child: subRules.isEmpty
-            ? NullStatus(label: '子规则为空')
+            ? NullStatus(label: appLocalizations.subRuleEmpty)
             : ListView.builder(
                 padding: EdgeInsets.symmetric(
                   horizontal: 16,
@@ -965,7 +971,7 @@ class _SubRuleSelectedView extends ConsumerWidget {
                 },
               ),
       ),
-      title: '规则集',
+      title: appLocalizations.subRule,
     );
   }
 }
@@ -976,7 +982,9 @@ bool _handleSaveRule(BuildContext context, WidgetRef ref) {
     globalState.showMessage(
       cancelable: false,
       message: TextSpan(
-        text: rule.ruleAction == RuleAction.RULE_SET ? '代理集不能为空。' : '内容不能为空。',
+        text: rule.ruleAction == RuleAction.RULE_SET
+            ? appLocalizations.proxyProvidersNotEmpty
+            : appLocalizations.contentNotEmpty,
       ),
     );
     return false;
@@ -985,7 +993,9 @@ bool _handleSaveRule(BuildContext context, WidgetRef ref) {
     globalState.showMessage(
       cancelable: false,
       message: TextSpan(
-        text: rule.ruleAction == RuleAction.SUB_RULE ? '子规则不能为空。' : '分流策略不能为空',
+        text: rule.ruleAction == RuleAction.SUB_RULE
+            ? appLocalizations.subRuleNotEmpty
+            : appLocalizations.splitStrategyNotEmpty,
       ),
     );
     return false;

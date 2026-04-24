@@ -129,7 +129,7 @@ class CustomProxyGroupsView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final proxyGroups = ref.watch(proxyGroupsProvider(profileId)).value ?? [];
     return CommonScaffold(
-      title: '策略组',
+      title: appLocalizations.proxyGroup,
       actions: [
         CommonMinFilledButtonTheme(
           child: FilledButton(
@@ -142,7 +142,7 @@ class CustomProxyGroupsView extends ConsumerWidget {
         SizedBox(width: 8),
       ],
       body: proxyGroups.isEmpty
-          ? NullStatus(label: '策略组为空')
+          ? NullStatus(label: appLocalizations.proxyGroupEmpty)
           : ReorderableListView.builder(
               buildDefaultDragHandles: false,
               padding: EdgeInsets.symmetric(vertical: 12).copyWith(bottom: 24),
@@ -187,7 +187,7 @@ bool _handleSaveProxyGroup(BuildContext context, WidgetRef ref) {
   final proxyGroup = ref.read(proxyGroupProvider);
   if (proxyGroup.name.isEmpty) {
     globalState.showMessage(
-      message: TextSpan(text: '策略组名称不能为空'),
+      message: TextSpan(text: appLocalizations.proxyGroupNameEmpty),
       cancelable: false,
     );
     return false;
@@ -204,7 +204,7 @@ bool _handleSaveProxyGroup(BuildContext context, WidgetRef ref) {
       .put(newProxyGroup);
   if (isRepeat == false) {
     globalState.showMessage(
-      message: TextSpan(text: '策略组名称重复'),
+      message: TextSpan(text: appLocalizations.proxyGroupNameDuplicate),
       cancelable: false,
     );
     return false;
@@ -238,7 +238,7 @@ class _AddOrEditProxyGroupNestedSheetState
     final state = _nestedNavigatorKey.currentState;
     if (state != null && state.canPop()) {
       final res = await globalState.showMessage(
-        message: TextSpan(text: '确定要退出当前窗口吗?'),
+        message: TextSpan(text: appLocalizations.confirmExitWindow),
       );
       if (res != true) {
         return;
@@ -256,7 +256,7 @@ class _AddOrEditProxyGroupNestedSheetState
       return;
     }
     final res = await globalState.showMessage(
-      message: TextSpan(text: '检测到数据有更改，是否保存'),
+      message: TextSpan(text: appLocalizations.dataChangedSave),
     );
     if (!mounted) {
       return;
@@ -348,7 +348,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
   Future<void> _showTypeOptions(GroupType type) async {
     final value = await globalState.showCommonDialog<GroupType>(
       child: OptionsDialog<GroupType>(
-        title: '类型',
+        title: appLocalizations.proxyType,
         options: GroupType.values,
         textBuilder: (item) => item.name,
         value: type,
@@ -419,7 +419,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
 
   Widget _buildProvidersItem(bool includeAllProviders, List<String> use) {
     return _buildItem(
-      title: Text('选择代理集'),
+      title: Text(appLocalizations.selectProxyProviders),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         spacing: 2,
@@ -456,7 +456,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
 
   Widget _buildFilterItem(String? filter) {
     return _buildItem(
-      title: Text('节点过滤器'),
+      title: Text(appLocalizations.proxyFilter),
       trailing: TextFormField(
         textAlign: TextAlign.end,
         initialValue: filter,
@@ -467,7 +467,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
         },
         decoration: InputDecoration.collapsed(
           border: NoInputBorder(),
-          hintText: '可选',
+          hintText: appLocalizations.optional,
         ),
       ),
     );
@@ -475,7 +475,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
 
   Widget _buildMaxFailedTimesItem(int? maxFailedTimes) {
     return _buildItem(
-      title: Text('最大失败次数'),
+      title: Text(appLocalizations.maxFailedTimes),
       trailing: TextFormField(
         keyboardType: TextInputType.number,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -490,7 +490,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
         },
         decoration: InputDecoration.collapsed(
           border: NoInputBorder(),
-          hintText: '可选',
+          hintText: appLocalizations.optional,
         ),
       ),
     );
@@ -498,7 +498,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
 
   Widget _buildUrlItem(String? url) {
     return _buildItem(
-      title: Text('测试链接'),
+      title: Text(appLocalizations.testUrl),
       trailing: TextFormField(
         keyboardType: TextInputType.url,
         textAlign: TextAlign.end,
@@ -510,7 +510,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
         },
         decoration: InputDecoration.collapsed(
           border: NoInputBorder(),
-          hintText: '可选',
+          hintText: appLocalizations.optional,
         ),
       ),
     );
@@ -518,7 +518,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
 
   Widget _buildIntervalItem(int? interval) {
     return _buildItem(
-      title: Text('测试间隔'),
+      title: Text(appLocalizations.testInterval),
       trailing: TextFormField(
         keyboardType: TextInputType.number,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -531,7 +531,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
         },
         decoration: InputDecoration.collapsed(
           border: NoInputBorder(),
-          hintText: '可选',
+          hintText: appLocalizations.optional,
         ),
       ),
     );
@@ -539,7 +539,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
 
   Widget _buildExcludeFilterItem(String? excludeFilter) {
     return _buildItem(
-      title: Text('排除节点过滤器'),
+      title: Text(appLocalizations.excludeProxyFilter),
       trailing: TextFormField(
         textAlign: TextAlign.end,
         initialValue: excludeFilter,
@@ -550,7 +550,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
         },
         decoration: InputDecoration.collapsed(
           border: NoInputBorder(),
-          hintText: '可选',
+          hintText: appLocalizations.optional,
         ),
       ),
     );
@@ -558,7 +558,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
 
   Widget _buildExcludeTypeItem(String? type) {
     return _buildItem(
-      title: Text('排除类型'),
+      title: Text(appLocalizations.excludeType),
       trailing: TextFormField(
         textAlign: TextAlign.end,
         initialValue: type,
@@ -569,7 +569,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
         },
         decoration: InputDecoration.collapsed(
           border: NoInputBorder(),
-          hintText: '可选',
+          hintText: appLocalizations.optional,
         ),
       ),
     );
@@ -577,7 +577,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
 
   Widget _buildExpectedStatusItem(String? expectedStatus) {
     return _buildItem(
-      title: Text('预期状态'),
+      title: Text(appLocalizations.expectedStatus),
       trailing: TextFormField(
         textAlign: TextAlign.end,
         initialValue: expectedStatus,
@@ -588,7 +588,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
         },
         decoration: InputDecoration.collapsed(
           border: NoInputBorder(),
-          hintText: '可选',
+          hintText: appLocalizations.optional,
         ),
       ),
     );
@@ -596,7 +596,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
 
   Widget _buildProxiesItem(bool includeAllProxies, List<String> proxies) {
     return _buildItem(
-      title: Text('选择代理'),
+      title: Text(appLocalizations.selectProxies),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         spacing: 2,
@@ -633,7 +633,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
 
   Widget _buildTypeItem(GroupType type) {
     return _buildItem(
-      title: Text('类型'),
+      title: Text(appLocalizations.proxyType),
       onPressed: () {
         _showTypeOptions(type);
       },
@@ -643,13 +643,13 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
 
   Widget _buildIconItem(String? icon) {
     return _buildItem(
-      title: Text('图标'),
+      title: Text(appLocalizations.icon),
       onPressed: () {
         _showIconEdit(icon);
       },
       trailing: TooltipText(
         text: Text(
-          icon ?? '可选',
+          icon ?? appLocalizations.optional,
           maxLines: 1,
           style: context.textTheme.bodyLarge?.copyWith(
             color: icon == null ? context.colorScheme.onSurfaceVariant : null,
@@ -662,7 +662,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
 
   Widget _buildNameItem(String name) {
     return _buildItem(
-      title: Text('名称'),
+      title: Text(appLocalizations.name),
       trailing: TextFormField(
         initialValue: name,
         keyboardType: TextInputType.name,
@@ -677,7 +677,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
         textAlign: TextAlign.end,
         decoration: InputDecoration.collapsed(
           border: NoInputBorder(),
-          hintText: '输入策略组名称',
+          hintText: appLocalizations.inputProxyGroupName,
         ),
       ),
     );
@@ -691,7 +691,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
     }
 
     return _buildItem(
-      title: Text('从列表中隐藏'),
+      title: Text(appLocalizations.hideFromList),
       onPressed: handleChangeHidden,
       trailing: Switch(
         value: hidden ?? false,
@@ -710,7 +710,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
     }
 
     return _buildItem(
-      title: Text('使用时测试'),
+      title: Text(appLocalizations.testWhenUsed),
       onPressed: handleChangeLazy,
       trailing: Switch(
         value: lazy ?? false,
@@ -731,7 +731,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
     }
 
     return _buildItem(
-      title: Text('禁用UDP'),
+      title: Text(appLocalizations.disableUDP),
       onPressed: handleChangeDisableUDP,
       trailing: Switch(
         value: disableUDP ?? false,
@@ -744,7 +744,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
 
   Future<void> _handleDelete(int profileId, String name) async {
     final res = await globalState.showMessage(
-      message: TextSpan(text: '确定要删除当前策略组吗？'),
+      message: TextSpan(text: appLocalizations.confirmDeleteProxyGroup),
     );
     if (res == true && mounted) {
       ref.read(proxyGroupsProvider(profileId).notifier).del(name);
@@ -780,7 +780,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
           ).copyWith(bottom: 20, top: context.sheetTopPadding),
           children: [
             generateSectionV3(
-              title: '通用',
+              title: appLocalizations.general,
               items: [
                 _buildNameItem(proxyGroup.name),
                 _buildTypeItem(proxyGroup.type),
@@ -790,7 +790,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
               ],
             ),
             generateSectionV3(
-              title: '节点',
+              title: appLocalizations.proxies,
               items: [
                 _buildProxiesItem(
                   proxyGroup.includeAllProxies ?? false,
@@ -807,7 +807,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
               ],
             ),
             generateSectionV3(
-              title: '其他',
+              title: appLocalizations.other,
               items: [
                 _buildUrlItem(proxyGroup.url),
                 _buildMaxFailedTimesItem(proxyGroup.maxFailedTimes),
@@ -816,12 +816,12 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
               ],
             ),
             generateSectionV3(
-              title: '操作',
+              title: appLocalizations.action,
               items: [
                 if (proxyGroup.id != -1)
                   _buildItem(
                     title: Text(
-                      '删除',
+                      appLocalizations.delete,
                       style: context.textTheme.bodyLarge?.copyWith(
                         color: context.colorScheme.error,
                       ),
@@ -835,7 +835,9 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
           ],
         ),
       ),
-      title: proxyGroup.id == -1 ? '添加策略组' : '编辑策略组',
+      title: proxyGroup.id == -1
+          ? appLocalizations.addProxyGroup
+          : appLocalizations.editProxyGroup,
     );
   }
 }

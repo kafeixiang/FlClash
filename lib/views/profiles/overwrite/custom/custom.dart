@@ -16,7 +16,7 @@ class CustomContent extends ConsumerWidget {
 
   void _handleUseDefault(WidgetRef ref, int profileId) async {
     final res = await globalState.showMessage(
-      message: TextSpan(text: '确定后将会覆盖已有数据'),
+      message: TextSpan(text: appLocalizations.confirmOverwriteTip),
     );
     if (res != true) {
       return;
@@ -61,13 +61,13 @@ class CustomContent extends ConsumerWidget {
         SliverToBoxAdapter(child: SizedBox(height: 24)),
         SliverToBoxAdapter(
           child: Column(
-            children: [InfoHeader(info: Info(label: '自定义'))],
+            children: [InfoHeader(info: Info(label: appLocalizations.custom))],
           ),
         ),
         SliverToBoxAdapter(child: SizedBox(height: 8)),
         SliverToBoxAdapter(
           child: MoreActionButton(
-            label: '策略组',
+            label: appLocalizations.proxyGroup,
             onPressed: () {
               _handleToProxyGroupsView(context, profileId);
             },
@@ -92,7 +92,7 @@ class CustomContent extends ConsumerWidget {
         SliverToBoxAdapter(child: SizedBox(height: 4)),
         SliverToBoxAdapter(
           child: MoreActionButton(
-            label: '规则',
+            label: appLocalizations.rule,
             onPressed: () {
               _handleToRulesView(context, profileId);
             },
@@ -123,14 +123,14 @@ class CustomContent extends ConsumerWidget {
               child: MaterialBanner(
                 elevation: 0,
                 dividerColor: Colors.transparent,
-                content: Text('检测到配置中存在数据'),
+                content: Text(appLocalizations.configDataDetected),
                 actions: [
                   CommonMinFilledButtonTheme(
                     child: FilledButton.tonal(
                       onPressed: () {
                         _handleUseDefault(ref, profileId);
                       },
-                      child: Text('一键填入'),
+                      child: Text(appLocalizations.quickFill),
                     ),
                   ),
                 ],

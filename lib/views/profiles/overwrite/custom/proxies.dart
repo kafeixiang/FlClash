@@ -162,7 +162,7 @@ class _EditProxiesViewState extends ConsumerState<EditProxiesView>
     return SizedBox(
       height: height,
       child: AdaptiveSheetScaffold(
-        title: '编辑代理',
+        title: appLocalizations.editProxy,
         sheetTransparentToolBar: true,
         body: CustomScrollView(
           slivers: [
@@ -180,7 +180,7 @@ class _EditProxiesViewState extends ConsumerState<EditProxiesView>
                     title: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('包含所有代理'),
+                        Text(appLocalizations.includeAllProxies),
                         CommonMinIconButtonTheme(
                           child: IconButton(
                             padding: EdgeInsets.zero,
@@ -188,7 +188,7 @@ class _EditProxiesViewState extends ConsumerState<EditProxiesView>
                               globalState.showMessage(
                                 title: appLocalizations.tip,
                                 message: TextSpan(
-                                  text: '引入不包含策略组的所有代理，可在下方额外添加策略组',
+                                  text: appLocalizations.includeAllProxiesTip,
                                 ),
                                 cancelable: false,
                               );
@@ -217,12 +217,12 @@ class _EditProxiesViewState extends ConsumerState<EditProxiesView>
               padding: EdgeInsets.symmetric(horizontal: 16),
               sliver: SliverToBoxAdapter(
                 child: InfoHeader(
-                  info: Info(label: '节点'),
+                  info: Info(label: appLocalizations.proxies),
                   actions: [
                     CommonMinFilledButtonTheme(
                       child: FilledButton.tonal(
                         onPressed: _handleToAddProxiesView,
-                        child: Text('添加'),
+                        child: Text(appLocalizations.add),
                       ),
                     ),
                   ],
@@ -273,7 +273,7 @@ class _EditProxiesViewState extends ConsumerState<EditProxiesView>
                 },
               )
             else
-              SliverFillRemaining(child: NullStatus(label: '代理为空')),
+              SliverFillRemaining(child: NullStatus(label: appLocalizations.proxiesEmpty)),
             SliverToBoxAdapter(child: SizedBox(height: 16)),
           ],
         ),
@@ -407,7 +407,7 @@ class _AddProxiesViewState extends ConsumerState<_AddProxiesView>
       height: height,
       child: AdaptiveSheetScaffold(
         sheetTransparentToolBar: true,
-        title: '添加代理',
+        title: appLocalizations.addProxies,
         body: proxies.isEmpty && proxyGroups.isEmpty
             ? NullStatus(label: appLocalizations.noData)
             : CustomScrollView(
@@ -419,7 +419,7 @@ class _AddProxiesViewState extends ConsumerState<_AddProxiesView>
                     SliverPadding(
                       padding: EdgeInsets.symmetric(horizontal: 16),
                       sliver: SliverToBoxAdapter(
-                        child: InfoHeader(info: Info(label: '策略组')),
+                        child: InfoHeader(info: Info(label: appLocalizations.proxyGroup)),
                       ),
                     ),
                     SliverList(
@@ -447,7 +447,7 @@ class _AddProxiesViewState extends ConsumerState<_AddProxiesView>
                     SliverPadding(
                       padding: EdgeInsets.symmetric(horizontal: 16),
                       sliver: SliverToBoxAdapter(
-                        child: InfoHeader(info: Info(label: '代理')),
+                        child: InfoHeader(info: Info(label: appLocalizations.proxies)),
                       ),
                     ),
                     SliverList(
