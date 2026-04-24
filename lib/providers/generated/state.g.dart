@@ -1177,28 +1177,28 @@ final class RealTestUrlFamily extends $Family
   String toString() => r'realTestUrlProvider';
 }
 
-@ProviderFor(getDelay)
-const getDelayProvider = GetDelayFamily._();
+@ProviderFor(delay)
+const delayProvider = DelayFamily._();
 
-final class GetDelayProvider extends $FunctionalProvider<int?, int?, int?>
+final class DelayProvider extends $FunctionalProvider<int?, int?, int?>
     with $Provider<int?> {
-  const GetDelayProvider._({
-    required GetDelayFamily super.from,
+  const DelayProvider._({
+    required DelayFamily super.from,
     required ({String proxyName, String? testUrl}) super.argument,
   }) : super(
          retry: null,
-         name: r'getDelayProvider',
+         name: r'delayProvider',
          isAutoDispose: true,
          dependencies: null,
          $allTransitiveDependencies: null,
        );
 
   @override
-  String debugGetCreateSourceHash() => _$getDelayHash();
+  String debugGetCreateSourceHash() => _$delayHash();
 
   @override
   String toString() {
-    return r'getDelayProvider'
+    return r'delayProvider'
         ''
         '$argument';
   }
@@ -1211,11 +1211,7 @@ final class GetDelayProvider extends $FunctionalProvider<int?, int?, int?>
   @override
   int? create(Ref ref) {
     final argument = this.argument as ({String proxyName, String? testUrl});
-    return getDelay(
-      ref,
-      proxyName: argument.proxyName,
-      testUrl: argument.testUrl,
-    );
+    return delay(ref, proxyName: argument.proxyName, testUrl: argument.testUrl);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -1228,7 +1224,7 @@ final class GetDelayProvider extends $FunctionalProvider<int?, int?, int?>
 
   @override
   bool operator ==(Object other) {
-    return other is GetDelayProvider && other.argument == argument;
+    return other is DelayProvider && other.argument == argument;
   }
 
   @override
@@ -1237,28 +1233,28 @@ final class GetDelayProvider extends $FunctionalProvider<int?, int?, int?>
   }
 }
 
-String _$getDelayHash() => r'ee2df2db2b12d599794f77519a9ac518f42245a7';
+String _$delayHash() => r'3cbaa758ea602519d2958a4e413c705b062bce32';
 
-final class GetDelayFamily extends $Family
+final class DelayFamily extends $Family
     with
         $FunctionalFamilyOverride<int?, ({String proxyName, String? testUrl})> {
-  const GetDelayFamily._()
+  const DelayFamily._()
     : super(
         retry: null,
-        name: r'getDelayProvider',
+        name: r'delayProvider',
         dependencies: null,
         $allTransitiveDependencies: null,
         isAutoDispose: true,
       );
 
-  GetDelayProvider call({required String proxyName, String? testUrl}) =>
-      GetDelayProvider._(
+  DelayProvider call({required String proxyName, String? testUrl}) =>
+      DelayProvider._(
         argument: (proxyName: proxyName, testUrl: testUrl),
         from: this,
       );
 
   @override
-  String toString() => r'getDelayProvider';
+  String toString() => r'delayProvider';
 }
 
 @ProviderFor(selectedMap)

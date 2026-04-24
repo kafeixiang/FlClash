@@ -37,7 +37,7 @@ class ProxyCard extends StatelessWidget {
       child: Consumer(
         builder: (context, ref, _) {
           final delay = ref.watch(
-            getDelayProvider(proxyName: proxy.name, testUrl: testUrl),
+            delayProvider(proxyName: proxy.name, testUrl: testUrl),
           );
           return FadeThroughBox(
             alignment: type == ProxyCardType.expand

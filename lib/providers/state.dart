@@ -402,18 +402,16 @@ String realTestUrl(Ref ref, [String? testUrl]) {
 }
 
 @riverpod
-int? getDelay(Ref ref, {required String proxyName, String? testUrl}) {
+int? delay(Ref ref, {required String proxyName, String? testUrl}) {
   final currentTestUrl = ref.watch(realTestUrlProvider(testUrl));
   final proxyState = ref.watch(realSelectedProxyStateProvider(proxyName));
-  final delay = ref.watch(
-    delayDataSourceProvider.select((state) {
-      final delayMap =
-          state[proxyState.testUrl.takeFirstValid([currentTestUrl])];
-      return delayMap?[proxyState.proxyName];
-    }),
+  final effectiveTestUrl = proxyState.testUrl.takeFirstValid([currentTestUrl]);
+  final effectiveProxyName = proxyState.proxyName;
+  return ref.watch(
+    delayDataSourceProvider.select(
+      (state) => state[effectiveTestUrl]?[effectiveProxyName],
+    ),
   );
-
-  return delay;
 }
 
 @riverpod
