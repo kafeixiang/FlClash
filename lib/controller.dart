@@ -643,14 +643,14 @@ extension SetupControllerExt on AppController {
     bool force = false,
     VoidCallback? preloadInvoke,
   }) async {
-    await loadingRun(
-      () async {
-        await _setupConfig(force: force, preloadInvoke: preloadInvoke);
+    await _setupConfig(
+      force: force,
+      silence: silence,
+      preloadInvoke: preloadInvoke,
+      onUpdated: () async {
         await updateGroups();
         await updateProviders();
       },
-      silence: true,
-      tag: !silence ? LoadingTag.proxies : null,
     );
   }
 
@@ -726,7 +726,9 @@ extension SetupControllerExt on AppController {
 
   Future<void> _setupConfig({
     bool force = false,
+    bool silence = false,
     VoidCallback? preloadInvoke,
+    FutureOr Function()? onUpdated,
   }) async {
     commonPrint.log('setup ===>');
     var profile = _ref.read(currentProfileProvider);
@@ -755,19 +757,26 @@ extension SetupControllerExt on AppController {
     if (yamlMd5 == globalState.lastConfigMd5 && force == false) {
       return;
     }
-    final configFilePath = await appPath.configFilePath;
-    final yamlString = vm2.a;
-    await File(configFilePath).safeWriteAsString(yamlString);
-    final message = await coreController.setupConfig(
-      setupState: setupState,
-      params: setupParams,
-      preloadInvoke: preloadInvoke,
+    await loadingRun(
+      () async {
+        final configFilePath = await appPath.configFilePath;
+        final yamlString = vm2.a;
+        await File(configFilePath).safeWriteAsString(yamlString);
+        final message = await coreController.setupConfig(
+          setupState: setupState,
+          params: setupParams,
+          preloadInvoke: preloadInvoke,
+        );
+        if (message.isNotEmpty) {
+          throw message;
+        }
+        globalState.lastConfigMd5 = yamlMd5;
+        addCheckIp();
+        await onUpdated?.call();
+      },
+      silence: true,
+      tag: !silence ? LoadingTag.proxies : null,
     );
-    if (message.isNotEmpty) {
-      throw message;
-    }
-    globalState.lastConfigMd5 = yamlMd5;
-    addCheckIp();
   }
 }
 
