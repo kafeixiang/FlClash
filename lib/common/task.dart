@@ -608,6 +608,7 @@ Future<MigrationData> _restoreTask(RootIsolateToken token) async {
     scripts: scripts,
     rules: results[2].cast<Rule>(),
     links: results[3].cast<ProfileRuleLink>(),
+    proxyGroups: results[4].cast<ProxyGroup>(),
   );
   await database.close();
   return migrationData;
