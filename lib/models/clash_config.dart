@@ -102,6 +102,7 @@ const defaultBypassPrivateRouteAddress = [
 @freezed
 abstract class ProxyGroup with _$ProxyGroup {
   const factory ProxyGroup({
+    int? profileId,
     @JsonKey(fromJson: Snowflake.buildId) required int id,
     required String name,
     required GroupType type,

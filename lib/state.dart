@@ -90,7 +90,13 @@ class GlobalState {
         final newConfigMap = data.configMap;
         final config = Config.realFromJson(newConfigMap);
         await Future.wait([
-          database.restore(data.profiles, data.scripts, data.rules, data.links),
+          database.restore(
+            data.profiles,
+            data.scripts,
+            data.rules,
+            data.links,
+            data.proxyGroups,
+          ),
           preferences.saveConfig(config),
         ]);
         return config;

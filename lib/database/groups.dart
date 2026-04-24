@@ -96,7 +96,7 @@ class ProxyGroupsDao extends DatabaseAccessor<Database>
   }
 
   void setAllWithBatch(
-    int profileId,
+    int? profileId,
     Batch batch,
     Iterable<ProxyGroup> proxyGroups,
   ) async {
@@ -106,7 +106,9 @@ class ProxyGroupsDao extends DatabaseAccessor<Database>
       proxyGroups.mapIndexed(
         (index, item) => item.toCompanion(profileId, keys[index]),
       ),
-      deleteFilter: (row) => row.profileId.equals(profileId),
+      deleteFilter: (row) => profileId == null
+          ? const Constant(true)
+          : row.profileId.equals(profileId),
       preDelete: true,
     );
   }
@@ -115,6 +117,7 @@ class ProxyGroupsDao extends DatabaseAccessor<Database>
 extension RawProxyGroupExt on RawProxyGroup {
   ProxyGroup toProxyGroup() {
     return ProxyGroup(
+      profileId: profileId,
       id: id,
       name: name,
       type: GroupType.parse(type),
@@ -141,10 +144,10 @@ extension RawProxyGroupExt on RawProxyGroup {
 }
 
 extension ProxyGroupsCompanionExt on ProxyGroup {
-  ProxyGroupsCompanion toCompanion(int profileId, [String? order]) {
+  ProxyGroupsCompanion toCompanion([int? profileId, String? order]) {
     return ProxyGroupsCompanion.insert(
       id: Value(id),
-      profileId: Value(profileId),
+      profileId: Value(this.profileId ?? profileId),
       name: name,
       type: type.value,
       proxies: Value(proxies),

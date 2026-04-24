@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ProxyGroup {
 
-@JsonKey(fromJson: Snowflake.buildId) int get id; String get name; GroupType get type; List<String>? get proxies; List<String>? get use; int? get interval; bool? get lazy;@JsonKey(name: 'disable-udp') bool? get disableUDP; String? get url; int? get timeout;@JsonKey(name: 'max-failed-times') int? get maxFailedTimes; String? get filter;@JsonKey(name: 'exclude-filter') String? get excludeFilter;@JsonKey(name: 'exclude-type') String? get excludeType;@JsonKey(name: 'expected-status') String? get expectedStatus;@JsonKey(name: 'include-all') bool? get includeAll;@JsonKey(name: 'include-all-proxies') bool? get includeAllProxies;@JsonKey(name: 'include-all-providers') bool? get includeAllProviders; bool? get hidden; String? get icon; String? get order;
+ int? get profileId;@JsonKey(fromJson: Snowflake.buildId) int get id; String get name; GroupType get type; List<String>? get proxies; List<String>? get use; int? get interval; bool? get lazy;@JsonKey(name: 'disable-udp') bool? get disableUDP; String? get url; int? get timeout;@JsonKey(name: 'max-failed-times') int? get maxFailedTimes; String? get filter;@JsonKey(name: 'exclude-filter') String? get excludeFilter;@JsonKey(name: 'exclude-type') String? get excludeType;@JsonKey(name: 'expected-status') String? get expectedStatus;@JsonKey(name: 'include-all') bool? get includeAll;@JsonKey(name: 'include-all-proxies') bool? get includeAllProxies;@JsonKey(name: 'include-all-providers') bool? get includeAllProviders; bool? get hidden; String? get icon; String? get order;
 /// Create a copy of ProxyGroup
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $ProxyGroupCopyWith<ProxyGroup> get copyWith => _$ProxyGroupCopyWithImpl<ProxyGr
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProxyGroup&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.proxies, proxies)&&const DeepCollectionEquality().equals(other.use, use)&&(identical(other.interval, interval) || other.interval == interval)&&(identical(other.lazy, lazy) || other.lazy == lazy)&&(identical(other.disableUDP, disableUDP) || other.disableUDP == disableUDP)&&(identical(other.url, url) || other.url == url)&&(identical(other.timeout, timeout) || other.timeout == timeout)&&(identical(other.maxFailedTimes, maxFailedTimes) || other.maxFailedTimes == maxFailedTimes)&&(identical(other.filter, filter) || other.filter == filter)&&(identical(other.excludeFilter, excludeFilter) || other.excludeFilter == excludeFilter)&&(identical(other.excludeType, excludeType) || other.excludeType == excludeType)&&(identical(other.expectedStatus, expectedStatus) || other.expectedStatus == expectedStatus)&&(identical(other.includeAll, includeAll) || other.includeAll == includeAll)&&(identical(other.includeAllProxies, includeAllProxies) || other.includeAllProxies == includeAllProxies)&&(identical(other.includeAllProviders, includeAllProviders) || other.includeAllProviders == includeAllProviders)&&(identical(other.hidden, hidden) || other.hidden == hidden)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.order, order) || other.order == order));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProxyGroup&&(identical(other.profileId, profileId) || other.profileId == profileId)&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.proxies, proxies)&&const DeepCollectionEquality().equals(other.use, use)&&(identical(other.interval, interval) || other.interval == interval)&&(identical(other.lazy, lazy) || other.lazy == lazy)&&(identical(other.disableUDP, disableUDP) || other.disableUDP == disableUDP)&&(identical(other.url, url) || other.url == url)&&(identical(other.timeout, timeout) || other.timeout == timeout)&&(identical(other.maxFailedTimes, maxFailedTimes) || other.maxFailedTimes == maxFailedTimes)&&(identical(other.filter, filter) || other.filter == filter)&&(identical(other.excludeFilter, excludeFilter) || other.excludeFilter == excludeFilter)&&(identical(other.excludeType, excludeType) || other.excludeType == excludeType)&&(identical(other.expectedStatus, expectedStatus) || other.expectedStatus == expectedStatus)&&(identical(other.includeAll, includeAll) || other.includeAll == includeAll)&&(identical(other.includeAllProxies, includeAllProxies) || other.includeAllProxies == includeAllProxies)&&(identical(other.includeAllProviders, includeAllProviders) || other.includeAllProviders == includeAllProviders)&&(identical(other.hidden, hidden) || other.hidden == hidden)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.order, order) || other.order == order));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,name,type,const DeepCollectionEquality().hash(proxies),const DeepCollectionEquality().hash(use),interval,lazy,disableUDP,url,timeout,maxFailedTimes,filter,excludeFilter,excludeType,expectedStatus,includeAll,includeAllProxies,includeAllProviders,hidden,icon,order]);
+int get hashCode => Object.hashAll([runtimeType,profileId,id,name,type,const DeepCollectionEquality().hash(proxies),const DeepCollectionEquality().hash(use),interval,lazy,disableUDP,url,timeout,maxFailedTimes,filter,excludeFilter,excludeType,expectedStatus,includeAll,includeAllProxies,includeAllProviders,hidden,icon,order]);
 
 @override
 String toString() {
-  return 'ProxyGroup(id: $id, name: $name, type: $type, proxies: $proxies, use: $use, interval: $interval, lazy: $lazy, disableUDP: $disableUDP, url: $url, timeout: $timeout, maxFailedTimes: $maxFailedTimes, filter: $filter, excludeFilter: $excludeFilter, excludeType: $excludeType, expectedStatus: $expectedStatus, includeAll: $includeAll, includeAllProxies: $includeAllProxies, includeAllProviders: $includeAllProviders, hidden: $hidden, icon: $icon, order: $order)';
+  return 'ProxyGroup(profileId: $profileId, id: $id, name: $name, type: $type, proxies: $proxies, use: $use, interval: $interval, lazy: $lazy, disableUDP: $disableUDP, url: $url, timeout: $timeout, maxFailedTimes: $maxFailedTimes, filter: $filter, excludeFilter: $excludeFilter, excludeType: $excludeType, expectedStatus: $expectedStatus, includeAll: $includeAll, includeAllProxies: $includeAllProxies, includeAllProviders: $includeAllProviders, hidden: $hidden, icon: $icon, order: $order)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $ProxyGroupCopyWith<$Res>  {
   factory $ProxyGroupCopyWith(ProxyGroup value, $Res Function(ProxyGroup) _then) = _$ProxyGroupCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(fromJson: Snowflake.buildId) int id, String name, GroupType type, List<String>? proxies, List<String>? use, int? interval, bool? lazy,@JsonKey(name: 'disable-udp') bool? disableUDP, String? url, int? timeout,@JsonKey(name: 'max-failed-times') int? maxFailedTimes, String? filter,@JsonKey(name: 'exclude-filter') String? excludeFilter,@JsonKey(name: 'exclude-type') String? excludeType,@JsonKey(name: 'expected-status') String? expectedStatus,@JsonKey(name: 'include-all') bool? includeAll,@JsonKey(name: 'include-all-proxies') bool? includeAllProxies,@JsonKey(name: 'include-all-providers') bool? includeAllProviders, bool? hidden, String? icon, String? order
+ int? profileId,@JsonKey(fromJson: Snowflake.buildId) int id, String name, GroupType type, List<String>? proxies, List<String>? use, int? interval, bool? lazy,@JsonKey(name: 'disable-udp') bool? disableUDP, String? url, int? timeout,@JsonKey(name: 'max-failed-times') int? maxFailedTimes, String? filter,@JsonKey(name: 'exclude-filter') String? excludeFilter,@JsonKey(name: 'exclude-type') String? excludeType,@JsonKey(name: 'expected-status') String? expectedStatus,@JsonKey(name: 'include-all') bool? includeAll,@JsonKey(name: 'include-all-proxies') bool? includeAllProxies,@JsonKey(name: 'include-all-providers') bool? includeAllProviders, bool? hidden, String? icon, String? order
 });
 
 
@@ -65,9 +65,10 @@ class _$ProxyGroupCopyWithImpl<$Res>
 
 /// Create a copy of ProxyGroup
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? type = null,Object? proxies = freezed,Object? use = freezed,Object? interval = freezed,Object? lazy = freezed,Object? disableUDP = freezed,Object? url = freezed,Object? timeout = freezed,Object? maxFailedTimes = freezed,Object? filter = freezed,Object? excludeFilter = freezed,Object? excludeType = freezed,Object? expectedStatus = freezed,Object? includeAll = freezed,Object? includeAllProxies = freezed,Object? includeAllProviders = freezed,Object? hidden = freezed,Object? icon = freezed,Object? order = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? profileId = freezed,Object? id = null,Object? name = null,Object? type = null,Object? proxies = freezed,Object? use = freezed,Object? interval = freezed,Object? lazy = freezed,Object? disableUDP = freezed,Object? url = freezed,Object? timeout = freezed,Object? maxFailedTimes = freezed,Object? filter = freezed,Object? excludeFilter = freezed,Object? excludeType = freezed,Object? expectedStatus = freezed,Object? includeAll = freezed,Object? includeAllProxies = freezed,Object? includeAllProviders = freezed,Object? hidden = freezed,Object? icon = freezed,Object? order = freezed,}) {
   return _then(_self.copyWith(
-id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+profileId: freezed == profileId ? _self.profileId : profileId // ignore: cast_nullable_to_non_nullable
+as int?,id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as GroupType,proxies: freezed == proxies ? _self.proxies : proxies // ignore: cast_nullable_to_non_nullable
@@ -173,10 +174,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(fromJson: Snowflake.buildId)  int id,  String name,  GroupType type,  List<String>? proxies,  List<String>? use,  int? interval,  bool? lazy, @JsonKey(name: 'disable-udp')  bool? disableUDP,  String? url,  int? timeout, @JsonKey(name: 'max-failed-times')  int? maxFailedTimes,  String? filter, @JsonKey(name: 'exclude-filter')  String? excludeFilter, @JsonKey(name: 'exclude-type')  String? excludeType, @JsonKey(name: 'expected-status')  String? expectedStatus, @JsonKey(name: 'include-all')  bool? includeAll, @JsonKey(name: 'include-all-proxies')  bool? includeAllProxies, @JsonKey(name: 'include-all-providers')  bool? includeAllProviders,  bool? hidden,  String? icon,  String? order)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int? profileId, @JsonKey(fromJson: Snowflake.buildId)  int id,  String name,  GroupType type,  List<String>? proxies,  List<String>? use,  int? interval,  bool? lazy, @JsonKey(name: 'disable-udp')  bool? disableUDP,  String? url,  int? timeout, @JsonKey(name: 'max-failed-times')  int? maxFailedTimes,  String? filter, @JsonKey(name: 'exclude-filter')  String? excludeFilter, @JsonKey(name: 'exclude-type')  String? excludeType, @JsonKey(name: 'expected-status')  String? expectedStatus, @JsonKey(name: 'include-all')  bool? includeAll, @JsonKey(name: 'include-all-proxies')  bool? includeAllProxies, @JsonKey(name: 'include-all-providers')  bool? includeAllProviders,  bool? hidden,  String? icon,  String? order)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProxyGroup() when $default != null:
-return $default(_that.id,_that.name,_that.type,_that.proxies,_that.use,_that.interval,_that.lazy,_that.disableUDP,_that.url,_that.timeout,_that.maxFailedTimes,_that.filter,_that.excludeFilter,_that.excludeType,_that.expectedStatus,_that.includeAll,_that.includeAllProxies,_that.includeAllProviders,_that.hidden,_that.icon,_that.order);case _:
+return $default(_that.profileId,_that.id,_that.name,_that.type,_that.proxies,_that.use,_that.interval,_that.lazy,_that.disableUDP,_that.url,_that.timeout,_that.maxFailedTimes,_that.filter,_that.excludeFilter,_that.excludeType,_that.expectedStatus,_that.includeAll,_that.includeAllProxies,_that.includeAllProviders,_that.hidden,_that.icon,_that.order);case _:
   return orElse();
 
 }
@@ -194,10 +195,10 @@ return $default(_that.id,_that.name,_that.type,_that.proxies,_that.use,_that.int
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(fromJson: Snowflake.buildId)  int id,  String name,  GroupType type,  List<String>? proxies,  List<String>? use,  int? interval,  bool? lazy, @JsonKey(name: 'disable-udp')  bool? disableUDP,  String? url,  int? timeout, @JsonKey(name: 'max-failed-times')  int? maxFailedTimes,  String? filter, @JsonKey(name: 'exclude-filter')  String? excludeFilter, @JsonKey(name: 'exclude-type')  String? excludeType, @JsonKey(name: 'expected-status')  String? expectedStatus, @JsonKey(name: 'include-all')  bool? includeAll, @JsonKey(name: 'include-all-proxies')  bool? includeAllProxies, @JsonKey(name: 'include-all-providers')  bool? includeAllProviders,  bool? hidden,  String? icon,  String? order)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? profileId, @JsonKey(fromJson: Snowflake.buildId)  int id,  String name,  GroupType type,  List<String>? proxies,  List<String>? use,  int? interval,  bool? lazy, @JsonKey(name: 'disable-udp')  bool? disableUDP,  String? url,  int? timeout, @JsonKey(name: 'max-failed-times')  int? maxFailedTimes,  String? filter, @JsonKey(name: 'exclude-filter')  String? excludeFilter, @JsonKey(name: 'exclude-type')  String? excludeType, @JsonKey(name: 'expected-status')  String? expectedStatus, @JsonKey(name: 'include-all')  bool? includeAll, @JsonKey(name: 'include-all-proxies')  bool? includeAllProxies, @JsonKey(name: 'include-all-providers')  bool? includeAllProviders,  bool? hidden,  String? icon,  String? order)  $default,) {final _that = this;
 switch (_that) {
 case _ProxyGroup():
-return $default(_that.id,_that.name,_that.type,_that.proxies,_that.use,_that.interval,_that.lazy,_that.disableUDP,_that.url,_that.timeout,_that.maxFailedTimes,_that.filter,_that.excludeFilter,_that.excludeType,_that.expectedStatus,_that.includeAll,_that.includeAllProxies,_that.includeAllProviders,_that.hidden,_that.icon,_that.order);case _:
+return $default(_that.profileId,_that.id,_that.name,_that.type,_that.proxies,_that.use,_that.interval,_that.lazy,_that.disableUDP,_that.url,_that.timeout,_that.maxFailedTimes,_that.filter,_that.excludeFilter,_that.excludeType,_that.expectedStatus,_that.includeAll,_that.includeAllProxies,_that.includeAllProviders,_that.hidden,_that.icon,_that.order);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -214,10 +215,10 @@ return $default(_that.id,_that.name,_that.type,_that.proxies,_that.use,_that.int
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(fromJson: Snowflake.buildId)  int id,  String name,  GroupType type,  List<String>? proxies,  List<String>? use,  int? interval,  bool? lazy, @JsonKey(name: 'disable-udp')  bool? disableUDP,  String? url,  int? timeout, @JsonKey(name: 'max-failed-times')  int? maxFailedTimes,  String? filter, @JsonKey(name: 'exclude-filter')  String? excludeFilter, @JsonKey(name: 'exclude-type')  String? excludeType, @JsonKey(name: 'expected-status')  String? expectedStatus, @JsonKey(name: 'include-all')  bool? includeAll, @JsonKey(name: 'include-all-proxies')  bool? includeAllProxies, @JsonKey(name: 'include-all-providers')  bool? includeAllProviders,  bool? hidden,  String? icon,  String? order)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int? profileId, @JsonKey(fromJson: Snowflake.buildId)  int id,  String name,  GroupType type,  List<String>? proxies,  List<String>? use,  int? interval,  bool? lazy, @JsonKey(name: 'disable-udp')  bool? disableUDP,  String? url,  int? timeout, @JsonKey(name: 'max-failed-times')  int? maxFailedTimes,  String? filter, @JsonKey(name: 'exclude-filter')  String? excludeFilter, @JsonKey(name: 'exclude-type')  String? excludeType, @JsonKey(name: 'expected-status')  String? expectedStatus, @JsonKey(name: 'include-all')  bool? includeAll, @JsonKey(name: 'include-all-proxies')  bool? includeAllProxies, @JsonKey(name: 'include-all-providers')  bool? includeAllProviders,  bool? hidden,  String? icon,  String? order)?  $default,) {final _that = this;
 switch (_that) {
 case _ProxyGroup() when $default != null:
-return $default(_that.id,_that.name,_that.type,_that.proxies,_that.use,_that.interval,_that.lazy,_that.disableUDP,_that.url,_that.timeout,_that.maxFailedTimes,_that.filter,_that.excludeFilter,_that.excludeType,_that.expectedStatus,_that.includeAll,_that.includeAllProxies,_that.includeAllProviders,_that.hidden,_that.icon,_that.order);case _:
+return $default(_that.profileId,_that.id,_that.name,_that.type,_that.proxies,_that.use,_that.interval,_that.lazy,_that.disableUDP,_that.url,_that.timeout,_that.maxFailedTimes,_that.filter,_that.excludeFilter,_that.excludeType,_that.expectedStatus,_that.includeAll,_that.includeAllProxies,_that.includeAllProviders,_that.hidden,_that.icon,_that.order);case _:
   return null;
 
 }
@@ -229,9 +230,10 @@ return $default(_that.id,_that.name,_that.type,_that.proxies,_that.use,_that.int
 @JsonSerializable()
 
 class _ProxyGroup implements ProxyGroup {
-  const _ProxyGroup({@JsonKey(fromJson: Snowflake.buildId) required this.id, required this.name, required this.type, final  List<String>? proxies, final  List<String>? use, this.interval, this.lazy, @JsonKey(name: 'disable-udp') this.disableUDP, this.url, this.timeout, @JsonKey(name: 'max-failed-times') this.maxFailedTimes, this.filter, @JsonKey(name: 'exclude-filter') this.excludeFilter, @JsonKey(name: 'exclude-type') this.excludeType, @JsonKey(name: 'expected-status') this.expectedStatus, @JsonKey(name: 'include-all') this.includeAll, @JsonKey(name: 'include-all-proxies') this.includeAllProxies, @JsonKey(name: 'include-all-providers') this.includeAllProviders, this.hidden, this.icon, this.order}): _proxies = proxies,_use = use;
+  const _ProxyGroup({this.profileId, @JsonKey(fromJson: Snowflake.buildId) required this.id, required this.name, required this.type, final  List<String>? proxies, final  List<String>? use, this.interval, this.lazy, @JsonKey(name: 'disable-udp') this.disableUDP, this.url, this.timeout, @JsonKey(name: 'max-failed-times') this.maxFailedTimes, this.filter, @JsonKey(name: 'exclude-filter') this.excludeFilter, @JsonKey(name: 'exclude-type') this.excludeType, @JsonKey(name: 'expected-status') this.expectedStatus, @JsonKey(name: 'include-all') this.includeAll, @JsonKey(name: 'include-all-proxies') this.includeAllProxies, @JsonKey(name: 'include-all-providers') this.includeAllProviders, this.hidden, this.icon, this.order}): _proxies = proxies,_use = use;
   factory _ProxyGroup.fromJson(Map<String, dynamic> json) => _$ProxyGroupFromJson(json);
 
+@override final  int? profileId;
 @override@JsonKey(fromJson: Snowflake.buildId) final  int id;
 @override final  String name;
 @override final  GroupType type;
@@ -283,16 +285,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProxyGroup&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other._proxies, _proxies)&&const DeepCollectionEquality().equals(other._use, _use)&&(identical(other.interval, interval) || other.interval == interval)&&(identical(other.lazy, lazy) || other.lazy == lazy)&&(identical(other.disableUDP, disableUDP) || other.disableUDP == disableUDP)&&(identical(other.url, url) || other.url == url)&&(identical(other.timeout, timeout) || other.timeout == timeout)&&(identical(other.maxFailedTimes, maxFailedTimes) || other.maxFailedTimes == maxFailedTimes)&&(identical(other.filter, filter) || other.filter == filter)&&(identical(other.excludeFilter, excludeFilter) || other.excludeFilter == excludeFilter)&&(identical(other.excludeType, excludeType) || other.excludeType == excludeType)&&(identical(other.expectedStatus, expectedStatus) || other.expectedStatus == expectedStatus)&&(identical(other.includeAll, includeAll) || other.includeAll == includeAll)&&(identical(other.includeAllProxies, includeAllProxies) || other.includeAllProxies == includeAllProxies)&&(identical(other.includeAllProviders, includeAllProviders) || other.includeAllProviders == includeAllProviders)&&(identical(other.hidden, hidden) || other.hidden == hidden)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.order, order) || other.order == order));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProxyGroup&&(identical(other.profileId, profileId) || other.profileId == profileId)&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other._proxies, _proxies)&&const DeepCollectionEquality().equals(other._use, _use)&&(identical(other.interval, interval) || other.interval == interval)&&(identical(other.lazy, lazy) || other.lazy == lazy)&&(identical(other.disableUDP, disableUDP) || other.disableUDP == disableUDP)&&(identical(other.url, url) || other.url == url)&&(identical(other.timeout, timeout) || other.timeout == timeout)&&(identical(other.maxFailedTimes, maxFailedTimes) || other.maxFailedTimes == maxFailedTimes)&&(identical(other.filter, filter) || other.filter == filter)&&(identical(other.excludeFilter, excludeFilter) || other.excludeFilter == excludeFilter)&&(identical(other.excludeType, excludeType) || other.excludeType == excludeType)&&(identical(other.expectedStatus, expectedStatus) || other.expectedStatus == expectedStatus)&&(identical(other.includeAll, includeAll) || other.includeAll == includeAll)&&(identical(other.includeAllProxies, includeAllProxies) || other.includeAllProxies == includeAllProxies)&&(identical(other.includeAllProviders, includeAllProviders) || other.includeAllProviders == includeAllProviders)&&(identical(other.hidden, hidden) || other.hidden == hidden)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.order, order) || other.order == order));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,name,type,const DeepCollectionEquality().hash(_proxies),const DeepCollectionEquality().hash(_use),interval,lazy,disableUDP,url,timeout,maxFailedTimes,filter,excludeFilter,excludeType,expectedStatus,includeAll,includeAllProxies,includeAllProviders,hidden,icon,order]);
+int get hashCode => Object.hashAll([runtimeType,profileId,id,name,type,const DeepCollectionEquality().hash(_proxies),const DeepCollectionEquality().hash(_use),interval,lazy,disableUDP,url,timeout,maxFailedTimes,filter,excludeFilter,excludeType,expectedStatus,includeAll,includeAllProxies,includeAllProviders,hidden,icon,order]);
 
 @override
 String toString() {
-  return 'ProxyGroup(id: $id, name: $name, type: $type, proxies: $proxies, use: $use, interval: $interval, lazy: $lazy, disableUDP: $disableUDP, url: $url, timeout: $timeout, maxFailedTimes: $maxFailedTimes, filter: $filter, excludeFilter: $excludeFilter, excludeType: $excludeType, expectedStatus: $expectedStatus, includeAll: $includeAll, includeAllProxies: $includeAllProxies, includeAllProviders: $includeAllProviders, hidden: $hidden, icon: $icon, order: $order)';
+  return 'ProxyGroup(profileId: $profileId, id: $id, name: $name, type: $type, proxies: $proxies, use: $use, interval: $interval, lazy: $lazy, disableUDP: $disableUDP, url: $url, timeout: $timeout, maxFailedTimes: $maxFailedTimes, filter: $filter, excludeFilter: $excludeFilter, excludeType: $excludeType, expectedStatus: $expectedStatus, includeAll: $includeAll, includeAllProxies: $includeAllProxies, includeAllProviders: $includeAllProviders, hidden: $hidden, icon: $icon, order: $order)';
 }
 
 
@@ -303,7 +305,7 @@ abstract mixin class _$ProxyGroupCopyWith<$Res> implements $ProxyGroupCopyWith<$
   factory _$ProxyGroupCopyWith(_ProxyGroup value, $Res Function(_ProxyGroup) _then) = __$ProxyGroupCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(fromJson: Snowflake.buildId) int id, String name, GroupType type, List<String>? proxies, List<String>? use, int? interval, bool? lazy,@JsonKey(name: 'disable-udp') bool? disableUDP, String? url, int? timeout,@JsonKey(name: 'max-failed-times') int? maxFailedTimes, String? filter,@JsonKey(name: 'exclude-filter') String? excludeFilter,@JsonKey(name: 'exclude-type') String? excludeType,@JsonKey(name: 'expected-status') String? expectedStatus,@JsonKey(name: 'include-all') bool? includeAll,@JsonKey(name: 'include-all-proxies') bool? includeAllProxies,@JsonKey(name: 'include-all-providers') bool? includeAllProviders, bool? hidden, String? icon, String? order
+ int? profileId,@JsonKey(fromJson: Snowflake.buildId) int id, String name, GroupType type, List<String>? proxies, List<String>? use, int? interval, bool? lazy,@JsonKey(name: 'disable-udp') bool? disableUDP, String? url, int? timeout,@JsonKey(name: 'max-failed-times') int? maxFailedTimes, String? filter,@JsonKey(name: 'exclude-filter') String? excludeFilter,@JsonKey(name: 'exclude-type') String? excludeType,@JsonKey(name: 'expected-status') String? expectedStatus,@JsonKey(name: 'include-all') bool? includeAll,@JsonKey(name: 'include-all-proxies') bool? includeAllProxies,@JsonKey(name: 'include-all-providers') bool? includeAllProviders, bool? hidden, String? icon, String? order
 });
 
 
@@ -320,9 +322,10 @@ class __$ProxyGroupCopyWithImpl<$Res>
 
 /// Create a copy of ProxyGroup
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? type = null,Object? proxies = freezed,Object? use = freezed,Object? interval = freezed,Object? lazy = freezed,Object? disableUDP = freezed,Object? url = freezed,Object? timeout = freezed,Object? maxFailedTimes = freezed,Object? filter = freezed,Object? excludeFilter = freezed,Object? excludeType = freezed,Object? expectedStatus = freezed,Object? includeAll = freezed,Object? includeAllProxies = freezed,Object? includeAllProviders = freezed,Object? hidden = freezed,Object? icon = freezed,Object? order = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? profileId = freezed,Object? id = null,Object? name = null,Object? type = null,Object? proxies = freezed,Object? use = freezed,Object? interval = freezed,Object? lazy = freezed,Object? disableUDP = freezed,Object? url = freezed,Object? timeout = freezed,Object? maxFailedTimes = freezed,Object? filter = freezed,Object? excludeFilter = freezed,Object? excludeType = freezed,Object? expectedStatus = freezed,Object? includeAll = freezed,Object? includeAllProxies = freezed,Object? includeAllProviders = freezed,Object? hidden = freezed,Object? icon = freezed,Object? order = freezed,}) {
   return _then(_ProxyGroup(
-id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+profileId: freezed == profileId ? _self.profileId : profileId // ignore: cast_nullable_to_non_nullable
+as int?,id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as GroupType,proxies: freezed == proxies ? _self._proxies : proxies // ignore: cast_nullable_to_non_nullable

@@ -1040,6 +1040,7 @@ extension BackupControllerExt on AppController {
         migrationData.scripts,
         migrationData.rules,
         migrationData.links,
+        migrationData.proxyGroups,
         isOverride: isOverride,
       );
       final configMap = migrationData.configMap;
