@@ -183,6 +183,9 @@ class _IconEditViewState extends ConsumerState<IconEditView>
       backAction: () {
         Navigator.of(context).pop(_srcController.text);
       },
+      // actions: [IconButtonData(icon: Icons.check, onPressed: (){
+      //   Navigator.of(context).pop(_srcController.text);
+      // })],
       title: appLocalizations.icon,
       body: SizedBox(
         height: height,
@@ -260,7 +263,9 @@ class _IconEditViewState extends ConsumerState<IconEditView>
                 if (records.isNotEmpty) ...[
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: InfoHeader(info: Info(label: appLocalizations.iconRecords)),
+                    child: InfoHeader(
+                      info: Info(label: appLocalizations.iconRecords),
+                    ),
                   ),
                   Expanded(
                     child: ListView.builder(
@@ -284,7 +289,9 @@ class _IconEditViewState extends ConsumerState<IconEditView>
                     ),
                   ),
                 ] else
-                  Expanded(child: NullStatus(label: appLocalizations.noRecords)),
+                  Expanded(
+                    child: NullStatus(label: appLocalizations.noRecords),
+                  ),
                 SizedBox(height: 20),
               ],
             );

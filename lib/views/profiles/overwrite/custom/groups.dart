@@ -649,7 +649,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
       },
       trailing: TooltipText(
         text: Text(
-          icon ?? appLocalizations.optional,
+          icon?.value ?? appLocalizations.optional,
           maxLines: 1,
           style: context.textTheme.bodyLarge?.copyWith(
             color: icon == null ? context.colorScheme.onSurfaceVariant : null,

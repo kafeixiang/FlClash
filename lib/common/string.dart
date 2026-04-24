@@ -91,6 +91,13 @@ extension StringExtension on String {
       return await decodeJSONTask<T>(this);
     }
   }
+
+  String? get value {
+    if (isEmpty) {
+      return null;
+    }
+    return this;
+  }
 }
 
 extension StringNullExt on String? {
