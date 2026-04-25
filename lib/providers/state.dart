@@ -363,7 +363,7 @@ MoreToolsSelectorState moreToolsSelectorState(Ref ref) {
   final viewMode = ref.watch(viewModeProvider);
   final navigationItems = ref.watch(
     navigationItemsStateProvider.select((state) {
-      return state.value.where((element) {
+      return VM(state.value.where((element) {
         final isMore = element.modes.contains(NavigationItemMode.more);
         final isDesktop = element.modes.contains(NavigationItemMode.desktop);
         if (isMore && !isDesktop) return true;
@@ -371,9 +371,9 @@ MoreToolsSelectorState moreToolsSelectorState(Ref ref) {
           return false;
         }
         return true;
-      }).toList();
+      }).toList());
     }),
-  );
+  ).a;
 
   return MoreToolsSelectorState(navigationItems: navigationItems);
 }
@@ -692,9 +692,9 @@ CustomOverwriteDate customOverwriteDate(Ref ref, int profileId) {
   final proxyGroups =
       ref.watch(
         proxyGroupsProvider(profileId).select((state) {
-          return state.value;
+          return VM(state.value);
         }),
-      ) ??
+      ).a ??
       [];
   final ruleTargets = [
     ...proxies.map((item) => item.name),

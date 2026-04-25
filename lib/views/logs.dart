@@ -28,11 +28,11 @@ class _LogsViewState extends ConsumerState<LogsView> {
     _logs = ref.read(logsProvider).list;
     _scrollController = ScrollController(initialScrollOffset: double.maxFinite);
     _logsStateNotifier.value = _logsStateNotifier.value.copyWith(logs: _logs);
-    ref.listenManual(logsProvider.select((state) => state.list), (prev, next) {
+    ref.listenManual(logsProvider.select((state) => VM(state.list)), (prev, next) {
       if (prev != next) {
-        final isEquality = logListEquality.equals(prev, next);
+        final isEquality = logListEquality.equals(prev?.a, next.a);
         if (!isEquality) {
-          _logs = next;
+          _logs = next.a;
           updateLogsThrottler();
         }
       }

@@ -381,9 +381,9 @@ class _AddProxiesViewState extends ConsumerState<_AddProxiesView>
     final dismissProxies = ref.watch(itemsProvider('${key}_proxies'));
     final excludeProxyNames = ref.watch(
       proxyGroupProvider.select((state) {
-        return [...?state.proxies, state.name];
+        return VM([...?state.proxies, state.name]);
       }),
-    );
+    ).a;
     final vm2 = ref.watch(
       customOverwriteDateProvider(profileId).select((state) {
         return VM2(
