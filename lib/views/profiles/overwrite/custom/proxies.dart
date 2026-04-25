@@ -273,7 +273,9 @@ class _EditProxiesViewState extends ConsumerState<EditProxiesView>
                 },
               )
             else
-              SliverFillRemaining(child: NullStatus(label: appLocalizations.proxiesEmpty)),
+              SliverFillRemaining(
+                child: NullStatus(label: appLocalizations.proxiesEmpty),
+              ),
             SliverToBoxAdapter(child: SizedBox(height: 16)),
           ],
         ),
@@ -419,7 +421,9 @@ class _AddProxiesViewState extends ConsumerState<_AddProxiesView>
                     SliverPadding(
                       padding: EdgeInsets.symmetric(horizontal: 16),
                       sliver: SliverToBoxAdapter(
-                        child: InfoHeader(info: Info(label: appLocalizations.proxyGroup)),
+                        child: InfoHeader(
+                          info: Info(label: appLocalizations.proxyGroup),
+                        ),
                       ),
                     ),
                     SliverList(
@@ -447,7 +451,9 @@ class _AddProxiesViewState extends ConsumerState<_AddProxiesView>
                     SliverPadding(
                       padding: EdgeInsets.symmetric(horizontal: 16),
                       sliver: SliverToBoxAdapter(
-                        child: InfoHeader(info: Info(label: appLocalizations.proxies)),
+                        child: InfoHeader(
+                          info: Info(label: appLocalizations.proxies),
+                        ),
                       ),
                     ),
                     SliverList(
@@ -470,6 +476,7 @@ class _AddProxiesViewState extends ConsumerState<_AddProxiesView>
                       }, childCount: proxies.length),
                     ),
                   ],
+                  SliverToBoxAdapter(child: SizedBox(height: 16)),
                 ],
               ),
       ),
