@@ -14,6 +14,11 @@ part 'generated/state.freezed.dart';
 part 'generated/state.g.dart';
 
 @freezed
+abstract class VM<A> with _$VM<A> {
+  const factory VM(A a) = _VM;
+}
+
+@freezed
 abstract class VM2<A, B> with _$VM2<A, B> {
   const factory VM2(A a, B b) = _VM2;
 }

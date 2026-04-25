@@ -12,6 +12,263 @@ part of '../state.dart';
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
+mixin _$VM<A> {
+
+ A get a;
+/// Create a copy of VM
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$VMCopyWith<A, VM<A>> get copyWith => _$VMCopyWithImpl<A, VM<A>>(this as VM<A>, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is VM<A>&&const DeepCollectionEquality().equals(other.a, a));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(a));
+
+@override
+String toString() {
+  return 'VM<$A>(a: $a)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $VMCopyWith<A,$Res>  {
+  factory $VMCopyWith(VM<A> value, $Res Function(VM<A>) _then) = _$VMCopyWithImpl;
+@useResult
+$Res call({
+ A a
+});
+
+
+
+
+}
+/// @nodoc
+class _$VMCopyWithImpl<A,$Res>
+    implements $VMCopyWith<A, $Res> {
+  _$VMCopyWithImpl(this._self, this._then);
+
+  final VM<A> _self;
+  final $Res Function(VM<A>) _then;
+
+/// Create a copy of VM
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? a = freezed,}) {
+  return _then(_self.copyWith(
+a: freezed == a ? _self.a : a // ignore: cast_nullable_to_non_nullable
+as A,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [VM].
+extension VMPatterns<A> on VM<A> {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _VM<A> value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _VM() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _VM<A> value)  $default,){
+final _that = this;
+switch (_that) {
+case _VM():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _VM<A> value)?  $default,){
+final _that = this;
+switch (_that) {
+case _VM() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( A a)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _VM() when $default != null:
+return $default(_that.a);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( A a)  $default,) {final _that = this;
+switch (_that) {
+case _VM():
+return $default(_that.a);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( A a)?  $default,) {final _that = this;
+switch (_that) {
+case _VM() when $default != null:
+return $default(_that.a);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _VM<A> implements VM<A> {
+  const _VM(this.a);
+  
+
+@override final  A a;
+
+/// Create a copy of VM
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$VMCopyWith<A, _VM<A>> get copyWith => __$VMCopyWithImpl<A, _VM<A>>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _VM<A>&&const DeepCollectionEquality().equals(other.a, a));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(a));
+
+@override
+String toString() {
+  return 'VM<$A>(a: $a)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$VMCopyWith<A,$Res> implements $VMCopyWith<A, $Res> {
+  factory _$VMCopyWith(_VM<A> value, $Res Function(_VM<A>) _then) = __$VMCopyWithImpl;
+@override @useResult
+$Res call({
+ A a
+});
+
+
+
+
+}
+/// @nodoc
+class __$VMCopyWithImpl<A,$Res>
+    implements _$VMCopyWith<A, $Res> {
+  __$VMCopyWithImpl(this._self, this._then);
+
+  final _VM<A> _self;
+  final $Res Function(_VM<A>) _then;
+
+/// Create a copy of VM
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? a = freezed,}) {
+  return _then(_VM<A>(
+freezed == a ? _self.a : a // ignore: cast_nullable_to_non_nullable
+as A,
+  ));
+}
+
+
+}
+
+/// @nodoc
 mixin _$VM2<A,B> {
 
  A get a; B get b;

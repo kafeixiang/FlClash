@@ -3,6 +3,7 @@ import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/features/overwrite/rule.dart';
 import 'package:fl_clash/models/clash_config.dart';
 import 'package:fl_clash/models/common.dart';
+import 'package:fl_clash/models/state.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
@@ -96,6 +97,10 @@ class _CustomRulesViewState extends ConsumerState<CustomRulesView>
     );
   }
 
+  bool _handleCheckInvalid(String ruleTarget, List<String> ruleTargets) {
+    return !ruleTargets.contains(ruleTarget);
+  }
+
   Widget _buildItem({
     required Rule rule,
     required bool isEditing,
@@ -104,6 +109,7 @@ class _CustomRulesViewState extends ConsumerState<CustomRulesView>
     required int total,
     required Function() onSelected,
     required Function(Rule rule) onEdit,
+    required bool Function(String ruleTarget) checkInvalidHandler,
   }) {
     final position = ItemPosition.get(index, total);
     return ReorderableDelayedDragStartListener(
@@ -112,6 +118,7 @@ class _CustomRulesViewState extends ConsumerState<CustomRulesView>
       child: ItemPositionProvider(
         position: position,
         child: RuleItem(
+          checkInvalidHandler: checkInvalidHandler,
           isEditing: isEditing,
           isSelected: isSelected,
           rule: rule,
@@ -136,6 +143,11 @@ class _CustomRulesViewState extends ConsumerState<CustomRulesView>
   Widget build(context) {
     final rules = ref.watch(profileCustomRulesProvider(_profileId)).value ?? [];
     final selectedRules = ref.watch(itemsProvider(key));
+    final ruleTargets = ref.watch(
+      customOverwriteDateProvider(
+        widget.profileId,
+      ).select((state) => VM(state.ruleTargets)),
+    ).a;
     return CommonScaffold(
       title: appLocalizations.rule,
       actions: [
@@ -176,6 +188,9 @@ class _CustomRulesViewState extends ConsumerState<CustomRulesView>
                   final rule = rules[index];
                   return _buildItem(
                     index: index,
+                    checkInvalidHandler: (target) {
+                      return _handleCheckInvalid(target, ruleTargets);
+                    },
                     total: rules.length,
                     isEditing: selectedRules.isNotEmpty,
                     isSelected: selectedRules.contains(rule.id),
@@ -195,6 +210,9 @@ class _CustomRulesViewState extends ConsumerState<CustomRulesView>
                   return commonProxyDecorator(
                     _buildItem(
                       index: index,
+                      checkInvalidHandler: (target) {
+                        return _handleCheckInvalid(target, ruleTargets);
+                      },
                       total: rules.length,
                       isEditing: selectedRules.isNotEmpty,
                       isSelected: selectedRules.contains(rule.id),
@@ -731,14 +749,13 @@ class _RuleTargetSelectedView extends ConsumerWidget {
         (state) => isBottomSheet ? state.height * 0.70 : double.maxFinite,
       ),
     );
-    final proxyGroups = ref.watch(
-      proxyGroupsProvider(profileId).select((state) => state.value ?? []),
+    final vm2 = ref.watch(
+      customOverwriteDateProvider(profileId).select((state) {
+        return VM2(state.proxies, state.proxyGroups);
+      }),
     );
-    final proxies = ref.watch(
-      clashConfigProvider(
-        profileId,
-      ).select((state) => state.value?.proxies ?? []),
-    );
+    final proxies = vm2.a;
+    final proxyGroups = vm2.b;
     final currentRuleTarget = ref.watch(
       ruleProvider.select((state) => state.ruleTarget),
     );
@@ -870,8 +887,8 @@ class _RuleProviderSelectedView extends ConsumerWidget {
     final ruleProviders = ref.watch(
       clashConfigProvider(
         profileId,
-      ).select((state) => state.value?.ruleProviders ?? []),
-    );
+      ).select((state) => VM(state.value?.ruleProviders ?? [])),
+    ).a;
     final currentRuleProvider = ref.watch(
       ruleProvider.select((state) => state.ruleProvider),
     );
@@ -939,8 +956,8 @@ class _SubRuleSelectedView extends ConsumerWidget {
     final subRules = ref.watch(
       clashConfigProvider(
         profileId,
-      ).select((state) => state.value?.subRules ?? []),
-    );
+      ).select((state) => VM(state.value?.subRules ?? [])),
+    ).a;
     final currentSubRule = ref.watch(
       ruleProvider.select((state) => state.subRule),
     );

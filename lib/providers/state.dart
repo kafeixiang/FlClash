@@ -681,7 +681,7 @@ Future<ClashConfig> clashConfig(Ref ref, int profileId) async {
 }
 
 @riverpod
-CustomOverwriteDate overwriteCustomData(Ref ref, int profileId) {
+CustomOverwriteDate customOverwriteDate(Ref ref, int profileId) {
   final proxies =
       ref.watch(
         clashConfigProvider(profileId).select((state) {
@@ -696,7 +696,15 @@ CustomOverwriteDate overwriteCustomData(Ref ref, int profileId) {
         }),
       ) ??
       [];
-  return CustomOverwriteDate(proxies: proxies, proxyGroups: proxyGroups);
+  final ruleTargets = [
+    ...proxies.map((item) => item.name),
+    ...proxyGroups.map((item) => item.name),
+  ];
+  return CustomOverwriteDate(
+    proxies: proxies,
+    proxyGroups: proxyGroups,
+    ruleTargets: ruleTargets,
+  );
 }
 
 @riverpod

@@ -2445,10 +2445,10 @@ final class ClashConfigFamily extends $Family
   String toString() => r'clashConfigProvider';
 }
 
-@ProviderFor(overwriteCustomData)
-const overwriteCustomDataProvider = OverwriteCustomDataFamily._();
+@ProviderFor(customOverwriteDate)
+const customOverwriteDateProvider = CustomOverwriteDateFamily._();
 
-final class OverwriteCustomDataProvider
+final class CustomOverwriteDateProvider
     extends
         $FunctionalProvider<
           CustomOverwriteDate,
@@ -2456,23 +2456,23 @@ final class OverwriteCustomDataProvider
           CustomOverwriteDate
         >
     with $Provider<CustomOverwriteDate> {
-  const OverwriteCustomDataProvider._({
-    required OverwriteCustomDataFamily super.from,
+  const CustomOverwriteDateProvider._({
+    required CustomOverwriteDateFamily super.from,
     required int super.argument,
   }) : super(
          retry: null,
-         name: r'overwriteCustomDataProvider',
+         name: r'customOverwriteDateProvider',
          isAutoDispose: true,
          dependencies: null,
          $allTransitiveDependencies: null,
        );
 
   @override
-  String debugGetCreateSourceHash() => _$overwriteCustomDataHash();
+  String debugGetCreateSourceHash() => _$customOverwriteDateHash();
 
   @override
   String toString() {
-    return r'overwriteCustomDataProvider'
+    return r'customOverwriteDateProvider'
         ''
         '($argument)';
   }
@@ -2486,7 +2486,7 @@ final class OverwriteCustomDataProvider
   @override
   CustomOverwriteDate create(Ref ref) {
     final argument = this.argument as int;
-    return overwriteCustomData(ref, argument);
+    return customOverwriteDate(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -2499,7 +2499,7 @@ final class OverwriteCustomDataProvider
 
   @override
   bool operator ==(Object other) {
-    return other is OverwriteCustomDataProvider && other.argument == argument;
+    return other is CustomOverwriteDateProvider && other.argument == argument;
   }
 
   @override
@@ -2508,25 +2508,25 @@ final class OverwriteCustomDataProvider
   }
 }
 
-String _$overwriteCustomDataHash() =>
-    r'b227334adc460d14d51227e1d05c992c576e6aaa';
+String _$customOverwriteDateHash() =>
+    r'42cd575207d6ccfd4d5a3f508abc534fec55074a';
 
-final class OverwriteCustomDataFamily extends $Family
+final class CustomOverwriteDateFamily extends $Family
     with $FunctionalFamilyOverride<CustomOverwriteDate, int> {
-  const OverwriteCustomDataFamily._()
+  const CustomOverwriteDateFamily._()
     : super(
         retry: null,
-        name: r'overwriteCustomDataProvider',
+        name: r'customOverwriteDateProvider',
         dependencies: null,
         $allTransitiveDependencies: null,
         isAutoDispose: true,
       );
 
-  OverwriteCustomDataProvider call(int profileId) =>
-      OverwriteCustomDataProvider._(argument: profileId, from: this);
+  CustomOverwriteDateProvider call(int profileId) =>
+      CustomOverwriteDateProvider._(argument: profileId, from: this);
 
   @override
-  String toString() => r'overwriteCustomDataProvider';
+  String toString() => r'customOverwriteDateProvider';
 }
 
 @ProviderFor(setupState)

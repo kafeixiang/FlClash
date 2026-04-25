@@ -353,13 +353,13 @@ class _AddProxyProvidersViewState extends ConsumerState<_AddProxyProvidersView>
     final allProxyProviders = ref.watch(
       clashConfigProvider(
         profileId,
-      ).select((state) => state.value?.proxyProviders ?? []),
-    );
+      ).select((state) => VM(state.value?.proxyProviders ?? [])),
+    ).a;
     final excludeProxyProviderNames = ref.watch(
       proxyGroupProvider.select((state) {
-        return [...?state.use];
+        return VM([...?state.use]);
       }),
-    );
+    ).a;
     final providerNames = allProxyProviders
         .where((item) => !excludeProxyProviderNames.contains(item))
         .toList();
