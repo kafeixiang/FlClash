@@ -221,7 +221,8 @@ class _IconEditViewState extends ConsumerState<IconEditView>
                                         child: _state.value != null
                                             ? CommonCard(
                                                 type: CommonCardType.filled,
-                                                padding: EdgeInsets.all(6),
+                                                radius: 20,
+                                                padding: EdgeInsets.all(8),
                                                 child: CommonImage(
                                                   isSvg:
                                                       _srcController.text.isSvg,
@@ -240,8 +241,10 @@ class _IconEditViewState extends ConsumerState<IconEditView>
                         ),
                         Flexible(
                           child: CommonCard(
+                            radius: 20,
                             type: CommonCardType.filled,
-                            child: ListItem(
+                            child: ListTile(
+                              minTileHeight: dimension,
                               title: TextField(
                                 controller: _srcController,
                                 keyboardType: TextInputType.url,

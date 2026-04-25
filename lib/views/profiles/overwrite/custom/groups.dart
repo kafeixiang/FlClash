@@ -15,18 +15,28 @@ import 'package:smooth_sheets/smooth_sheets.dart';
 import 'icon.dart';
 import 'proxies.dart';
 
-class CustomProxyGroupsView extends ConsumerWidget {
+class CustomProxyGroupsView extends ConsumerStatefulWidget {
   final int profileId;
 
   const CustomProxyGroupsView(this.profileId, {super.key});
 
-  void _handleReorder(
-    WidgetRef ref,
-    int profileId,
-    int oldIndex,
-    int newIndex,
-  ) {
-    ref.read(proxyGroupsProvider(profileId).notifier).order(oldIndex, newIndex);
+  @override
+  ConsumerState createState() => _CustomProxyGroupsViewState();
+}
+
+class _CustomProxyGroupsViewState extends ConsumerState<CustomProxyGroupsView> {
+  late final ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+  }
+
+  void _handleReorder(int oldIndex, int newIndex) {
+    ref
+        .read(proxyGroupsProvider(widget.profileId).notifier)
+        .order(oldIndex, newIndex);
   }
 
   void _handleEditProxyGroup(
@@ -43,7 +53,7 @@ class CustomProxyGroupsView extends ConsumerWidget {
       ),
       builder: (context) {
         return ProfileIdProvider(
-          profileId: profileId,
+          profileId: widget.profileId,
           child: ProviderScope(
             overrides: [
               proxyGroupProvider.overrideWithBuild((_, _) => proxyGroup),
@@ -56,7 +66,6 @@ class CustomProxyGroupsView extends ConsumerWidget {
   }
 
   Widget _buildItem({
-    required BuildContext context,
     required ProxyGroup proxyGroup,
     required int index,
     required int total,
@@ -100,7 +109,7 @@ class CustomProxyGroupsView extends ConsumerWidget {
     );
   }
 
-  void _handleAdd(BuildContext context) {
+  void _handleAdd() {
     showSheet(
       context: context,
       props: SheetProps(
@@ -110,7 +119,7 @@ class CustomProxyGroupsView extends ConsumerWidget {
       ),
       builder: (context) {
         return ProfileIdProvider(
-          profileId: profileId,
+          profileId: widget.profileId,
           child: ProviderScope(
             overrides: [
               proxyGroupProvider.overrideWithBuild(
@@ -126,16 +135,21 @@ class CustomProxyGroupsView extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final proxyGroups = ref.watch(proxyGroupsProvider(profileId)).value ?? [];
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final proxyGroups =
+        ref.watch(proxyGroupsProvider(widget.profileId)).value ?? [];
     return CommonScaffold(
       title: appLocalizations.proxyGroup,
       actions: [
         CommonMinFilledButtonTheme(
           child: FilledButton(
-            onPressed: () {
-              _handleAdd(context);
-            },
+            onPressed: _handleAdd,
             child: Text(appLocalizations.add),
           ),
         ),
@@ -143,41 +157,49 @@ class CustomProxyGroupsView extends ConsumerWidget {
       ],
       body: proxyGroups.isEmpty
           ? NullStatus(label: appLocalizations.proxyGroupEmpty)
-          : ReorderableListView.builder(
-              buildDefaultDragHandles: false,
-              padding: EdgeInsets.symmetric(vertical: 12).copyWith(bottom: 24),
-              itemBuilder: (context, index) {
-                final proxyGroup = proxyGroups[index];
-                return _buildItem(
-                  context: context,
-                  proxyGroup: proxyGroup,
-                  total: proxyGroups.length,
-                  index: index,
-                  onPressed: () {
-                    _handleEditProxyGroup(context, proxyGroup, index);
-                  },
-                );
-              },
-              proxyDecorator: (child, index, animation) {
-                final proxyGroup = proxyGroups[index];
-                return commonProxyDecorator(
-                  _buildItem(
-                    context: context,
+          : CommonScrollBar(
+              controller: _scrollController,
+              child: ReorderableListView.builder(
+                scrollController: _scrollController,
+                buildDefaultDragHandles: false,
+                padding: EdgeInsets.symmetric(
+                  vertical: 12,
+                ).copyWith(bottom: 24),
+                itemBuilder: (context, index) {
+                  final proxyGroup = proxyGroups[index];
+                  return _buildItem(
                     proxyGroup: proxyGroup,
                     total: proxyGroups.length,
                     index: index,
                     onPressed: () {
                       _handleEditProxyGroup(context, proxyGroup, index);
                     },
-                  ),
-                  index,
-                  animation,
-                );
-              },
-              itemCount: proxyGroups.length,
-              onReorder: (oldIndex, newIndex) {
-                _handleReorder(ref, profileId, oldIndex, newIndex);
-              },
+                  );
+                },
+                proxyDecorator: (child, index, animation) {
+                  final proxyGroup = proxyGroups[index];
+                  return commonProxyDecorator(
+                    _buildItem(
+                      proxyGroup: proxyGroup,
+                      total: proxyGroups.length,
+                      index: index,
+                      onPressed: () {
+                        _handleEditProxyGroup(context, proxyGroup, index);
+                      },
+                    ),
+                    index,
+                    animation,
+                  );
+                },
+                itemCount: proxyGroups.length,
+                itemExtent:
+                    globalState.measure.bodyLargeHeight +
+                    globalState.measure.bodyMediumHeight +
+                    16,
+                onReorder: (oldIndex, newIndex) {
+                  _handleReorder(oldIndex, newIndex);
+                },
+              ),
             ),
     );
   }
