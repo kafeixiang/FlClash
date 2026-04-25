@@ -765,6 +765,7 @@ extension SetupControllerExt on AppController {
       () async {
         final configFilePath = await appPath.configFilePath;
         await File(configFilePath).safeWriteAsString(yamlString);
+        globalState.lastConfigMd5 = yamlMd5;
         final message = await coreController.setupConfig(
           setupState: setupState,
           params: setupParams,
@@ -773,7 +774,6 @@ extension SetupControllerExt on AppController {
         if (message.isNotEmpty) {
           throw message;
         }
-        globalState.lastConfigMd5 = yamlMd5;
         addCheckIp();
         await onUpdated?.call();
       },

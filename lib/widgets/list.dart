@@ -690,7 +690,7 @@ class DecorationListItem extends StatelessWidget {
       shape: proxyDecorator == true
           ? LinearBorder.none
           : RoundedSuperellipseBorder(borderRadius: borderRadius),
-      side: invalid ? BorderSide(color: context.colorScheme.error) : null,
+      isError: invalid,
       isSelected: isSelected,
       padding: EdgeInsets.zero,
       type: CommonCardType.filled,

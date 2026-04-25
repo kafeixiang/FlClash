@@ -33,7 +33,7 @@ class RuleItem extends StatelessWidget {
     this.isEditing = false,
   });
 
-  VM2<bool, Color> _checkInvalid(BuildContext context) {
+  VM2<bool, Color?> _checkInvalid(BuildContext context) {
     if (rule.ruleAction != RuleAction.SUB_RULE) {
       final ruleTarget = rule.ruleTarget ?? '';
       if (ruleTarget.toUpperCase() == 'DIRECT') {
@@ -51,9 +51,7 @@ class RuleItem extends StatelessWidget {
     }
     return VM2(
       invalid,
-      invalid
-          ? Colors.grey.harmonizeWith(context.colorScheme.primary)
-          : context.colorScheme.onSecondaryContainer,
+      invalid ? null : context.colorScheme.onSecondaryContainer,
     );
   }
 
@@ -75,30 +73,43 @@ class RuleItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  rule.ruleAction.name,
-                  style: context.textTheme.bodyLarge?.toJetBrainsMono,
-                ),
-                Flexible(
-                  child: TooltipText(
-                    text: Text(
-                      rule.realContent ?? '',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.textTheme.bodySmall?.toJetBrainsMono
-                          .copyWith(
-                            color:
-                                context.colorScheme.onSurfaceVariant.opacity80,
-                          ),
+            child: Builder(
+              builder: (context) {
+                final style = DefaultTextStyle.of(
+                  context,
+                ).style.toJetBrainsMono;
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      rule.ruleAction.name,
+                      style: style.copyWith(
+                        fontSize: context.textTheme.bodyLarge?.fontSize,
+                      ),
                     ),
-                  ),
-                ),
-              ],
+                    Flexible(
+                      child: Builder(
+                        builder: (context) {
+                          return TooltipText(
+                            text: Text(
+                              rule.realContent ?? '',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: style.copyWith(
+                                fontSize:
+                                    context.textTheme.bodyMedium?.fontSize,
+                                color: style.color?.opacity60,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
           if (rule.realTarget != null)
