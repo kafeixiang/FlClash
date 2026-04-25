@@ -88,8 +88,8 @@ class ProfilesDao extends DatabaseAccessor<Database> with _$ProfilesDaoMixin {
   }
 
   Selectable<String> fileNames() {
-    final query = profiles.selectOnly()..addColumns([profiles.label]);
-    return query.map((row) => '${row.read(profiles.label)}.yaml');
+    final query = profiles.selectOnly()..addColumns([profiles.id]);
+    return query.map((row) => '${row.read(profiles.id)}.yaml');
   }
 
   void setAllWithBatch(Batch batch, Iterable<Profile> profiles) {

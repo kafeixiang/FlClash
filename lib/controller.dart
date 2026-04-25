@@ -753,6 +753,10 @@ extension SetupControllerExt on AppController {
       setupState: setupState,
       patchConfig: realPatchConfig,
     );
+    final yamlString = vm2.a;
+    if (yamlString.isEmpty) {
+      return;
+    }
     final yamlMd5 = vm2.b;
     if (yamlMd5 == globalState.lastConfigMd5 && force == false) {
       return;
@@ -760,7 +764,6 @@ extension SetupControllerExt on AppController {
     await loadingRun(
       () async {
         final configFilePath = await appPath.configFilePath;
-        final yamlString = vm2.a;
         await File(configFilePath).safeWriteAsString(yamlString);
         final message = await coreController.setupConfig(
           setupState: setupState,

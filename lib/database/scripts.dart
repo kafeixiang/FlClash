@@ -30,8 +30,8 @@ class ScriptsDao extends DatabaseAccessor<Database> with _$ScriptsDaoMixin {
   }
 
   Selectable<String> fileNames() {
-    final query = scripts.selectOnly()..addColumns([scripts.label]);
-    return query.map((row) => '${row.read(scripts.label)}.js');
+    final query = scripts.selectOnly()..addColumns([scripts.id]);
+    return query.map((row) => '${row.read(scripts.id)}.js');
   }
 
   Future<void> setAll(Iterable<Script> scripts) async {
