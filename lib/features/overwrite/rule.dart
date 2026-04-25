@@ -13,7 +13,8 @@ import 'package:fl_clash/widgets/list.dart';
 import 'package:fl_clash/widgets/text.dart';
 import 'package:flutter/material.dart';
 
-final ruleItemHeight = globalState.measure.bodyMediumHeight * 2 + 14;
+final ruleItemHeight =
+    globalState.measure.bodyLargeHeight + globalState.measure.bodyMediumHeight;
 
 class RuleItem extends StatelessWidget {
   final bool isSelected;
@@ -60,6 +61,7 @@ class RuleItem extends StatelessWidget {
     final vm2 = _checkInvalid(context);
     final invalid = vm2.a;
     return SelectedDecorationListItem(
+      minVerticalPadding: 0,
       isSelected: isSelected,
       isEditing: isEditing,
       horizontalTitleGap: 0,
@@ -67,59 +69,61 @@ class RuleItem extends StatelessWidget {
       onSelected: () {
         onSelected();
       },
-      title: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Builder(
-              builder: (context) {
-                final style = DefaultTextStyle.of(
-                  context,
-                ).style.toJetBrainsMono;
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      rule.ruleAction.name,
-                      style: style.copyWith(
-                        fontSize: context.textTheme.bodyLarge?.fontSize,
+      title: Center(
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Builder(
+                builder: (context) {
+                  final style = DefaultTextStyle.of(
+                    context,
+                  ).style.toJetBrainsMono;
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        rule.ruleAction.name,
+                        style: style.copyWith(
+                          fontSize: context.textTheme.bodyLarge?.fontSize,
+                        ),
                       ),
-                    ),
-                    Flexible(
-                      child: Builder(
-                        builder: (context) {
-                          return TooltipText(
-                            text: Text(
-                              rule.realContent ?? '',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: style.copyWith(
-                                fontSize:
-                                    context.textTheme.bodyMedium?.fontSize,
-                                color: style.color?.opacity60,
+                      Flexible(
+                        child: Builder(
+                          builder: (context) {
+                            return TooltipText(
+                              text: Text(
+                                rule.realContent ?? '',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: style.copyWith(
+                                  fontSize:
+                                      context.textTheme.bodyMedium?.fontSize,
+                                  color: style.color?.opacity60,
+                                ),
                               ),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
-          if (rule.realTarget != null)
-            Text(
-              rule.realTarget!,
-              style: context.textTheme.bodyMedium?.toJetBrainsMono.copyWith(
-                color: vm2.b,
+                    ],
+                  );
+                },
               ),
             ),
-        ],
+            if (rule.realTarget != null)
+              Text(
+                rule.realTarget!,
+                style: context.textTheme.bodyMedium?.toJetBrainsMono.copyWith(
+                  color: vm2.b,
+                ),
+              ),
+          ],
+        ),
       ),
       onPressed: () {
         onEdit(rule);

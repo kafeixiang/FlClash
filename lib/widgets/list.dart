@@ -652,7 +652,7 @@ class DecorationListItem extends StatelessWidget {
   final double? horizontalTitleGap;
   final EdgeInsetsGeometry? contentPadding;
   final VoidCallback? onPressed;
-  final double minVerticalPadding;
+  final double? minVerticalPadding;
   final bool invalid;
 
   const DecorationListItem({
@@ -665,7 +665,7 @@ class DecorationListItem extends StatelessWidget {
     this.isSelected,
     this.onPressed,
     this.horizontalTitleGap,
-    this.minVerticalPadding = 6,
+    this.minVerticalPadding,
     this.invalid = false,
   });
 
@@ -704,7 +704,7 @@ class DecorationListItem extends StatelessWidget {
                 contentPadding ?? const EdgeInsets.only(right: 16, left: 16),
             title: title,
             subtitle: subtitle,
-            minVerticalPadding: minVerticalPadding,
+            minVerticalPadding: minVerticalPadding ?? 6,
             minTileHeight: 54,
             horizontalTitleGap: horizontalTitleGap,
             trailing: trailing,
@@ -737,6 +737,7 @@ class SelectedDecorationListItem extends StatelessWidget {
   final double? horizontalTitleGap;
   final Widget? leading;
   final bool invalid;
+  final double? minVerticalPadding;
 
   const SelectedDecorationListItem({
     super.key,
@@ -747,6 +748,7 @@ class SelectedDecorationListItem extends StatelessWidget {
     this.invalid = false,
     required this.title,
     required this.onPressed,
+    this.minVerticalPadding,
     this.subtitle,
     this.leading,
   });
@@ -755,6 +757,7 @@ class SelectedDecorationListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecorationListItem(
       title: title,
+      minVerticalPadding: minVerticalPadding,
       contentPadding: EdgeInsets.only(left: 16, right: 0),
       isSelected: isSelected,
       invalid: invalid,

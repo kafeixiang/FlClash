@@ -73,6 +73,7 @@ class _AddedRulesViewState extends ConsumerState<AddedRulesView> {
         Navigator.of(context).pop();
         return false;
       },
+
       child: BaseScaffold(
         title: appLocalizations.addedRules,
         actions: [
