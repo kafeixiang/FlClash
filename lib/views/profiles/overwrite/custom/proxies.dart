@@ -387,10 +387,10 @@ class _AddProxiesViewState extends ConsumerState<_AddProxiesView>
     final vm2 = ref.watch(
       overwriteCustomDataProvider(profileId).select((state) {
         return VM2(
-          state.allProxies
+          state.proxies
               .where((item) => !excludeProxyNames.contains(item.name))
               .toList(),
-          state.allProxyGroups
+          state.proxyGroups
               .where((item) => !excludeProxyNames.contains(item.name))
               .toList(),
         );

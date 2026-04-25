@@ -142,11 +142,11 @@ abstract class Proxy with _$Proxy {
 }
 
 @freezed
-abstract class OverwriteCustomData with _$OverwriteCustomData {
-  const factory OverwriteCustomData({
-    @Default([]) List<Proxy> allProxies,
-    @Default([]) List<ProxyGroup> allProxyGroups,
-  }) = _OverwriteCustomData;
+abstract class CustomOverwriteDate with _$CustomOverwriteDate {
+  const factory CustomOverwriteDate({
+    @Default([]) List<Proxy> proxies,
+    @Default([]) List<ProxyGroup> proxyGroups,
+  }) = _CustomOverwriteDate;
 }
 
 @freezed

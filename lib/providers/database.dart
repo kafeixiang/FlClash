@@ -368,6 +368,11 @@ class ProxyGroups extends _$ProxyGroups with AsyncNotifierMixin {
           oldName: oldName,
           newName: newName,
         );
+        database.proxyGroupsDao.renameProxies(
+          profileId,
+          oldName: oldName,
+          newName: newName,
+        );
       }
     }
     withRollback(value, () {

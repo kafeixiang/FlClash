@@ -95,6 +95,23 @@ class ProxyGroupsDao extends DatabaseAccessor<Database>
     );
   }
 
+  Future<void> renameProxies(
+    int profileId, {
+    required String oldName,
+    required String newName,
+  }) {
+    return customUpdate(
+      'UPDATE ${proxyGroups.entityName} '
+      'SET ${proxyGroups.proxies.name} = REPLACE(${proxyGroups.proxies.name}, ?, ?) '
+      'WHERE ${proxyGroups.profileId.name} = ?',
+      variables: [
+        Variable.withString('"$oldName"'),
+        Variable.withString('"$newName"'),
+        Variable.withInt(profileId),
+      ],
+    );
+  }
+
   void setAllWithBatch(
     int? profileId,
     Batch batch,

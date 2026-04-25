@@ -623,40 +623,40 @@ as String?,
 }
 
 /// @nodoc
-mixin _$OverwriteCustomData {
+mixin _$CustomOverwriteDate {
 
- List<Proxy> get allProxies; List<ProxyGroup> get allProxyGroups;
-/// Create a copy of OverwriteCustomData
+ List<Proxy> get proxies; List<ProxyGroup> get proxyGroups;
+/// Create a copy of CustomOverwriteDate
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$OverwriteCustomDataCopyWith<OverwriteCustomData> get copyWith => _$OverwriteCustomDataCopyWithImpl<OverwriteCustomData>(this as OverwriteCustomData, _$identity);
+$CustomOverwriteDateCopyWith<CustomOverwriteDate> get copyWith => _$CustomOverwriteDateCopyWithImpl<CustomOverwriteDate>(this as CustomOverwriteDate, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is OverwriteCustomData&&const DeepCollectionEquality().equals(other.allProxies, allProxies)&&const DeepCollectionEquality().equals(other.allProxyGroups, allProxyGroups));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CustomOverwriteDate&&const DeepCollectionEquality().equals(other.proxies, proxies)&&const DeepCollectionEquality().equals(other.proxyGroups, proxyGroups));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(allProxies),const DeepCollectionEquality().hash(allProxyGroups));
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(proxies),const DeepCollectionEquality().hash(proxyGroups));
 
 @override
 String toString() {
-  return 'OverwriteCustomData(allProxies: $allProxies, allProxyGroups: $allProxyGroups)';
+  return 'CustomOverwriteDate(proxies: $proxies, proxyGroups: $proxyGroups)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $OverwriteCustomDataCopyWith<$Res>  {
-  factory $OverwriteCustomDataCopyWith(OverwriteCustomData value, $Res Function(OverwriteCustomData) _then) = _$OverwriteCustomDataCopyWithImpl;
+abstract mixin class $CustomOverwriteDateCopyWith<$Res>  {
+  factory $CustomOverwriteDateCopyWith(CustomOverwriteDate value, $Res Function(CustomOverwriteDate) _then) = _$CustomOverwriteDateCopyWithImpl;
 @useResult
 $Res call({
- List<Proxy> allProxies, List<ProxyGroup> allProxyGroups
+ List<Proxy> proxies, List<ProxyGroup> proxyGroups
 });
 
 
@@ -664,19 +664,19 @@ $Res call({
 
 }
 /// @nodoc
-class _$OverwriteCustomDataCopyWithImpl<$Res>
-    implements $OverwriteCustomDataCopyWith<$Res> {
-  _$OverwriteCustomDataCopyWithImpl(this._self, this._then);
+class _$CustomOverwriteDateCopyWithImpl<$Res>
+    implements $CustomOverwriteDateCopyWith<$Res> {
+  _$CustomOverwriteDateCopyWithImpl(this._self, this._then);
 
-  final OverwriteCustomData _self;
-  final $Res Function(OverwriteCustomData) _then;
+  final CustomOverwriteDate _self;
+  final $Res Function(CustomOverwriteDate) _then;
 
-/// Create a copy of OverwriteCustomData
+/// Create a copy of CustomOverwriteDate
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? allProxies = null,Object? allProxyGroups = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? proxies = null,Object? proxyGroups = null,}) {
   return _then(_self.copyWith(
-allProxies: null == allProxies ? _self.allProxies : allProxies // ignore: cast_nullable_to_non_nullable
-as List<Proxy>,allProxyGroups: null == allProxyGroups ? _self.allProxyGroups : allProxyGroups // ignore: cast_nullable_to_non_nullable
+proxies: null == proxies ? _self.proxies : proxies // ignore: cast_nullable_to_non_nullable
+as List<Proxy>,proxyGroups: null == proxyGroups ? _self.proxyGroups : proxyGroups // ignore: cast_nullable_to_non_nullable
 as List<ProxyGroup>,
   ));
 }
@@ -684,8 +684,8 @@ as List<ProxyGroup>,
 }
 
 
-/// Adds pattern-matching-related methods to [OverwriteCustomData].
-extension OverwriteCustomDataPatterns on OverwriteCustomData {
+/// Adds pattern-matching-related methods to [CustomOverwriteDate].
+extension CustomOverwriteDatePatterns on CustomOverwriteDate {
 /// A variant of `map` that fallback to returning `orElse`.
 ///
 /// It is equivalent to doing:
@@ -698,10 +698,10 @@ extension OverwriteCustomDataPatterns on OverwriteCustomData {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _OverwriteCustomData value)?  $default,{required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _CustomOverwriteDate value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _OverwriteCustomData() when $default != null:
+case _CustomOverwriteDate() when $default != null:
 return $default(_that);case _:
   return orElse();
 
@@ -720,10 +720,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _OverwriteCustomData value)  $default,){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _CustomOverwriteDate value)  $default,){
 final _that = this;
 switch (_that) {
-case _OverwriteCustomData():
+case _CustomOverwriteDate():
 return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -741,10 +741,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _OverwriteCustomData value)?  $default,){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _CustomOverwriteDate value)?  $default,){
 final _that = this;
 switch (_that) {
-case _OverwriteCustomData() when $default != null:
+case _CustomOverwriteDate() when $default != null:
 return $default(_that);case _:
   return null;
 
@@ -762,10 +762,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Proxy> allProxies,  List<ProxyGroup> allProxyGroups)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Proxy> proxies,  List<ProxyGroup> proxyGroups)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _OverwriteCustomData() when $default != null:
-return $default(_that.allProxies,_that.allProxyGroups);case _:
+case _CustomOverwriteDate() when $default != null:
+return $default(_that.proxies,_that.proxyGroups);case _:
   return orElse();
 
 }
@@ -783,10 +783,10 @@ return $default(_that.allProxies,_that.allProxyGroups);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Proxy> allProxies,  List<ProxyGroup> allProxyGroups)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Proxy> proxies,  List<ProxyGroup> proxyGroups)  $default,) {final _that = this;
 switch (_that) {
-case _OverwriteCustomData():
-return $default(_that.allProxies,_that.allProxyGroups);case _:
+case _CustomOverwriteDate():
+return $default(_that.proxies,_that.proxyGroups);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -803,10 +803,10 @@ return $default(_that.allProxies,_that.allProxyGroups);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Proxy> allProxies,  List<ProxyGroup> allProxyGroups)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Proxy> proxies,  List<ProxyGroup> proxyGroups)?  $default,) {final _that = this;
 switch (_that) {
-case _OverwriteCustomData() when $default != null:
-return $default(_that.allProxies,_that.allProxyGroups);case _:
+case _CustomOverwriteDate() when $default != null:
+return $default(_that.proxies,_that.proxyGroups);case _:
   return null;
 
 }
@@ -817,56 +817,56 @@ return $default(_that.allProxies,_that.allProxyGroups);case _:
 /// @nodoc
 
 
-class _OverwriteCustomData implements OverwriteCustomData {
-  const _OverwriteCustomData({final  List<Proxy> allProxies = const [], final  List<ProxyGroup> allProxyGroups = const []}): _allProxies = allProxies,_allProxyGroups = allProxyGroups;
+class _CustomOverwriteDate implements CustomOverwriteDate {
+  const _CustomOverwriteDate({final  List<Proxy> proxies = const [], final  List<ProxyGroup> proxyGroups = const []}): _proxies = proxies,_proxyGroups = proxyGroups;
   
 
- final  List<Proxy> _allProxies;
-@override@JsonKey() List<Proxy> get allProxies {
-  if (_allProxies is EqualUnmodifiableListView) return _allProxies;
+ final  List<Proxy> _proxies;
+@override@JsonKey() List<Proxy> get proxies {
+  if (_proxies is EqualUnmodifiableListView) return _proxies;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_allProxies);
+  return EqualUnmodifiableListView(_proxies);
 }
 
- final  List<ProxyGroup> _allProxyGroups;
-@override@JsonKey() List<ProxyGroup> get allProxyGroups {
-  if (_allProxyGroups is EqualUnmodifiableListView) return _allProxyGroups;
+ final  List<ProxyGroup> _proxyGroups;
+@override@JsonKey() List<ProxyGroup> get proxyGroups {
+  if (_proxyGroups is EqualUnmodifiableListView) return _proxyGroups;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_allProxyGroups);
+  return EqualUnmodifiableListView(_proxyGroups);
 }
 
 
-/// Create a copy of OverwriteCustomData
+/// Create a copy of CustomOverwriteDate
 /// with the given fields replaced by the non-null parameter values.
 @override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$OverwriteCustomDataCopyWith<_OverwriteCustomData> get copyWith => __$OverwriteCustomDataCopyWithImpl<_OverwriteCustomData>(this, _$identity);
+_$CustomOverwriteDateCopyWith<_CustomOverwriteDate> get copyWith => __$CustomOverwriteDateCopyWithImpl<_CustomOverwriteDate>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _OverwriteCustomData&&const DeepCollectionEquality().equals(other._allProxies, _allProxies)&&const DeepCollectionEquality().equals(other._allProxyGroups, _allProxyGroups));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CustomOverwriteDate&&const DeepCollectionEquality().equals(other._proxies, _proxies)&&const DeepCollectionEquality().equals(other._proxyGroups, _proxyGroups));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_allProxies),const DeepCollectionEquality().hash(_allProxyGroups));
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_proxies),const DeepCollectionEquality().hash(_proxyGroups));
 
 @override
 String toString() {
-  return 'OverwriteCustomData(allProxies: $allProxies, allProxyGroups: $allProxyGroups)';
+  return 'CustomOverwriteDate(proxies: $proxies, proxyGroups: $proxyGroups)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$OverwriteCustomDataCopyWith<$Res> implements $OverwriteCustomDataCopyWith<$Res> {
-  factory _$OverwriteCustomDataCopyWith(_OverwriteCustomData value, $Res Function(_OverwriteCustomData) _then) = __$OverwriteCustomDataCopyWithImpl;
+abstract mixin class _$CustomOverwriteDateCopyWith<$Res> implements $CustomOverwriteDateCopyWith<$Res> {
+  factory _$CustomOverwriteDateCopyWith(_CustomOverwriteDate value, $Res Function(_CustomOverwriteDate) _then) = __$CustomOverwriteDateCopyWithImpl;
 @override @useResult
 $Res call({
- List<Proxy> allProxies, List<ProxyGroup> allProxyGroups
+ List<Proxy> proxies, List<ProxyGroup> proxyGroups
 });
 
 
@@ -874,19 +874,19 @@ $Res call({
 
 }
 /// @nodoc
-class __$OverwriteCustomDataCopyWithImpl<$Res>
-    implements _$OverwriteCustomDataCopyWith<$Res> {
-  __$OverwriteCustomDataCopyWithImpl(this._self, this._then);
+class __$CustomOverwriteDateCopyWithImpl<$Res>
+    implements _$CustomOverwriteDateCopyWith<$Res> {
+  __$CustomOverwriteDateCopyWithImpl(this._self, this._then);
 
-  final _OverwriteCustomData _self;
-  final $Res Function(_OverwriteCustomData) _then;
+  final _CustomOverwriteDate _self;
+  final $Res Function(_CustomOverwriteDate) _then;
 
-/// Create a copy of OverwriteCustomData
+/// Create a copy of CustomOverwriteDate
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? allProxies = null,Object? allProxyGroups = null,}) {
-  return _then(_OverwriteCustomData(
-allProxies: null == allProxies ? _self._allProxies : allProxies // ignore: cast_nullable_to_non_nullable
-as List<Proxy>,allProxyGroups: null == allProxyGroups ? _self._allProxyGroups : allProxyGroups // ignore: cast_nullable_to_non_nullable
+@override @pragma('vm:prefer-inline') $Res call({Object? proxies = null,Object? proxyGroups = null,}) {
+  return _then(_CustomOverwriteDate(
+proxies: null == proxies ? _self._proxies : proxies // ignore: cast_nullable_to_non_nullable
+as List<Proxy>,proxyGroups: null == proxyGroups ? _self._proxyGroups : proxyGroups // ignore: cast_nullable_to_non_nullable
 as List<ProxyGroup>,
   ));
 }

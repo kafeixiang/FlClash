@@ -2451,11 +2451,11 @@ const overwriteCustomDataProvider = OverwriteCustomDataFamily._();
 final class OverwriteCustomDataProvider
     extends
         $FunctionalProvider<
-          OverwriteCustomData,
-          OverwriteCustomData,
-          OverwriteCustomData
+          CustomOverwriteDate,
+          CustomOverwriteDate,
+          CustomOverwriteDate
         >
-    with $Provider<OverwriteCustomData> {
+    with $Provider<CustomOverwriteDate> {
   const OverwriteCustomDataProvider._({
     required OverwriteCustomDataFamily super.from,
     required int super.argument,
@@ -2479,21 +2479,21 @@ final class OverwriteCustomDataProvider
 
   @$internal
   @override
-  $ProviderElement<OverwriteCustomData> $createElement(
+  $ProviderElement<CustomOverwriteDate> $createElement(
     $ProviderPointer pointer,
   ) => $ProviderElement(pointer);
 
   @override
-  OverwriteCustomData create(Ref ref) {
+  CustomOverwriteDate create(Ref ref) {
     final argument = this.argument as int;
     return overwriteCustomData(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(OverwriteCustomData value) {
+  Override overrideWithValue(CustomOverwriteDate value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<OverwriteCustomData>(value),
+      providerOverride: $SyncValueProvider<CustomOverwriteDate>(value),
     );
   }
 
@@ -2509,10 +2509,10 @@ final class OverwriteCustomDataProvider
 }
 
 String _$overwriteCustomDataHash() =>
-    r'3e5e85863ef55506da162ee6d98269906db6d719';
+    r'b227334adc460d14d51227e1d05c992c576e6aaa';
 
 final class OverwriteCustomDataFamily extends $Family
-    with $FunctionalFamilyOverride<OverwriteCustomData, int> {
+    with $FunctionalFamilyOverride<CustomOverwriteDate, int> {
   const OverwriteCustomDataFamily._()
     : super(
         retry: null,
