@@ -226,20 +226,25 @@ class CommonCard extends StatelessWidget {
       true => FilledButton(
         onLongPress: onLongPress,
         clipBehavior: Clip.antiAlias,
-        style: FilledButton.styleFrom(
-          padding: padding ?? EdgeInsets.zero,
-          shape:
-              shape ??
-              RoundedSuperellipseBorder(
-                borderRadius: BorderRadius.circular(radius ?? 14),
+        style:
+            FilledButton.styleFrom(
+              padding: padding ?? EdgeInsets.zero,
+              shape:
+                  shape ??
+                  RoundedSuperellipseBorder(
+                    borderRadius: BorderRadius.circular(radius ?? 14),
+                  ),
+              iconSize: 20,
+              iconColor: _buildIconColor(context),
+
+              foregroundColor: _buildForegroundColor(context),
+              side: BorderSide.none,
+              elevation: 0,
+            ).copyWith(
+              backgroundColor: WidgetStatePropertyAll(
+                _buildBackgroundColor(context),
               ),
-          iconSize: 20,
-          iconColor: _buildIconColor(context),
-          backgroundColor: _buildBackgroundColor(context),
-          foregroundColor: _buildForegroundColor(context),
-          side: BorderSide.none,
-          elevation: 0,
-        ),
+            ),
         onPressed: onPressed,
         child: childWidget,
       ),
