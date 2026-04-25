@@ -97,7 +97,15 @@ class _CustomRulesViewState extends ConsumerState<CustomRulesView>
     );
   }
 
-  bool _handleCheckInvalid(String ruleTarget, List<String> ruleTargets) {
+  bool _handleCheckInvalid(
+    Rule rule,
+    List<String> ruleTargets,
+    List<String> subRules,
+  ) {
+    final ruleTarget = rule.realTarget;
+    if (rule.ruleAction == RuleAction.SUB_RULE) {
+      return !subRules.contains(ruleTarget);
+    }
     return !ruleTargets.contains(ruleTarget);
   }
 
@@ -109,7 +117,7 @@ class _CustomRulesViewState extends ConsumerState<CustomRulesView>
     required int total,
     required Function() onSelected,
     required Function(Rule rule) onEdit,
-    required bool Function(String ruleTarget) checkInvalidHandler,
+    required bool Function(Rule rule) checkInvalidHandler,
   }) {
     final position = ItemPosition.get(index, total);
     return ReorderableDelayedDragStartListener(
@@ -143,11 +151,13 @@ class _CustomRulesViewState extends ConsumerState<CustomRulesView>
   Widget build(context) {
     final rules = ref.watch(profileCustomRulesProvider(_profileId)).value ?? [];
     final selectedRules = ref.watch(itemsProvider(key));
-    final ruleTargets = ref.watch(
+    final vm2 = ref.watch(
       customOverwriteDateProvider(
         widget.profileId,
-      ).select((state) => VM(state.ruleTargets)),
-    ).a;
+      ).select((state) => VM2(state.ruleTargets, state.subRules)),
+    );
+    final ruleTargets = vm2.a;
+    final subRules = vm2.b;
     return CommonScaffold(
       title: appLocalizations.rule,
       actions: [
@@ -188,8 +198,8 @@ class _CustomRulesViewState extends ConsumerState<CustomRulesView>
                   final rule = rules[index];
                   return _buildItem(
                     index: index,
-                    checkInvalidHandler: (target) {
-                      return _handleCheckInvalid(target, ruleTargets);
+                    checkInvalidHandler: (rule) {
+                      return _handleCheckInvalid(rule, ruleTargets, subRules);
                     },
                     total: rules.length,
                     isEditing: selectedRules.isNotEmpty,
@@ -211,7 +221,11 @@ class _CustomRulesViewState extends ConsumerState<CustomRulesView>
                     _buildItem(
                       index: index,
                       checkInvalidHandler: (target) {
-                        return _handleCheckInvalid(target, ruleTargets);
+                        return _handleCheckInvalid(
+                          target,
+                          ruleTargets,
+                          subRules,
+                        );
                       },
                       total: rules.length,
                       isEditing: selectedRules.isNotEmpty,
@@ -884,11 +898,13 @@ class _RuleProviderSelectedView extends ConsumerWidget {
         (state) => isBottomSheet ? state.height * 0.70 : double.maxFinite,
       ),
     );
-    final ruleProviders = ref.watch(
-      clashConfigProvider(
-        profileId,
-      ).select((state) => VM(state.value?.ruleProviders ?? [])),
-    ).a;
+    final ruleProviders = ref
+        .watch(
+          clashConfigProvider(
+            profileId,
+          ).select((state) => VM(state.value?.ruleProviders ?? [])),
+        )
+        .a;
     final currentRuleProvider = ref.watch(
       ruleProvider.select((state) => state.ruleProvider),
     );
@@ -953,11 +969,13 @@ class _SubRuleSelectedView extends ConsumerWidget {
         (state) => isBottomSheet ? state.height * 0.70 : double.maxFinite,
       ),
     );
-    final subRules = ref.watch(
-      clashConfigProvider(
-        profileId,
-      ).select((state) => VM(state.value?.subRules ?? [])),
-    ).a;
+    final subRules = ref
+        .watch(
+          clashConfigProvider(
+            profileId,
+          ).select((state) => VM(state.value?.subRules ?? [])),
+        )
+        .a;
     final currentSubRule = ref.watch(
       ruleProvider.select((state) => state.subRule),
     );

@@ -1001,7 +1001,7 @@ final class MoreToolsSelectorStateProvider
 }
 
 String _$moreToolsSelectorStateHash() =>
-    r'6329d92652135e2af009dddeac590b4369d2fa04';
+    r'8b72349ba6732a4bd1bfae4090f3a75e13e1b14b';
 
 @ProviderFor(isCurrentPage)
 const isCurrentPageProvider = IsCurrentPageFamily._();
@@ -2509,7 +2509,7 @@ final class CustomOverwriteDateProvider
 }
 
 String _$customOverwriteDateHash() =>
-    r'42cd575207d6ccfd4d5a3f508abc534fec55074a';
+    r'499e8633d3a41ccb6e9351afb50f70e603859e67';
 
 final class CustomOverwriteDateFamily extends $Family
     with $FunctionalFamilyOverride<CustomOverwriteDate, int> {

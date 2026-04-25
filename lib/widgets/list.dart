@@ -644,7 +644,6 @@ class CommonSelectedListItem extends StatelessWidget {
 }
 
 class DecorationListItem extends StatelessWidget {
-  final bool isDecorator;
   final Widget title;
   final Widget? subtitle;
   final Widget? leading;
@@ -654,10 +653,10 @@ class DecorationListItem extends StatelessWidget {
   final EdgeInsetsGeometry? contentPadding;
   final VoidCallback? onPressed;
   final double minVerticalPadding;
+  final bool invalid;
 
   const DecorationListItem({
     super.key,
-    this.isDecorator = false,
     this.contentPadding,
     required this.title,
     this.leading,
@@ -667,10 +666,13 @@ class DecorationListItem extends StatelessWidget {
     this.onPressed,
     this.horizontalTitleGap,
     this.minVerticalPadding = 6,
+    this.invalid = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    final proxyDecorator =
+        ProxyDecoratorProvider.of(context)?.isProxyDecorator ?? false;
     final position = ItemPositionProvider.of(context)?.position;
     final isStart = [
       ItemPosition.start,
@@ -680,52 +682,46 @@ class DecorationListItem extends StatelessWidget {
       ItemPosition.end,
       ItemPosition.startAndEnd,
     ].contains(position);
-    return Container(
-      clipBehavior: Clip.antiAlias,
-      decoration: ShapeDecoration(
-        shape: isDecorator == true
-            ? LinearBorder.none
-            : RoundedSuperellipseBorder(
-                borderRadius: BorderRadius.vertical(
-                  top: isStart ? Radius.circular(24) : Radius.zero,
-                  bottom: isEnd ? Radius.circular(24) : Radius.zero,
-                ),
+    final borderRadius = BorderRadius.vertical(
+      top: isStart ? Radius.circular(24) : Radius.zero,
+      bottom: isEnd ? Radius.circular(24) : Radius.zero,
+    );
+    return CommonCard(
+      shape: proxyDecorator == true
+          ? LinearBorder.none
+          : RoundedSuperellipseBorder(borderRadius: borderRadius),
+      side: invalid ? BorderSide(color: context.colorScheme.error) : null,
+      isSelected: isSelected,
+      padding: EdgeInsets.zero,
+      type: CommonCardType.filled,
+      onPressed: proxyDecorator ? null : onPressed,
+      child: LayoutBuilder(
+        builder: (_, constraints) {
+          final isInfinite = constraints.maxHeight >= double.infinity;
+          final tile = ListTile(
+            leading: leading,
+            contentPadding:
+                contentPadding ?? const EdgeInsets.only(right: 16, left: 16),
+            title: title,
+            subtitle: subtitle,
+            minVerticalPadding: minVerticalPadding,
+            minTileHeight: 54,
+            horizontalTitleGap: horizontalTitleGap,
+            trailing: trailing,
+          );
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Flexible(
+                fit: isInfinite ? FlexFit.loose : FlexFit.tight,
+                child: tile,
               ),
-      ),
-      child: CommonCard(
-        radius: 0,
-        isSelected: isSelected,
-        padding: EdgeInsets.zero,
-        type: CommonCardType.filled,
-        onPressed: onPressed,
-        child: LayoutBuilder(
-          builder: (_, constraints) {
-            final isInfinite = constraints.maxHeight >= double.infinity;
-            final tile = ListTile(
-              leading: leading,
-              contentPadding:
-                  contentPadding ?? const EdgeInsets.only(right: 16, left: 16),
-              title: title,
-              subtitle: subtitle,
-              minVerticalPadding: minVerticalPadding,
-              minTileHeight: 54,
-              horizontalTitleGap: horizontalTitleGap,
-              trailing: trailing,
-            );
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Flexible(
-                  fit: isInfinite ? FlexFit.loose : FlexFit.tight,
-                  child: tile,
-                ),
-                if (isDecorator != true && !isEnd)
-                  Divider(height: 0, indent: 14, endIndent: 14),
-              ],
-            );
-          },
-        ),
+              if (!invalid && proxyDecorator != true && !isEnd)
+                Divider(height: 0, indent: 14, endIndent: 14),
+            ],
+          );
+        },
       ),
     );
   }
@@ -739,8 +735,8 @@ class SelectedDecorationListItem extends StatelessWidget {
   final VoidCallback onSelected;
   final VoidCallback onPressed;
   final double? horizontalTitleGap;
-  final bool isDecorator;
   final Widget? leading;
+  final bool invalid;
 
   const SelectedDecorationListItem({
     super.key,
@@ -748,9 +744,9 @@ class SelectedDecorationListItem extends StatelessWidget {
     required this.onSelected,
     this.horizontalTitleGap,
     this.isEditing = false,
+    this.invalid = false,
     required this.title,
     required this.onPressed,
-    this.isDecorator = false,
     this.subtitle,
     this.leading,
   });
@@ -760,19 +756,17 @@ class SelectedDecorationListItem extends StatelessWidget {
     return DecorationListItem(
       title: title,
       contentPadding: EdgeInsets.only(left: 16, right: 0),
-      isDecorator: isDecorator,
       isSelected: isSelected,
+      invalid: invalid,
       leading: leading,
       horizontalTitleGap: horizontalTitleGap,
-      onPressed: isDecorator
-          ? null
-          : () {
-              if (isEditing) {
-                onSelected();
-                return;
-              }
-              onPressed();
-            },
+      onPressed: () {
+        if (isEditing) {
+          onSelected();
+          return;
+        }
+        onPressed();
+      },
       subtitle: subtitle,
       trailing: CommonCheckBox(
         value: isSelected,

@@ -326,7 +326,6 @@ class _ListInputPageState extends ConsumerState<ListInputPage> {
     required int length,
     required bool isSelected,
     required bool isEditing,
-    isDecorator = false,
   }) {
     final position = ItemPosition.get(index, length);
     return ReorderableDelayedDragStartListener(
@@ -335,7 +334,6 @@ class _ListInputPageState extends ConsumerState<ListInputPage> {
       child: ItemPositionProvider(
         position: position,
         child: SelectedDecorationListItem(
-          isDecorator: isDecorator,
           title: widget.titleBuilder(value),
           isSelected: isSelected,
           isEditing: isEditing,
@@ -431,7 +429,6 @@ class _ListInputPageState extends ConsumerState<ListInputPage> {
                       value: value,
                       index: index,
                       length: _items.length,
-                      isDecorator: true,
                       isSelected: selectedItems.contains(value),
                       isEditing: selectedItems.isNotEmpty,
                     ),
@@ -579,7 +576,6 @@ class _MapInputPageState extends ConsumerState<MapInputPage> {
     required int length,
     required bool isSelected,
     required bool isEditing,
-    isDecorator = false,
   }) {
     final position = ItemPosition.get(index, length);
     return ReorderableDelayedDragStartListener(
@@ -588,7 +584,6 @@ class _MapInputPageState extends ConsumerState<MapInputPage> {
       child: ItemPositionProvider(
         position: position,
         child: SelectedDecorationListItem(
-          isDecorator: isDecorator,
           title: widget.titleBuilder(value),
           leading: widget.leadingBuilder != null
               ? widget.leadingBuilder!(value)
@@ -687,7 +682,6 @@ class _MapInputPageState extends ConsumerState<MapInputPage> {
                       value: value,
                       index: index,
                       length: _items.length,
-                      isDecorator: true,
                       isSelected: selectedItems.contains(value.key),
                       isEditing: selectedItems.isNotEmpty,
                     ),

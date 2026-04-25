@@ -438,7 +438,7 @@ class _ReorderableProfilesSheetState extends State<ReorderableProfilesSheet> {
     profiles = List.from(widget.profiles);
   }
 
-  Widget _buildItem(int index, [bool isDecorator = false]) {
+  Widget _buildItem(int index) {
     final position = ItemPosition.get(index, profiles.length);
     final profile = profiles[index];
     return ItemPositionProvider(
@@ -450,7 +450,6 @@ class _ReorderableProfilesSheetState extends State<ReorderableProfilesSheet> {
           child: const Icon(Icons.drag_handle),
         ),
         title: Text(profile.realLabel),
-        isDecorator: isDecorator,
       ),
     );
   }
@@ -473,11 +472,7 @@ class _ReorderableProfilesSheetState extends State<ReorderableProfilesSheet> {
             horizontal: 16,
           ).copyWith(top: context.sheetTopPadding),
           proxyDecorator: (child, index, animation) {
-            return commonProxyDecorator(
-              _buildItem(index, true),
-              index,
-              animation,
-            );
+            return commonProxyDecorator(_buildItem(index), index, animation);
           },
           onReorder: (oldIndex, newIndex) {
             setState(() {

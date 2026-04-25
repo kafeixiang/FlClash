@@ -4,6 +4,7 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/clash_config.dart';
+import 'package:fl_clash/models/state.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/card.dart';
 import 'package:fl_clash/widgets/dialog.dart';
@@ -20,7 +21,7 @@ class RuleItem extends StatelessWidget {
   final Rule rule;
   final void Function() onSelected;
   final void Function(Rule rule) onEdit;
-  final bool Function(String ruleTarget)? checkInvalidHandler;
+  final bool Function(Rule rule)? checkInvalidHandler;
 
   const RuleItem({
     super.key,
@@ -32,27 +33,39 @@ class RuleItem extends StatelessWidget {
     this.isEditing = false,
   });
 
-  Color _buildRuleTargetColor(BuildContext context, String ruleTarget) {
-    if (ruleTarget.toUpperCase() == 'DIRECT') {
-      return Colors.green.harmonizeWith(context.colorScheme.primary);
-    } else if (ruleTarget.toUpperCase() == 'REJECT') {
-      return context.colorScheme.error;
-    }
-    if (checkInvalidHandler != null) {
-      final res = checkInvalidHandler!(ruleTarget);
-      if (res == true) {
-        return Colors.grey.harmonizeWith(context.colorScheme.primary);
+  VM2<bool, Color> _checkInvalid(BuildContext context) {
+    if (rule.ruleAction != RuleAction.SUB_RULE) {
+      final ruleTarget = rule.ruleTarget ?? '';
+      if (ruleTarget.toUpperCase() == 'DIRECT') {
+        return VM2(
+          false,
+          Colors.green.harmonizeWith(context.colorScheme.primary),
+        );
+      } else if (ruleTarget.toUpperCase() == 'REJECT') {
+        return VM2(false, context.colorScheme.error);
       }
     }
-    return context.colorScheme.onSecondaryContainer;
+    bool invalid = true;
+    if (checkInvalidHandler != null) {
+      invalid = checkInvalidHandler!(rule);
+    }
+    return VM2(
+      invalid,
+      invalid
+          ? Colors.grey.harmonizeWith(context.colorScheme.primary)
+          : context.colorScheme.onSecondaryContainer,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final vm2 = _checkInvalid(context);
+    final invalid = vm2.a;
     return SelectedDecorationListItem(
       isSelected: isSelected,
       isEditing: isEditing,
       horizontalTitleGap: 0,
+      invalid: invalid,
       onSelected: () {
         onSelected();
       },
@@ -88,11 +101,11 @@ class RuleItem extends StatelessWidget {
               ],
             ),
           ),
-          if (rule.ruleTarget != null)
+          if (rule.realTarget != null)
             Text(
-              rule.ruleTarget!,
+              rule.realTarget!,
               style: context.textTheme.bodyMedium?.toJetBrainsMono.copyWith(
-                color: _buildRuleTargetColor(context, rule.ruleTarget!),
+                color: vm2.b,
               ),
             ),
         ],

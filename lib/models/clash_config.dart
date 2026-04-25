@@ -147,6 +147,7 @@ abstract class CustomOverwriteDate with _$CustomOverwriteDate {
     @Default([]) List<Proxy> proxies,
     @Default([]) List<ProxyGroup> proxyGroups,
     @Default([]) List<String> ruleTargets,
+    @Default([]) List<String> subRules,
   }) = _CustomOverwriteDate;
 }
 

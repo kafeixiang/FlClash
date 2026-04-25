@@ -94,6 +94,8 @@ class CommonCard extends StatelessWidget {
     this.enterAnimated = false,
     this.info,
     this.onLongPress,
+    this.shape,
+    this.side,
   }) : isSelected = isSelected ?? false;
 
   final bool enterAnimated;
@@ -106,6 +108,8 @@ class CommonCard extends StatelessWidget {
   final Info? info;
   final CommonCardType type;
   final double? radius;
+  final OutlinedBorder? shape;
+  final BorderSide? side;
 
   // final WidgetStateProperty<Color?>? backgroundColor;
   // final WidgetStateProperty<BorderSide?>? borderSide;
@@ -187,10 +191,12 @@ class CommonCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       style: ButtonStyle(
         padding: WidgetStatePropertyAll(padding ?? EdgeInsets.zero),
-        shape: WidgetStatePropertyAll(
-          RoundedSuperellipseBorder(
-            borderRadius: BorderRadius.circular(radius ?? 14),
-          ),
+        shape: WidgetStateProperty.resolveWith(
+          (states) =>
+              shape ??
+              (RoundedSuperellipseBorder(
+                borderRadius: BorderRadius.circular(radius ?? 14),
+              )),
         ),
         iconColor: WidgetStatePropertyAll(context.colorScheme.primary),
         iconSize: WidgetStateProperty.all(20),
@@ -201,7 +207,7 @@ class CommonCard extends StatelessWidget {
           (states) => getForegroundColor(context, states),
         ),
         side: WidgetStateProperty.resolveWith(
-          (states) => getBorderSide(context, states),
+          (states) => side ?? getBorderSide(context, states),
         ),
       ),
       onPressed: onPressed,

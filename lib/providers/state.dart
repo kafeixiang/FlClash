@@ -361,19 +361,25 @@ PackageListSelectorState packageListSelectorState(Ref ref) {
 @riverpod
 MoreToolsSelectorState moreToolsSelectorState(Ref ref) {
   final viewMode = ref.watch(viewModeProvider);
-  final navigationItems = ref.watch(
-    navigationItemsStateProvider.select((state) {
-      return VM(state.value.where((element) {
-        final isMore = element.modes.contains(NavigationItemMode.more);
-        final isDesktop = element.modes.contains(NavigationItemMode.desktop);
-        if (isMore && !isDesktop) return true;
-        if (viewMode != ViewMode.mobile || !isMore) {
-          return false;
-        }
-        return true;
-      }).toList());
-    }),
-  ).a;
+  final navigationItems = ref
+      .watch(
+        navigationItemsStateProvider.select((state) {
+          return VM(
+            state.value.where((element) {
+              final isMore = element.modes.contains(NavigationItemMode.more);
+              final isDesktop = element.modes.contains(
+                NavigationItemMode.desktop,
+              );
+              if (isMore && !isDesktop) return true;
+              if (viewMode != ViewMode.mobile || !isMore) {
+                return false;
+              }
+              return true;
+            }).toList(),
+          );
+        }),
+      )
+      .a;
 
   return MoreToolsSelectorState(navigationItems: navigationItems);
 }
@@ -682,19 +688,21 @@ Future<ClashConfig> clashConfig(Ref ref, int profileId) async {
 
 @riverpod
 CustomOverwriteDate customOverwriteDate(Ref ref, int profileId) {
-  final proxies =
-      ref.watch(
-        clashConfigProvider(profileId).select((state) {
-          return state.value?.proxies;
-        }),
-      ) ??
-      [];
+  final vm2 = ref.watch(
+    clashConfigProvider(profileId).select((state) {
+      return VM2(state.value?.proxies ?? [], state.value?.subRules ?? []);
+    }),
+  );
+  final proxies = vm2.a;
+  final subRules = vm2.b;
   final proxyGroups =
-      ref.watch(
-        proxyGroupsProvider(profileId).select((state) {
-          return VM(state.value);
-        }),
-      ).a ??
+      ref
+          .watch(
+            proxyGroupsProvider(profileId).select((state) {
+              return VM(state.value);
+            }),
+          )
+          .a ??
       [];
   final ruleTargets = [
     ...proxies.map((item) => item.name),
@@ -704,6 +712,7 @@ CustomOverwriteDate customOverwriteDate(Ref ref, int profileId) {
     proxies: proxies,
     proxyGroups: proxyGroups,
     ruleTargets: ruleTargets,
+    subRules: subRules,
   );
 }
 

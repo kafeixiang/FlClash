@@ -60,6 +60,24 @@ class ItemPositionProvider extends InheritedWidget {
       position != oldWidget.position;
 }
 
+class ProxyDecoratorProvider extends InheritedWidget {
+  final bool isProxyDecorator;
+
+  const ProxyDecoratorProvider({
+    super.key,
+    required this.isProxyDecorator,
+    required super.child,
+  });
+
+  static ProxyDecoratorProvider? of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<ProxyDecoratorProvider>();
+  }
+
+  @override
+  bool updateShouldNotify(ProxyDecoratorProvider oldWidget) =>
+      isProxyDecorator != oldWidget.isProxyDecorator;
+}
+
 class SheetProvider<T> extends InheritedWidget {
   final SheetType type;
   final void Function([T? result])? nestedNavigatorPop;
