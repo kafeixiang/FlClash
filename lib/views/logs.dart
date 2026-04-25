@@ -193,7 +193,7 @@ class LogItem extends StatelessWidget {
       onTap: () {},
       title: SelectableText(
         log.payload,
-        style: context.textTheme.bodyLarge?.copyWith(color: log.logLevel.color),
+        style: context.textTheme.bodyLarge?.copyWith(color: log.logLevel.color(context)),
       ),
       subtitle: Column(
         children: [

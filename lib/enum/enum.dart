@@ -3,7 +3,6 @@
 import 'dart:io';
 
 import 'package:fl_clash/common/app_localizations.dart';
-import 'package:fl_clash/common/color.dart';
 import 'package:fl_clash/common/system.dart';
 import 'package:fl_clash/views/dashboard/widgets/widgets.dart';
 import 'package:fl_clash/widgets/widgets.dart';
@@ -99,13 +98,14 @@ enum ViewMode { mobile, laptop, desktop }
 enum LogLevel { debug, info, warning, error, silent }
 
 extension LogLevelExt on LogLevel {
-  Color? get color {
+  Color? color(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return switch (this) {
-      LogLevel.silent => Colors.grey.shade700,
-      LogLevel.debug => Colors.grey.shade400,
+      LogLevel.silent => colorScheme.outline,
+      LogLevel.debug => colorScheme.onSurfaceVariant,
       LogLevel.info => null,
-      LogLevel.warning => Colors.orangeAccent.darken(),
-      LogLevel.error => Colors.redAccent,
+      LogLevel.warning => colorScheme.tertiary,
+      LogLevel.error => colorScheme.error,
     };
   }
 }
