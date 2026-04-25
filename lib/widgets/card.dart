@@ -258,6 +258,7 @@ class CommonCard extends StatelessWidget {
               iconColor: _buildIconColor(context),
               backgroundColor: _buildBackgroundColor(context),
               foregroundColor: _buildForegroundColor(context),
+              elevation: 0,
             ).copyWith(
               side: WidgetStateProperty.resolveWith(
                 (states) => _buildBorderSide(context, states),

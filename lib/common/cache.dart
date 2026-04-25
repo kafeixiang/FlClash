@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 extension CacheManagerExt on CacheManager {
-  Stream<FileResponse> getFileStreamV2(
+  Stream<FileInfo> getFileStreamV2(
     String url, {
     String? key,
     Map<String, String>? headers,
@@ -39,7 +39,7 @@ extension CacheManagerExt on CacheManager {
     if (cacheFile == null || cacheFile.validTill.isBefore(DateTime.now())) {
       try {
         final res = (await downloadFile(url, key: key, authHeaders: headers));
-        streamController.add(res.file);
+        streamController.add(res);
         if (cacheFile == null) {
           onRemoteNewLoaded?.call();
         }
