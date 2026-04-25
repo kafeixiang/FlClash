@@ -4,6 +4,7 @@ import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -112,7 +113,9 @@ class CustomContent extends ConsumerWidget {
           ),
         ),
         SliverToBoxAdapter(child: SizedBox(height: 32)),
-        if (hasDefaultGroups || hasDefaultRules)
+        if ((proxyGroupNum == 0 && hasDefaultGroups) ||
+            (ruleNum == 0 && hasDefaultRules) ||
+            kDebugMode)
           SliverFillRemaining(
             hasScrollBody: false,
             child: Align(

@@ -622,6 +622,278 @@ as String?,
 
 }
 
+/// @nodoc
+mixin _$OverwriteCustomData {
+
+ List<Proxy> get allProxies; List<ProxyGroup> get allProxyGroups;
+/// Create a copy of OverwriteCustomData
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$OverwriteCustomDataCopyWith<OverwriteCustomData> get copyWith => _$OverwriteCustomDataCopyWithImpl<OverwriteCustomData>(this as OverwriteCustomData, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is OverwriteCustomData&&const DeepCollectionEquality().equals(other.allProxies, allProxies)&&const DeepCollectionEquality().equals(other.allProxyGroups, allProxyGroups));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(allProxies),const DeepCollectionEquality().hash(allProxyGroups));
+
+@override
+String toString() {
+  return 'OverwriteCustomData(allProxies: $allProxies, allProxyGroups: $allProxyGroups)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $OverwriteCustomDataCopyWith<$Res>  {
+  factory $OverwriteCustomDataCopyWith(OverwriteCustomData value, $Res Function(OverwriteCustomData) _then) = _$OverwriteCustomDataCopyWithImpl;
+@useResult
+$Res call({
+ List<Proxy> allProxies, List<ProxyGroup> allProxyGroups
+});
+
+
+
+
+}
+/// @nodoc
+class _$OverwriteCustomDataCopyWithImpl<$Res>
+    implements $OverwriteCustomDataCopyWith<$Res> {
+  _$OverwriteCustomDataCopyWithImpl(this._self, this._then);
+
+  final OverwriteCustomData _self;
+  final $Res Function(OverwriteCustomData) _then;
+
+/// Create a copy of OverwriteCustomData
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? allProxies = null,Object? allProxyGroups = null,}) {
+  return _then(_self.copyWith(
+allProxies: null == allProxies ? _self.allProxies : allProxies // ignore: cast_nullable_to_non_nullable
+as List<Proxy>,allProxyGroups: null == allProxyGroups ? _self.allProxyGroups : allProxyGroups // ignore: cast_nullable_to_non_nullable
+as List<ProxyGroup>,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [OverwriteCustomData].
+extension OverwriteCustomDataPatterns on OverwriteCustomData {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _OverwriteCustomData value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _OverwriteCustomData() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _OverwriteCustomData value)  $default,){
+final _that = this;
+switch (_that) {
+case _OverwriteCustomData():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _OverwriteCustomData value)?  $default,){
+final _that = this;
+switch (_that) {
+case _OverwriteCustomData() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Proxy> allProxies,  List<ProxyGroup> allProxyGroups)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _OverwriteCustomData() when $default != null:
+return $default(_that.allProxies,_that.allProxyGroups);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Proxy> allProxies,  List<ProxyGroup> allProxyGroups)  $default,) {final _that = this;
+switch (_that) {
+case _OverwriteCustomData():
+return $default(_that.allProxies,_that.allProxyGroups);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Proxy> allProxies,  List<ProxyGroup> allProxyGroups)?  $default,) {final _that = this;
+switch (_that) {
+case _OverwriteCustomData() when $default != null:
+return $default(_that.allProxies,_that.allProxyGroups);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _OverwriteCustomData implements OverwriteCustomData {
+  const _OverwriteCustomData({final  List<Proxy> allProxies = const [], final  List<ProxyGroup> allProxyGroups = const []}): _allProxies = allProxies,_allProxyGroups = allProxyGroups;
+  
+
+ final  List<Proxy> _allProxies;
+@override@JsonKey() List<Proxy> get allProxies {
+  if (_allProxies is EqualUnmodifiableListView) return _allProxies;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_allProxies);
+}
+
+ final  List<ProxyGroup> _allProxyGroups;
+@override@JsonKey() List<ProxyGroup> get allProxyGroups {
+  if (_allProxyGroups is EqualUnmodifiableListView) return _allProxyGroups;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_allProxyGroups);
+}
+
+
+/// Create a copy of OverwriteCustomData
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$OverwriteCustomDataCopyWith<_OverwriteCustomData> get copyWith => __$OverwriteCustomDataCopyWithImpl<_OverwriteCustomData>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _OverwriteCustomData&&const DeepCollectionEquality().equals(other._allProxies, _allProxies)&&const DeepCollectionEquality().equals(other._allProxyGroups, _allProxyGroups));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_allProxies),const DeepCollectionEquality().hash(_allProxyGroups));
+
+@override
+String toString() {
+  return 'OverwriteCustomData(allProxies: $allProxies, allProxyGroups: $allProxyGroups)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$OverwriteCustomDataCopyWith<$Res> implements $OverwriteCustomDataCopyWith<$Res> {
+  factory _$OverwriteCustomDataCopyWith(_OverwriteCustomData value, $Res Function(_OverwriteCustomData) _then) = __$OverwriteCustomDataCopyWithImpl;
+@override @useResult
+$Res call({
+ List<Proxy> allProxies, List<ProxyGroup> allProxyGroups
+});
+
+
+
+
+}
+/// @nodoc
+class __$OverwriteCustomDataCopyWithImpl<$Res>
+    implements _$OverwriteCustomDataCopyWith<$Res> {
+  __$OverwriteCustomDataCopyWithImpl(this._self, this._then);
+
+  final _OverwriteCustomData _self;
+  final $Res Function(_OverwriteCustomData) _then;
+
+/// Create a copy of OverwriteCustomData
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? allProxies = null,Object? allProxyGroups = null,}) {
+  return _then(_OverwriteCustomData(
+allProxies: null == allProxies ? _self._allProxies : allProxies // ignore: cast_nullable_to_non_nullable
+as List<Proxy>,allProxyGroups: null == allProxyGroups ? _self._allProxyGroups : allProxyGroups // ignore: cast_nullable_to_non_nullable
+as List<ProxyGroup>,
+  ));
+}
+
+
+}
+
 
 /// @nodoc
 mixin _$RuleProvider {

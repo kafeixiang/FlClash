@@ -379,25 +379,25 @@ class _AddProxiesViewState extends ConsumerState<_AddProxiesView>
     final profileId = ProfileIdProvider.of(context)!.profileId;
     final dismissGroups = ref.watch(itemsProvider('${key}_groups'));
     final dismissProxies = ref.watch(itemsProvider('${key}_proxies'));
-    final allProxiesAndProxyGroups = ref.watch(
-      clashConfigProvider(profileId).select(
-        (state) =>
-            VM2(state.value?.proxies ?? [], state.value?.proxyGroups ?? []),
-      ),
-    );
-    final allProxies = allProxiesAndProxyGroups.a;
-    final allProxyGroups = allProxiesAndProxyGroups.b;
     final excludeProxyNames = ref.watch(
       proxyGroupProvider.select((state) {
         return [...?state.proxies, state.name];
       }),
     );
-    final proxyGroups = allProxyGroups
-        .where((item) => !excludeProxyNames.contains(item.name))
-        .toList();
-    final proxies = allProxies
-        .where((item) => !excludeProxyNames.contains(item.name))
-        .toList();
+    final vm2 = ref.watch(
+      overwriteCustomDataProvider(profileId).select((state) {
+        return VM2(
+          state.allProxies
+              .where((item) => !excludeProxyNames.contains(item.name))
+              .toList(),
+          state.allProxyGroups
+              .where((item) => !excludeProxyNames.contains(item.name))
+              .toList(),
+        );
+      }),
+    );
+    final proxies = vm2.a;
+    final proxyGroups = vm2.b;
     final groupNames = proxyGroups.map((item) => item.name).toList();
     final proxyNames = proxies.map((item) => item.name).toList();
     final height = ref.watch(

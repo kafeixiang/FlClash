@@ -194,7 +194,7 @@ class _AccessViewState extends ConsumerState<AccessView> {
         final noSave = ref.watch(
           vpnSettingProvider.select(
             (state) =>
-                state.accessControlProps ==
+                _getRealAccessControlProps(state.accessControlProps) ==
                 _getRealAccessControlProps(accessControl),
           ),
         );

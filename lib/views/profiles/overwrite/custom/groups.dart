@@ -142,8 +142,9 @@ class _CustomProxyGroupsViewState extends ConsumerState<CustomProxyGroupsView> {
 
   @override
   Widget build(BuildContext context) {
-    final proxyGroups =
-        ref.watch(proxyGroupsProvider(widget.profileId)).value ?? [];
+    final proxyGroups = ref
+        .watch(overwriteCustomDataProvider(widget.profileId))
+        .allProxyGroups;
     return CommonScaffold(
       title: appLocalizations.proxyGroup,
       actions: [

@@ -2445,6 +2445,90 @@ final class ClashConfigFamily extends $Family
   String toString() => r'clashConfigProvider';
 }
 
+@ProviderFor(overwriteCustomData)
+const overwriteCustomDataProvider = OverwriteCustomDataFamily._();
+
+final class OverwriteCustomDataProvider
+    extends
+        $FunctionalProvider<
+          OverwriteCustomData,
+          OverwriteCustomData,
+          OverwriteCustomData
+        >
+    with $Provider<OverwriteCustomData> {
+  const OverwriteCustomDataProvider._({
+    required OverwriteCustomDataFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: null,
+         name: r'overwriteCustomDataProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$overwriteCustomDataHash();
+
+  @override
+  String toString() {
+    return r'overwriteCustomDataProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<OverwriteCustomData> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  OverwriteCustomData create(Ref ref) {
+    final argument = this.argument as int;
+    return overwriteCustomData(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(OverwriteCustomData value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<OverwriteCustomData>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is OverwriteCustomDataProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$overwriteCustomDataHash() =>
+    r'3e5e85863ef55506da162ee6d98269906db6d719';
+
+final class OverwriteCustomDataFamily extends $Family
+    with $FunctionalFamilyOverride<OverwriteCustomData, int> {
+  const OverwriteCustomDataFamily._()
+    : super(
+        retry: null,
+        name: r'overwriteCustomDataProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  OverwriteCustomDataProvider call(int profileId) =>
+      OverwriteCustomDataProvider._(argument: profileId, from: this);
+
+  @override
+  String toString() => r'overwriteCustomDataProvider';
+}
+
 @ProviderFor(setupState)
 const setupStateProvider = SetupStateFamily._();
 

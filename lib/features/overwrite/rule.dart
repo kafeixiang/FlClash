@@ -20,6 +20,7 @@ class RuleItem extends StatelessWidget {
   final Rule rule;
   final void Function() onSelected;
   final void Function(Rule rule) onEdit;
+  final bool Function(String ruleTarget)? invalidCheck;
 
   const RuleItem({
     super.key,
@@ -27,6 +28,7 @@ class RuleItem extends StatelessWidget {
     required this.rule,
     required this.onSelected,
     required this.onEdit,
+    this.invalidCheck,
     this.isEditing = false,
   });
 
@@ -35,6 +37,12 @@ class RuleItem extends StatelessWidget {
       return Colors.green.harmonizeWith(context.colorScheme.primary);
     } else if (ruleTarget.toUpperCase() == 'REJECT') {
       return context.colorScheme.error;
+    }
+    if (invalidCheck != null) {
+      final res = invalidCheck!(ruleTarget);
+      if (res == true) {
+        return Colors.grey.harmonizeWith(context.colorScheme.primary);
+      }
     }
     return context.colorScheme.onSecondaryContainer;
   }

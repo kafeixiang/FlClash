@@ -142,6 +142,14 @@ abstract class Proxy with _$Proxy {
 }
 
 @freezed
+abstract class OverwriteCustomData with _$OverwriteCustomData {
+  const factory OverwriteCustomData({
+    @Default([]) List<Proxy> allProxies,
+    @Default([]) List<ProxyGroup> allProxyGroups,
+  }) = _OverwriteCustomData;
+}
+
+@freezed
 abstract class RuleProvider with _$RuleProvider {
   const factory RuleProvider({required String name}) = _RuleProvider;
 
