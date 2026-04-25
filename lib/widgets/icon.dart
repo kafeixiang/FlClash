@@ -92,7 +92,7 @@ class _ImageCacheWidgetState extends State<ImageCacheWidget> {
           },
         )
         .listen((data) {
-          if (mounted && data is FileInfo) {
+          if (mounted) {
             _imageNotifier.value = data.file;
           }
         });
