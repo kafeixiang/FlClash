@@ -6,20 +6,19 @@ import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/clash_config.dart';
 import 'package:fl_clash/models/state.dart';
 import 'package:fl_clash/state.dart';
-import 'package:fl_clash/widgets/card.dart';
-import 'package:fl_clash/widgets/dialog.dart';
-import 'package:fl_clash/widgets/input.dart';
-import 'package:fl_clash/widgets/list.dart';
-import 'package:fl_clash/widgets/text.dart';
+import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 final ruleItemHeight =
-    globalState.measure.bodyLargeHeight + globalState.measure.bodyMediumHeight;
+    globalState.measure.bodyLargeHeight +
+    globalState.measure.bodyMediumHeight +
+    12;
 
 class RuleItem extends StatelessWidget {
   final bool isSelected;
   final bool isEditing;
   final Rule rule;
+  final bool hasMatch;
   final void Function() onSelected;
   final void Function(Rule rule) onEdit;
   final bool Function(Rule rule)? checkInvalidHandler;
@@ -32,6 +31,7 @@ class RuleItem extends StatelessWidget {
     required this.onEdit,
     this.checkInvalidHandler,
     this.isEditing = false,
+    this.hasMatch = false,
   });
 
   VM2<bool, Color?> _checkInvalid(BuildContext context) {
@@ -43,7 +43,12 @@ class RuleItem extends StatelessWidget {
           Colors.green.harmonizeWith(context.colorScheme.primary),
         );
       } else if (ruleTarget.toUpperCase() == 'REJECT') {
-        return VM2(false, context.colorScheme.error);
+        return VM2(
+          false,
+          Colors.orange.harmonizeWith(context.colorScheme.primary),
+        );
+      } else if (hasMatch && ruleTarget.toUpperCase() == 'MATCH') {
+        return VM2(false, context.colorScheme.tertiary);
       }
     }
     bool invalid = true;
@@ -52,7 +57,18 @@ class RuleItem extends StatelessWidget {
     }
     return VM2(
       invalid,
-      invalid ? null : context.colorScheme.onSecondaryContainer,
+      invalid ? context.colorScheme.error : context.colorScheme.tertiary,
+    );
+  }
+
+  Widget _buildInfoWidget(BuildContext context) {
+    return CommonMinIconButtonTheme(
+      child: IconButton(
+        onPressed: () {
+          globalState.showMessage(message: TextSpan(text: rule.targetErrorTip));
+        },
+        icon: Icon(Icons.info, size: 16.ap, color: context.colorScheme.error),
+      ),
     );
   }
 
@@ -115,13 +131,18 @@ class RuleItem extends StatelessWidget {
                 },
               ),
             ),
-            if (rule.realTarget != null)
-              Text(
-                rule.realTarget!,
-                style: context.textTheme.bodyMedium?.toJetBrainsMono.copyWith(
-                  color: vm2.b,
-                ),
-              ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (invalid) _buildInfoWidget(context),
+                if (rule.realTarget != null)
+                  Text(
+                    rule.realTarget!,
+                    style: context.textTheme.bodyMedium?.toJetBrainsMono
+                        .copyWith(color: vm2.b),
+                  ),
+              ],
+            ),
           ],
         ),
       ),

@@ -3,6 +3,7 @@ import 'package:fl_clash/enum/enum.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'generated/clash_config.freezed.dart';
+
 part 'generated/clash_config.g.dart';
 
 const defaultClashConfig = PatchClashConfig();
@@ -444,6 +445,13 @@ extension RuleExt on Rule {
     return switch (ruleAction == RuleAction.SUB_RULE) {
       true => subRule,
       false => ruleTarget,
+    };
+  }
+
+  String? get targetErrorTip {
+    return switch (ruleAction == RuleAction.SUB_RULE) {
+      true => '$subRule 是一个无效的SUB_RULE',
+      false => '$ruleTarget 是一个无效的策略',
     };
   }
 

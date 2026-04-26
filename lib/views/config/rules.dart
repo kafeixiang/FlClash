@@ -117,6 +117,7 @@ class _AddedRulesViewState extends ConsumerState<AddedRulesView> {
                     child: ItemPositionProvider(
                       position: position,
                       child: RuleItem(
+                        hasMatch: true,
                         isEditing: selectedRules.isNotEmpty,
                         rule: rule,
                         isSelected: selectedRules.contains(rule.id),

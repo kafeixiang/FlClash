@@ -113,10 +113,10 @@ class CommonCard extends StatelessWidget {
 
   BorderSide _buildBorderSide(BuildContext context, Set<WidgetState> states) {
     final colorScheme = context.colorScheme;
-    if (type == CommonCardType.filled) {
-      return BorderSide.none;
-    }
     if (isError) {
+      if (type == CommonCardType.filled) {
+        return BorderSide(color: colorScheme.error);
+      }
       final hoverColor = isSelected
           ? colorScheme.error.opacity80
           : colorScheme.error.opacity38;
@@ -130,6 +130,9 @@ class CommonCard extends StatelessWidget {
             ? colorScheme.error.opacity60
             : colorScheme.error.opacity30,
       );
+    }
+    if (type == CommonCardType.filled) {
+      return BorderSide.none;
     }
     final hoverColor = isSelected
         ? colorScheme.primary.opacity80
@@ -148,16 +151,16 @@ class CommonCard extends StatelessWidget {
 
   Color? _buildBackgroundColor(BuildContext context) {
     final colorScheme = context.colorScheme;
-    if (isError) {
-      if (type == CommonCardType.filled) {
-        return isSelected
-            ? colorScheme.errorContainer.opacity80
-            : colorScheme.errorContainer;
-      }
-      return isSelected
-          ? colorScheme.errorContainer.opacity60
-          : colorScheme.errorContainer.opacity12;
-    }
+    // if (isError) {
+    //   if (type == CommonCardType.filled) {
+    //     return isSelected
+    //         ? colorScheme.errorContainer.opacity80
+    //         : colorScheme.errorContainer;
+    //   }
+    //   return isSelected
+    //       ? colorScheme.errorContainer.opacity60
+    //       : colorScheme.errorContainer.opacity12;
+    // }
     if (type == CommonCardType.filled) {
       if (isSelected) {
         return colorScheme.secondaryContainer.opacity80;
@@ -173,10 +176,7 @@ class CommonCard extends StatelessWidget {
   Color? _buildForegroundColor(BuildContext context) {
     final colorScheme = context.colorScheme;
     if (isError) {
-      if (type == CommonCardType.filled) {
-        return colorScheme.onErrorContainer;
-      }
-      return isSelected ? colorScheme.onErrorContainer : colorScheme.error;
+      return colorScheme.error;
     }
     if (type == CommonCardType.filled) {
       if (isSelected) {
@@ -236,13 +236,15 @@ class CommonCard extends StatelessWidget {
                   ),
               iconSize: 20,
               iconColor: _buildIconColor(context),
-
               foregroundColor: _buildForegroundColor(context),
               side: BorderSide.none,
               elevation: 0,
             ).copyWith(
               backgroundColor: WidgetStatePropertyAll(
                 _buildBackgroundColor(context),
+              ),
+              side: WidgetStateProperty.resolveWith(
+                (states) => _buildBorderSide(context, states),
               ),
             ),
         onPressed: onPressed,

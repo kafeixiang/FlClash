@@ -148,6 +148,7 @@ class _StandardContentState extends ConsumerState<StandardContent> {
                       child: Container(
                         margin: EdgeInsets.symmetric(horizontal: 16),
                         child: RuleItem(
+                          hasMatch: true,
                           isEditing: selectedRules.isNotEmpty,
                           isSelected: selectedRules.contains(rule.id),
                           rule: rule,

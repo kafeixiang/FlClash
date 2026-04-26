@@ -384,9 +384,11 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
   Widget _buildItem({
     required Widget title,
     Widget? trailing,
+    bool? invalid,
     final VoidCallback? onPressed,
   }) {
     return DecorationListItem(
+      invalid: invalid ?? false,
       onPressed: onPressed,
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -514,30 +516,54 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
         .update((state) => state.copyWith(ruleTarget: res));
   }
 
-  Widget _buildTargetItem(String? target) {
-    return _buildItem(
-      title: Text(appLocalizations.splitStrategy),
-      onPressed: _handleSelectedTarget,
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        spacing: 4,
-        children: [
-          Flexible(
-            flex: 1,
-            child: TooltipText(
-              text: Text(
-                target ?? appLocalizations.selectSplitStrategy,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: context.textTheme.bodyLarge?.copyWith(
-                  color: context.colorScheme.onSurfaceVariant,
+  Widget _buildTargetItem(int profileId, String? target) {
+    return Consumer(
+      builder: (_, ref, _) {
+        final invalid = ref.watch(
+          customOverwriteDateProvider(
+            profileId,
+          ).select((state) => !state.ruleTargets.contains(target)),
+        );
+        final foregroundColor = invalid
+            ? context.colorScheme.error
+            : context.colorScheme.onSurfaceVariant;
+        return _buildItem(
+          invalid: invalid,
+          title: Text(appLocalizations.splitStrategy),
+          onPressed: _handleSelectedTarget,
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (invalid)
+                CommonMinIconButtonTheme(
+                  child: IconButton(
+                    onPressed: () {
+                      globalState.showMessage(
+                        message: TextSpan(text: '$target 是一个无效的策略'),
+                      );
+                    },
+                    icon: Icon(Icons.info, size: 16.ap, color: foregroundColor),
+                  ),
+                ),
+              Flexible(
+                flex: 1,
+                child: TooltipText(
+                  text: Text(
+                    target ?? appLocalizations.selectSplitStrategy,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.textTheme.bodyLarge?.copyWith(
+                      color: foregroundColor,
+                    ),
+                  ),
                 ),
               ),
-            ),
+              SizedBox(width: 4),
+              Icon(Icons.arrow_forward_ios, color: foregroundColor),
+            ],
           ),
-          Icon(Icons.arrow_forward_ios),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -637,7 +663,7 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
                       ? _buildRuleProviderItem(rule.ruleProvider)
                       : _buildContentItem(rule.content),
                 rule.ruleAction != RuleAction.SUB_RULE
-                    ? _buildTargetItem(rule.ruleTarget)
+                    ? _buildTargetItem(profileId, rule.ruleTarget)
                     : _buildSubRuleItem(profileId, rule.subRule),
               ],
             ),
