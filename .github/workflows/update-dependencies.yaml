@@ -1,8 +1,8 @@
 name: Update Clash-Core and Go Modules
 on:
-  repository_dispatch:
-    types:
-      - core-updated
+  push:
+    tags:
+      - 'trigger-*'
   workflow_dispatch:
 
 jobs:
@@ -12,8 +12,9 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
+          ref: dev-core
           submodules: recursive
-          fetch-depth: 0 # 必须获取完整历史以支持变基和压缩
+          fetch-depth: 0
 
       - name: Update submodules
         run: |
@@ -28,8 +29,7 @@ jobs:
           check-latest: true
 
       - name: Install update-go-mod-replace
-        run: |
-          go install github.com/metacubex/update-go-mod-replace@latest
+        run: go install github.com/metacubex/update-go-mod-replace@latest
 
       - name: Update Core Gomod
         run: |
@@ -57,7 +57,7 @@ jobs:
             exit 0
           fi
 
-          # 1. 检查是否需要压缩
+          # 1. 强制压缩逻辑：如果上一个是自动更新，就吃掉它，保持提交记录只有一个 chore
           LAST_MSG=$(git log -1 --pretty=%B)
           SQUASHED=false
           if [[ "$LAST_MSG" == "chore: update core to"* ]]; then
@@ -69,70 +69,47 @@ jobs:
           
           git commit -m "chore: update core to ${{ env.CORE_SHA }} and sync dependencies"
           
-          # 2. 尝试直接推送
-          echo "Attempting direct push..."
+          TARGET_BRANCH="dev-core"
           PUSH_SUCCESS=false
+          
+          # 2. 尝试推送（如果压缩了则强制推送，没压缩则普通推送）
           if [ "$SQUASHED" = "true" ]; then
-            # 如果压缩了，必须使用 force-with-lease 确保安全地替换上一个提交
-            if git push --force-with-lease origin HEAD:${{ github.ref_name }}; then
+            if git push --force-with-lease origin HEAD:$TARGET_BRANCH; then
               PUSH_SUCCESS=true
             fi
           else
-            if git push origin HEAD:${{ github.ref_name }}; then
+            if git push origin HEAD:$TARGET_BRANCH; then
               PUSH_SUCCESS=true
             fi
           fi
           
-          if [ "$PUSH_SUCCESS" = "true" ]; then
-            echo "Successfully synced directly."
-            echo "synced=true" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-          
-          # 3. 如果直接推送失败（可能远程有新提交），尝试变基同步
-          echo "Direct push failed, trying rebase sync..."
-          if git pull --rebase origin ${{ github.ref_name }}; then
-            echo "Rebase successful, attempting to push..."
-            if git push origin HEAD:${{ github.ref_name }}; then
-              echo "Successfully synced after rebase."
-              echo "synced=true" >> $GITHUB_OUTPUT
-              exit 0
+          # 3. 强制变基逻辑：如果上面失败了（有竞争），尝试 rebase 到最新
+          if [ "$PUSH_SUCCESS" = "false" ]; then
+            echo "Direct push failed, trying rebase sync..."
+            if git pull --rebase origin $TARGET_BRANCH; then
+              if git push origin HEAD:$TARGET_BRANCH; then
+                PUSH_SUCCESS=true
+              fi
+            else
+              git rebase --abort
             fi
-          else
-            echo "Rebase failed due to conflicts."
-            git rebase --abort
           fi
           
-          # 4. 如果以上都失败（有冲突），撤销本地提交，保留更改，交给下方的 PR 步骤
-          echo "Falling back to Pull Request mode."
-          git reset HEAD~1
-          echo "synced=false" >> $GITHUB_OUTPUT
+          echo "synced=$PUSH_SUCCESS" >> $GITHUB_OUTPUT
 
       - name: Create Pull Request
         if: steps.sync.outputs.synced != 'true'
-        id: cpr
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ steps.generate-token.outputs.token }}
-          commit-message: "chore: update core to ${{ env.CORE_SHA }} and sync dependencies"
+          base: dev-core
           branch: update-dependencies
           delete-branch: true
           title: 'Update Core to ${{ env.CORE_SHA }}'
-          draft: false
-          body: |
-            ### Description
-            - Updated `core/Clash.Meta` submodule to the latest commit.
-            - Synced `core/go.mod` and `core/go.sum` with the new core version.
-            
-            Core Version: `${{ env.CORE_SHA }}`
-            
-            > Note: Automated direct sync failed (possibly due to conflicts), so this PR was created.
-          labels: |
-            dependencies
-            automated pr
+          body: 'Automated core update failed to push directly, created PR instead.'
 
-      - name: PR result
-        if: steps.sync.outputs.synced != 'true' && steps.cpr.outputs.pull-request-number
+      - name: Cleanup trigger tag
+        if: always() && startsWith(github.ref, 'refs/tags/trigger-')
         run: |
-          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
-          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
+          echo "Cleaning up trigger tag: ${{ github.ref_name }}"
+          git push origin --delete ${{ github.ref_name }}
