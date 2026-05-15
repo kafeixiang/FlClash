@@ -17,29 +17,49 @@ class OnDemandView extends ConsumerStatefulWidget {
 }
 
 class _OnDemandViewState extends ConsumerState<OnDemandView> {
+  void _handlePermanentlyDeniedLocationPermission() {
+    if (system.isMacOS) {
+      final appLocalizations = context.appLocalizations;
+      globalState.showMessage(
+        title: appLocalizations.locationPermissionRequired,
+        cancelable: false,
+        message: TextSpan(
+          style: context.textTheme.bodyMedium,
+          text: appLocalizations.locationPermissionGuide(appName),
+        ),
+      );
+    } else if (system.isAndroid) {
+      app?.openAppSettings();
+    }
+  }
+
   Future<void> _handleRequestLocationPermission() async {
+    final appLocalizations = context.appLocalizations;
     final permission = ref.read(locationPermissionsProvider);
     if (permission == WifiSsidPermission.granted) {
       return;
     }
     if (permission == WifiSsidPermission.permanentlyDenied) {
-      if (system.isMacOS) {
-        final appLocalizations = context.appLocalizations;
-        globalState.showMessage(
-          title: appLocalizations.locationPermissionRequired,
-          cancelable: false,
-          message: TextSpan(
-            style: context.textTheme.bodyMedium,
-            text: appLocalizations.locationPermissionGuide(appName),
-          ),
-        );
-      } else if (system.isAndroid) {
-        app?.openAppSettings();
-      }
-    } else {
-      globalState.container.read(locationPermissionsProvider.notifier).value =
-          await wifiSsidManager.requestPermission();
+      _handlePermanentlyDeniedLocationPermission();
+      return;
     }
+    final res = await wifiSsidManager.requestPermission();
+    globalState.container.read(locationPermissionsProvider.notifier).value =
+        res;
+    if (!mounted) {
+      return;
+    }
+    final needGo = await globalState.showMessage(
+      title: appLocalizations.locationPermissionRequired,
+      message: const TextSpan(
+        text: '位置权限已被拒绝，无法获取当前 Wi-Fi 名称。请前往系统设置手动开启位置权限。',
+      ),
+      confirmText: appLocalizations.go,
+    );
+    if (needGo != true) {
+      return;
+    }
+    app?.openAppSettings();
   }
 
   void _handleOpenBatteryOptimizationSettings() {
