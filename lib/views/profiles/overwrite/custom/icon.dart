@@ -175,11 +175,9 @@ class _IconEditViewState extends ConsumerState<IconEditView>
     final dimension = globalState.measure.bodyLargeHeight + 28;
     final isBottomSheet =
         SheetProvider.of(context)?.type == SheetType.bottomSheet;
-    final height = ref.watch(
-      viewSizeProvider.select(
-        (state) => isBottomSheet ? state.height * 0.5 : double.maxFinite,
-      ),
-    );
+    final height = isBottomSheet
+        ? double.maxFinite
+        : globalState.container.read(viewSizeProvider).height * 0.5;
     return AdaptiveSheetScaffold(
       backAction: () {
         Navigator.of(context).pop(_srcController.text);
@@ -220,7 +218,9 @@ class _IconEditViewState extends ConsumerState<IconEditView>
                                             ? CommonCard(
                                                 type: CommonCardType.filled,
                                                 radius: 20,
-                                                padding: const EdgeInsets.all(8),
+                                                padding: const EdgeInsets.all(
+                                                  8,
+                                                ),
                                                 child: CommonImage(
                                                   isSvg:
                                                       _srcController.text.isSvg,

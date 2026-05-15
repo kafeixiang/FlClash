@@ -102,7 +102,8 @@ class _OnDemandViewState extends ConsumerState<OnDemandView> {
                             backgroundColor: batteryOptimizationDisable
                                 ? null
                                 : context.colorScheme.error,
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            padding: const EdgeInsets.symmetric(horizontal: 0),
+                            minimumSize: const Size(80, 40),
                           ),
                           onPressed: _handleOpenBatteryOptimizationSettings,
                           child: Text(
@@ -122,7 +123,8 @@ class _OnDemandViewState extends ConsumerState<OnDemandView> {
                             backgroundColor: locationPermissionsGranted
                                 ? null
                                 : context.colorScheme.error,
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            padding: const EdgeInsets.symmetric(horizontal: 0),
+                            minimumSize: const Size(80, 40),
                           ),
                           onPressed: _handleRequestLocationPermission,
                           child: Text(

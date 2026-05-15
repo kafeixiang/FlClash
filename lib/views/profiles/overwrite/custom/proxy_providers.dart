@@ -32,9 +32,9 @@ class _EditProxyProvidersViewState extends ConsumerState<EditProxyProvidersView>
   }
 
   void _handleToAddProxyProvidersView() {
-    Navigator.of(
-      context,
-    ).push(PagedSheetRoute(builder: (context) => const _AddProxyProvidersView()));
+    Navigator.of(context).push(
+      PagedSheetRoute(builder: (context) => const _AddProxyProvidersView()),
+    );
   }
 
   void _handleRemove(String providerName) {
@@ -172,11 +172,9 @@ class _EditProxyProvidersViewState extends ConsumerState<EditProxyProvidersView>
     final proxyProviderNames = vm2.b;
     final isBottomSheet =
         SheetProvider.of(context)?.type == SheetType.bottomSheet;
-    final height = ref.watch(
-      viewSizeProvider.select(
-        (state) => isBottomSheet ? state.height * 0.85 : double.maxFinite,
-      ),
-    );
+    final height = isBottomSheet
+        ? double.maxFinite
+        : globalState.container.read(viewSizeProvider).height * 0.85;
     return SizedBox(
       height: height,
       child: AdaptiveSheetScaffold(
@@ -399,11 +397,9 @@ class _AddProxyProvidersViewState extends ConsumerState<_AddProxyProvidersView>
     final providerNames = allProxyProviders
         .where((item) => !excludeProxyProviderNames.contains(item))
         .toList();
-    final height = ref.watch(
-      viewSizeProvider.select(
-        (state) => isBottomSheet ? state.height * 0.80 : double.maxFinite,
-      ),
-    );
+    final height = isBottomSheet
+        ? double.maxFinite
+        : globalState.container.read(viewSizeProvider).height * 0.80;
     return SizedBox(
       height: height,
       child: AdaptiveSheetScaffold(

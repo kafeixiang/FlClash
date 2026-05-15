@@ -741,11 +741,10 @@ class _RuleTypeSelectedView extends ConsumerWidget {
     final appLocalizations = context.appLocalizations;
     final isBottomSheet =
         SheetProvider.of(context)?.type == SheetType.bottomSheet;
-    final height = ref.watch(
-      viewSizeProvider.select(
-        (state) => isBottomSheet ? state.height * 0.70 : double.maxFinite,
-      ),
-    );
+    final height = isBottomSheet
+        ? double.maxFinite
+        : globalState.container.read(viewSizeProvider).height * 0.70;
+
     final currentRuleAction = ref.watch(
       ruleProvider.select((state) => state.ruleAction),
     );

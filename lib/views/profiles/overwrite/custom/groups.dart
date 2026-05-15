@@ -859,11 +859,9 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
         SheetProvider.of(context)?.type == SheetType.bottomSheet;
     final profileId = ProfileIdProvider.of(context)!.profileId;
     final proxyGroup = ref.watch(proxyGroupProvider);
-    final height = ref.watch(
-      viewSizeProvider.select(
-        (state) => isBottomSheet ? state.height * 0.65 : double.maxFinite,
-      ),
-    );
+    final height = isBottomSheet
+        ? double.maxFinite
+        : globalState.container.read(viewSizeProvider).height * 0.65;
     return AdaptiveSheetScaffold(
       sheetTransparentToolBar: true,
       actions: [IconButtonData(icon: Icons.check, onPressed: _handleSave)],
