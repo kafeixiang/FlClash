@@ -13,7 +13,9 @@ import 'common/common.dart';
 Future<void> main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
-    await RustLib.init();
+    if (system.isDesktop) {
+      await RustLib.init();
+    }
     final version = await system.version;
     final container = await globalState.init(version);
     HttpOverrides.global = FlClashHttpOverrides();

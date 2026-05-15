@@ -24,24 +24,7 @@ const _hostPlatform = {
 };
 
 Future<void> main(List<String> args) async {
-  final parser = ArgParser()
-    ..addOption(
-      'env',
-      defaultsTo: 'pre',
-      allowed: ['pre', 'stable'],
-      help: 'Application environment',
-    )
-    ..addOption(
-      'targets',
-      valueHelp: 'exe,zip,dmg,apk,...',
-      help: 'Package targets (default: all for platform)',
-    )
-    ..addOption(
-      'arch',
-      valueHelp: 'arm,arm64,amd64',
-      allowed: ['arm', 'arm64', 'amd64'],
-      help: 'Target architecture (Android only)',
-    );
+  final parser = createSetupArgParser();
 
   if (args.contains('--help') || args.contains('-h')) {
     _showHelp(parser);
@@ -73,6 +56,7 @@ Future<void> main(List<String> args) async {
   final arch = _detectArch();
   final targets = _getTargets(platform, arch, results['targets']);
   final androidArch = results['arch'] as String?;
+  final verbose = results['verbose'] as bool;
 
   final exitCode = await _package(
     platform,
@@ -81,8 +65,50 @@ Future<void> main(List<String> args) async {
     rootDir,
     arch,
     androidArch: androidArch,
+    verbose: verbose,
   );
   exit(exitCode);
+}
+
+ArgParser createSetupArgParser() {
+  return ArgParser()
+    ..addOption(
+      'env',
+      defaultsTo: 'pre',
+      allowed: ['pre', 'stable'],
+      help: 'Application environment',
+    )
+    ..addOption(
+      'targets',
+      valueHelp: 'exe,zip,dmg,apk,...',
+      help: 'Package targets (default: all for platform)',
+    )
+    ..addOption(
+      'arch',
+      valueHelp: 'arm,arm64,amd64',
+      allowed: ['arm', 'arm64', 'amd64'],
+      help: 'Target architecture (Android only)',
+    )
+    ..addFlag(
+      'verbose',
+      abbr: 'v',
+      negatable: false,
+      help: 'Enable verbose Flutter build output',
+    );
+}
+
+List<String> createFlutterBuildArgs({
+  required String platform,
+  required bool verbose,
+}) {
+  final flutterBuildArgs = <String>[
+    if (verbose) 'verbose',
+    'dart-define-from-file=env.json',
+  ];
+  if (platform == 'android') {
+    flutterBuildArgs.add('split-per-abi');
+  }
+  return flutterBuildArgs;
 }
 
 String _getTargets(String platform, String arch, String? customTargets) {
@@ -108,6 +134,7 @@ Future<int> _package(
   String rootDir,
   String arch, {
   String? androidArch,
+  required bool verbose,
 }) async {
   final distributorDir = p.join(
     rootDir,
@@ -137,10 +164,10 @@ Future<int> _package(
     jsonEncode({'APP_ENV': env, 'CORE_SHA256': ?coreSha256}),
   );
 
-  final flutterBuildArgs = <String>['dart-define-from-file=env.json'];
-  if (platform == 'android') {
-    flutterBuildArgs.add('split-per-abi');
-  }
+  final flutterBuildArgs = createFlutterBuildArgs(
+    platform: platform,
+    verbose: verbose,
+  );
   final descriptionArgs = <String>[];
   if (platform != 'android') {
     descriptionArgs.addAll(['--description', arch]);

@@ -336,7 +336,11 @@ class GlobalState {
       container.read(batteryOptimizationDisableProvider.notifier).value =
           await app?.isBatteryOptimizationDisabled() ?? true;
       final res = await WifiSsidManager.instance.checkPermission();
-      container.read(locationPermissionsProvider.notifier).value = res;
+      final current = container.read(locationPermissionsProvider);
+      if (res == WifiSsidPermission.granted ||
+          current != WifiSsidPermission.permanentlyDenied) {
+        container.read(locationPermissionsProvider.notifier).value = res;
+      }
       final needRequestPermission = container.read(
         excludeSSIDsProvider.select((state) => state.isNotEmpty),
       );

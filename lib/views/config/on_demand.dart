@@ -42,6 +42,10 @@ class _OnDemandViewState extends ConsumerState<OnDemandView> {
   }
 
   void _handleOpenBatteryOptimizationSettings() {
+    final isDisabled = ref.read(batteryOptimizationDisableProvider);
+    if (isDisabled) {
+      return;
+    }
     app?.openBatteryOptimizationSettings();
   }
 
