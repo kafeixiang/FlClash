@@ -173,8 +173,8 @@ class _EditProxyProvidersViewState extends ConsumerState<EditProxyProvidersView>
     final isBottomSheet =
         SheetProvider.of(context)?.type == SheetType.bottomSheet;
     final height = isBottomSheet
-        ? double.maxFinite
-        : globalState.container.read(viewSizeProvider).height * 0.85;
+        ? globalState.container.read(viewSizeProvider).height * 0.85
+        : double.maxFinite;
     return SizedBox(
       height: height,
       child: AdaptiveSheetScaffold(
@@ -398,8 +398,8 @@ class _AddProxyProvidersViewState extends ConsumerState<_AddProxyProvidersView>
         .where((item) => !excludeProxyProviderNames.contains(item))
         .toList();
     final height = isBottomSheet
-        ? double.maxFinite
-        : globalState.container.read(viewSizeProvider).height * 0.80;
+        ? globalState.container.read(viewSizeProvider).height * 0.80
+        : double.maxFinite;
     return SizedBox(
       height: height,
       child: AdaptiveSheetScaffold(

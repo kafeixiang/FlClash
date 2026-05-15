@@ -32,7 +32,7 @@ class Tray {
   }
 
   String getTryIcon({required bool isStart, required bool tunEnable}) {
-    if (system.isMacOS || !isStart) {
+    if (!isStart) {
       return 'assets/images/icon/status_1.$trayIconSuffix';
     }
     if (!tunEnable) {
@@ -50,7 +50,7 @@ class Tray {
     }
     await trayManager.setIcon(
       getTryIcon(isStart: isStart, tunEnable: tunEnable),
-      isTemplate: true,
+      isTemplate: system.isMacOS,
     );
     if (!Platform.isLinux) {
       await trayManager.setToolTip(appName);

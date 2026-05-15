@@ -176,8 +176,8 @@ class _IconEditViewState extends ConsumerState<IconEditView>
     final isBottomSheet =
         SheetProvider.of(context)?.type == SheetType.bottomSheet;
     final height = isBottomSheet
-        ? double.maxFinite
-        : globalState.container.read(viewSizeProvider).height * 0.5;
+        ? globalState.container.read(viewSizeProvider).height * 0.5
+        : double.maxFinite;
     return AdaptiveSheetScaffold(
       backAction: () {
         Navigator.of(context).pop(_srcController.text);

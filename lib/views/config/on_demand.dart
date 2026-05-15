@@ -1,4 +1,5 @@
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/plugins/app.dart';
 import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/providers/config.dart';
@@ -79,6 +80,9 @@ class _OnDemandViewState extends ConsumerState<OnDemandView> {
   @override
   Widget build(BuildContext context) {
     final appLocalizations = context.appLocalizations;
+    final isLoading = ref.watch(
+      loadingProvider(LoadingTag.batteryOptimization),
+    );
     final batteryOptimizationDisable = ref.watch(
       batteryOptimizationDisableProvider,
     );
@@ -101,21 +105,38 @@ class _OnDemandViewState extends ConsumerState<OnDemandView> {
                       minVerticalPadding: 8,
                       title: Text(appLocalizations.ignoreBatteryOptimization),
                       subtitle: Text(appLocalizations.batteryOptimizationDesc),
-                      trailing: CommonMinFilledButtonTheme(
-                        child: FilledButton(
-                          style: FilledButton.styleFrom(
-                            backgroundColor: batteryOptimizationDisable
-                                ? null
-                                : context.colorScheme.error,
-                            padding: const EdgeInsets.symmetric(horizontal: 0),
-                            minimumSize: const Size(80, 40),
-                          ),
-                          onPressed: _handleOpenBatteryOptimizationSettings,
-                          child: Text(
-                            batteryOptimizationDisable ? '已授权' : '点击授权',
-                          ),
-                        ),
-                      ),
+                      trailing: isLoading
+                          ? const SizedBox(
+                              width: 100,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  SizedBox.square(
+                                    dimension: 32,
+                                    child: CommonCircleLoading(),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : CommonMinFilledButtonTheme(
+                              child: FilledButton(
+                                style: FilledButton.styleFrom(
+                                  backgroundColor: batteryOptimizationDisable
+                                      ? null
+                                      : context.colorScheme.error,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 0,
+                                  ),
+                                  minimumSize: const Size(80, 40),
+                                ),
+                                onPressed:
+                                    _handleOpenBatteryOptimizationSettings,
+                                child: Text(
+                                  batteryOptimizationDisable ? '已授权' : '点击授权',
+                                ),
+                              ),
+                            ),
                     ),
                   if (system.isAndroid || system.isMacOS)
                     DecorationListItem(
