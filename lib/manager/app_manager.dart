@@ -69,7 +69,7 @@ class _AppStateManagerState extends ConsumerState<AppStateManager>
   Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
     commonPrint.log('$state');
     if (state == AppLifecycleState.resumed) {
-      globalState.checkTaskPermissions();
+      permissions.check();
       render?.resume();
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final ref = globalState.container;

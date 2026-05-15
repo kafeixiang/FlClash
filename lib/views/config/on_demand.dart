@@ -46,6 +46,7 @@ class _OnDemandViewState extends ConsumerState<OnDemandView> {
     if (isDisabled) {
       return;
     }
+    permissions.needWaitingBatteryOptimizationSettings = true;
     app?.openBatteryOptimizationSettings();
   }
 

@@ -27,6 +27,7 @@ export 'network.dart';
 export 'num.dart';
 export 'package.dart';
 export 'path.dart';
+export 'permission.dart';
 export 'picker.dart';
 export 'pipe.dart';
 export 'preferences.dart';
