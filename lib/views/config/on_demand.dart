@@ -46,7 +46,7 @@ class _OnDemandViewState extends ConsumerState<OnDemandView> {
     final res = await wifiSsidManager.requestPermission();
     globalState.container.read(locationPermissionsProvider.notifier).value =
         res;
-    if (!mounted) {
+    if (!mounted && res != WifiSsidPermission.permanentlyDenied) {
       return;
     }
     final needGo = await globalState.showMessage(
@@ -127,7 +127,7 @@ class _OnDemandViewState extends ConsumerState<OnDemandView> {
                       subtitle: Text(appLocalizations.batteryOptimizationDesc),
                       trailing: isLoading
                           ? const SizedBox(
-                              width: 100,
+                              width: 120,
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 mainAxisAlignment: MainAxisAlignment.end,
@@ -163,18 +163,23 @@ class _OnDemandViewState extends ConsumerState<OnDemandView> {
                       minVerticalPadding: 8,
                       title: Text(appLocalizations.locationPermission),
                       subtitle: Text(appLocalizations.locationPermissionDesc),
-                      trailing: CommonMinFilledButtonTheme(
-                        child: FilledButton(
-                          style: FilledButton.styleFrom(
-                            backgroundColor: locationPermissionsGranted
-                                ? null
-                                : context.colorScheme.error,
-                            padding: const EdgeInsets.symmetric(horizontal: 0),
-                            minimumSize: const Size(80, 40),
-                          ),
-                          onPressed: _handleRequestLocationPermission,
-                          child: Text(
-                            locationPermissionsGranted ? '已授权' : '点击授权',
+                      trailing: Padding(
+                        padding: const EdgeInsets.only(left: 40),
+                        child: CommonMinFilledButtonTheme(
+                          child: FilledButton(
+                            style: FilledButton.styleFrom(
+                              backgroundColor: locationPermissionsGranted
+                                  ? null
+                                  : context.colorScheme.error,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 0,
+                              ),
+                              minimumSize: const Size(80, 40),
+                            ),
+                            onPressed: _handleRequestLocationPermission,
+                            child: Text(
+                              locationPermissionsGranted ? '已授权' : '点击授权',
+                            ),
                           ),
                         ),
                       ),
