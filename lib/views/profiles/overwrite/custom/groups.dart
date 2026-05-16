@@ -389,24 +389,12 @@ class _AddOrEditProxyGroupNestedSheetState
               width: sheetProvider.type == SheetType.sideSheet ? 400 : null,
               child: SheetViewport(
                 child: PagedSheetRouteTheme(
-                  data: PagedSheetRouteThemeData(
-                    transitionsBuilder:
-                        (context, animation, secondaryAnimation, child) {
-                          return SharedAxisPageTransitionsBuilder(
-                            transitionType: SharedAxisTransitionType.horizontal,
-                            fillColor: fillColor,
-                          ).buildTransitions(
-                            ModalRoute.of(context) as PageRoute,
-                            context,
-                            animation,
-                            secondaryAnimation,
-                            child,
-                          );
-                        },
+                  data: const PagedSheetRouteThemeData(
+                    transitionsBuilder: fadeAndSlideTransition,
+                    transitionDuration: Duration(milliseconds: 500),
                   ),
                   child: PagedSheet(
                     decoration: MaterialSheetDecoration(
-                      animationDuration: Duration.zero,
                       size: SheetSize.stretch,
                       color: fillColor,
                       borderRadius: sheetProvider.type == SheetType.bottomSheet

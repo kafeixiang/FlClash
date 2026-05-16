@@ -1,4 +1,3 @@
-import 'package:animations/animations.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/features/overwrite/rule.dart';
@@ -7,6 +6,7 @@ import 'package:fl_clash/models/common.dart';
 import 'package:fl_clash/models/state.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
+import 'package:fl_clash/views/profiles/overwrite/custom/widgets.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -358,20 +358,9 @@ class _AddOrEditRuleNestedSheetState
               width: sheetProvider.type == SheetType.sideSheet ? 400 : null,
               child: SheetViewport(
                 child: PagedSheetRouteTheme(
-                  data: PagedSheetRouteThemeData(
-                    transitionsBuilder:
-                        (context, animation, secondaryAnimation, child) {
-                          return SharedAxisPageTransitionsBuilder(
-                            transitionType: SharedAxisTransitionType.horizontal,
-                            fillColor: fillColor,
-                          ).buildTransitions(
-                            ModalRoute.of(context) as PageRoute,
-                            context,
-                            animation,
-                            secondaryAnimation,
-                            child,
-                          );
-                        },
+                  data: const PagedSheetRouteThemeData(
+                    transitionsBuilder: fadeAndSlideTransition,
+                    transitionDuration: Duration(milliseconds: 500),
                   ),
                   child: PagedSheet(
                     decoration: MaterialSheetDecoration(

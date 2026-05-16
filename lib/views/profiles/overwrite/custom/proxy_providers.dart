@@ -289,6 +289,7 @@ class _EditProxyProvidersViewState extends ConsumerState<EditProxyProvidersView>
               )
             else
               SliverFillRemaining(
+                hasScrollBody: false,
                 child: NullStatus(label: appLocalizations.proxyProvidersEmpty),
               ),
             const SliverToBoxAdapter(child: SizedBox(height: 16)),

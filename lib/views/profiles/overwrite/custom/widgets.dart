@@ -20,3 +20,26 @@ class InfoMessageButton extends StatelessWidget {
     );
   }
 }
+
+Widget fadeAndSlideTransition(
+  BuildContext context,
+  Animation<double> animation,
+  Animation<double> secondaryAnimation,
+  Widget child,
+) {
+  return FadeTransition(
+    opacity: CurveTween(curve: Curves.easeInExpo).animate(animation),
+    child: FadeTransition(
+      opacity: Tween(begin: 1.0, end: 0.0)
+          .chain(CurveTween(curve: Curves.easeOutExpo))
+          .animate(secondaryAnimation),
+      child: const CupertinoPageTransitionsBuilder().buildTransitions(
+        ModalRoute.of(context) as PageRoute,
+        context,
+        animation,
+        secondaryAnimation,
+        child,
+      ),
+    ),
+  );
+}
