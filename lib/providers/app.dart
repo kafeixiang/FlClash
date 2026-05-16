@@ -357,12 +357,16 @@ class IsUpdating extends _$IsUpdating with AutoDisposeNotifierMixin {
 @Riverpod(keepAlive: true)
 class NetworkDetection extends _$NetworkDetection
     with AutoDisposeNotifierMixin {
+  static const _timeoutDisplayDelay = Duration(seconds: 2);
+
   bool? _preIsStart;
   CancelToken? _cancelToken;
+  Timer? _timeoutTimer;
   int _checkVersion = 0;
 
   @override
   NetworkDetectionState build() {
+    ref.onDispose(_cancelTimeoutTimer);
     return const NetworkDetectionState(isLoading: true, ipInfo: null);
   }
 
@@ -383,6 +387,7 @@ class NetworkDetection extends _$NetworkDetection
     }
     _cancelToken?.cancel();
     _cancelToken = CancelToken();
+    _cancelTimeoutTimer();
     final version = ++_checkVersion;
     commonPrint.log('checkIp start');
     state = state.copyWith(isLoading: true, ipInfo: null);
@@ -394,7 +399,28 @@ class NetworkDetection extends _$NetworkDetection
       state = state.copyWith(isLoading: true, ipInfo: null);
       return;
     }
-    state = state.copyWith(isLoading: false, ipInfo: res.data);
+    final ipInfo = res.data;
+    if (ipInfo == null) {
+      _delayTimeoutDisplay(version);
+      return;
+    }
+    state = state.copyWith(isLoading: false, ipInfo: ipInfo);
+  }
+
+  void _delayTimeoutDisplay(int version) {
+    _cancelTimeoutTimer();
+    _timeoutTimer = Timer(_timeoutDisplayDelay, () {
+      _timeoutTimer = null;
+      if (!ref.mounted || version != _checkVersion || state.ipInfo != null) {
+        return;
+      }
+      state = state.copyWith(isLoading: false, ipInfo: null);
+    });
+  }
+
+  void _cancelTimeoutTimer() {
+    _timeoutTimer?.cancel();
+    _timeoutTimer = null;
   }
 }
 
