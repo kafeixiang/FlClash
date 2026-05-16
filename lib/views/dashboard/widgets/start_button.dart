@@ -2,7 +2,6 @@ import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
-import 'package:fl_clash/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -75,7 +74,7 @@ class _StartButtonState extends ConsumerState<StartButton>
     if (!hasProfile) {
       return Container();
     }
-    final ssidDemand = ref.read(ssidDemandProvider);
+    final ssidDemand = ref.watch(ssidDemandProvider);
     final theme = Theme.of(context);
     return RepaintBoundary(
       child: Theme(
@@ -92,7 +91,7 @@ class _StartButtonState extends ConsumerState<StartButton>
                     .computeTextSize(
                       Text(
                         ssidDemand
-                            ? '挂起中'
+                            ? '挂起中...'
                             : utils.getTimeDifference(DateTime.now()),
                         style: context.textTheme.titleMedium?.toSoftBold,
                       ),
@@ -110,7 +109,6 @@ class _StartButtonState extends ConsumerState<StartButton>
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    // width: 56,
                     height: 56,
                     padding: EdgeInsets.only(
                       left: 16,
@@ -127,19 +125,29 @@ class _StartButtonState extends ConsumerState<StartButton>
               ),
             );
           },
-          child: Consumer(
-            builder: (_, ref, _) {
-              final runTime = ref.watch(runTimeProvider);
-              final text = utils.getTimeText(runTime);
-              return Text(
-                text,
-                maxLines: 1,
-                overflow: TextOverflow.visible,
-                style: Theme.of(context).textTheme.titleMedium?.toSoftBold
-                    .copyWith(color: context.colorScheme.onPrimaryContainer),
-              );
-            },
-          ),
+          child: ssidDemand
+              ? Text(
+                  '挂起中...',
+                  maxLines: 1,
+                  overflow: TextOverflow.visible,
+                  style: Theme.of(context).textTheme.titleMedium?.toSoftBold
+                      .copyWith(color: context.colorScheme.onPrimaryContainer),
+                )
+              : Consumer(
+                  builder: (_, ref, _) {
+                    final runTime = ref.watch(runTimeProvider);
+                    final text = utils.getTimeText(runTime);
+                    return Text(
+                      text,
+                      maxLines: 1,
+                      overflow: TextOverflow.visible,
+                      style: Theme.of(context).textTheme.titleMedium?.toSoftBold
+                          .copyWith(
+                            color: context.colorScheme.onPrimaryContainer,
+                          ),
+                    );
+                  },
+                ),
         ),
       ),
     );

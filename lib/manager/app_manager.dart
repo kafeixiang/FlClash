@@ -50,9 +50,9 @@ class _AppStateManagerState extends ConsumerState<AppStateManager>
       if (prev != next && isStart) {
         debouncer.call(FunctionTag.suspend, () {
           if (next == true) {
-            coreController.startListener();
-          } else {
             coreController.stopListener();
+          } else {
+            coreController.startListener();
           }
         });
       }
