@@ -87,16 +87,25 @@ class _StartButtonState extends ConsumerState<StartButton>
         child: AnimatedBuilder(
           animation: _controller!.view,
           builder: (_, child) {
-            final textWidth =
-                globalState.measure
-                    .computeTextSize(
-                      Text(
-                        utils.getTimeDifference(DateTime.now()),
-                        style: context.textTheme.titleMedium?.toSoftBold,
-                      ),
-                    )
-                    .width +
-                16;
+            final textWidth = suspend
+                ? globalState.measure
+                          .computeTextSize(
+                            Text(
+                              appLocalizations.suspended,
+                              style: context.textTheme.titleMedium,
+                            ),
+                          )
+                          .width +
+                      24
+                : globalState.measure
+                          .computeTextSize(
+                            Text(
+                              utils.getTimeDifference(DateTime.now()),
+                              style: context.textTheme.titleMedium?.toSoftBold,
+                            ),
+                          )
+                          .width +
+                      16;
             return FloatingActionButton(
               clipBehavior: Clip.antiAlias,
               materialTapTargetSize: MaterialTapTargetSize.padded,
