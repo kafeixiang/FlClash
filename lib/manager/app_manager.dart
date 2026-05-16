@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/core/controller.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/manager/window_manager.dart';
 import 'package:fl_clash/providers/providers.dart';
@@ -44,19 +45,30 @@ class _AppStateManagerState extends ConsumerState<AppStateManager>
             .updateGroupsDebounce();
       }
     });
-    if (window == null) {
-      return;
-    }
-    ref.listenManual(autoSetSystemDnsStateProvider, (prev, next) async {
-      if (prev == next) {
-        return;
-      }
-      if (next.a == true && next.b == true) {
-        macOS?.updateDns(false);
-      } else {
-        macOS?.updateDns(true);
+    ref.listenManual(ssidDemandProvider, (prev, next) {
+      final isStart = ref.read(isStartProvider);
+      if (prev != next && isStart) {
+        debouncer.call(FunctionTag.suspend, () {
+          if (next == true) {
+            coreController.startListener();
+          } else {
+            coreController.stopListener();
+          }
+        });
       }
     });
+    if (system.isMacOS) {
+      ref.listenManual(autoSetSystemDnsStateProvider, (prev, next) async {
+        if (prev == next) {
+          return;
+        }
+        if (next.a == true && next.b == true) {
+          macOS?.updateDns(false);
+        } else {
+          macOS?.updateDns(true);
+        }
+      });
+    }
   }
 
   @override

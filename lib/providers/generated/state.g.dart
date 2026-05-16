@@ -3138,3 +3138,43 @@ abstract class _$RuleProvider extends $Notifier<Rule> {
     element.handleCreate(ref, build);
   }
 }
+
+@ProviderFor(ssidDemand)
+final ssidDemandProvider = SsidDemandProvider._();
+
+final class SsidDemandProvider extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
+  SsidDemandProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'ssidDemandProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$ssidDemandHash();
+
+  @$internal
+  @override
+  $ProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  bool create(Ref ref) {
+    return ssidDemand(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$ssidDemandHash() => r'349dc06e83db0a57fdb1623093054f622f3b67d5';

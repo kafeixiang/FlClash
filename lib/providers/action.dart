@@ -142,7 +142,6 @@ class SetupAction extends _$SetupAction {
     ref.read(commonActionProvider.notifier).updateRunTime();
     ref.read(commonActionProvider.notifier).updateTraffic();
     await coreController.startListener();
-    await service?.start();
     _updateTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       ref.read(commonActionProvider.notifier).updateRunTime();
       ref.read(commonActionProvider.notifier).updateTraffic();
@@ -158,7 +157,6 @@ class SetupAction extends _$SetupAction {
     _updateTimer?.cancel();
     _updateTimer = null;
     await coreController.stopListener();
-    await service?.stop();
   }
 
   Future<void> initStatus() async {

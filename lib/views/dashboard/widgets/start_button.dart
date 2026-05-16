@@ -2,6 +2,7 @@ import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
+import 'package:fl_clash/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -74,6 +75,7 @@ class _StartButtonState extends ConsumerState<StartButton>
     if (!hasProfile) {
       return Container();
     }
+    final ssidDemand = ref.read(ssidDemandProvider);
     final theme = Theme.of(context);
     return RepaintBoundary(
       child: Theme(
@@ -89,7 +91,9 @@ class _StartButtonState extends ConsumerState<StartButton>
                 globalState.measure
                     .computeTextSize(
                       Text(
-                        utils.getTimeDifference(DateTime.now()),
+                        ssidDemand
+                            ? '挂起中'
+                            : utils.getTimeDifference(DateTime.now()),
                         style: context.textTheme.titleMedium?.toSoftBold,
                       ),
                     )
@@ -106,9 +110,13 @@ class _StartButtonState extends ConsumerState<StartButton>
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
+                    // width: 56,
                     height: 56,
-                    width: 56,
-                    alignment: Alignment.center,
+                    padding: EdgeInsets.only(
+                      left: 16,
+                      right: 16 - 8 * _animation.value,
+                    ),
+                    alignment: Alignment.centerLeft,
                     child: AnimatedIcon(
                       icon: AnimatedIcons.play_pause,
                       progress: _animation,

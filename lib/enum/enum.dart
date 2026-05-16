@@ -291,6 +291,7 @@ enum FunctionTag {
   loadedProvider,
   saveSharedFile,
   removeProxy,
+  suspend,
 }
 
 enum DashboardWidget {

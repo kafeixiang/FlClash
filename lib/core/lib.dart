@@ -52,6 +52,20 @@ class CoreLib extends CoreHandlerInterface {
   }
 
   @override
+  Future<bool> startListener() async {
+    await super.stopListener();
+    await service?.start();
+    return true;
+  }
+
+  @override
+  Future<bool> stopListener() async {
+    await super.stopListener();
+    await service?.stop();
+    return true;
+  }
+
+  @override
   Future<T?> invoke<T>({
     required ActionMethod method,
     dynamic data,

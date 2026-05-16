@@ -843,3 +843,10 @@ class RuleProvider extends _$RuleProvider with AutoDisposeNotifierMixin {
     return throw 'Initialization RuleProvider error';
   }
 }
+
+@riverpod
+bool ssidDemand(Ref ref) {
+  final currentSSID = ref.watch(currentSSIDProvider);
+  final excludeSSIDs = ref.watch(excludeSSIDsProvider);
+  return excludeSSIDs.contains(currentSSID);
+}
