@@ -45,15 +45,16 @@ class _AppStateManagerState extends ConsumerState<AppStateManager>
             .updateGroupsDebounce();
       }
     });
-    ref.listenManual(ssidDemandProvider, (prev, next) {
+    ref.listenManual(suspendProvider, (prev, next) {
       final isStart = ref.read(isStartProvider);
       if (prev != next && isStart) {
-        debouncer.call(FunctionTag.suspend, () {
+        debouncer.call(FunctionTag.suspend, () async {
           if (next == true) {
-            coreController.stopListener();
+            await coreController.stopListener();
           } else {
-            coreController.startListener();
+            await coreController.startListener();
           }
+          ref.read(checkIpNumProvider.notifier).add();
         });
       }
     });

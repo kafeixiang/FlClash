@@ -52,8 +52,8 @@ class _OnDemandViewState extends ConsumerState<OnDemandView>
     }
     final needGo = await globalState.showMessage(
       title: appLocalizations.locationPermissionRequired,
-      message: const TextSpan(
-        text: '位置权限已被拒绝，无法获取当前 Wi-Fi 名称。请前往系统设置手动开启位置权限。',
+      message: TextSpan(
+        text: appLocalizations.locationPermissionDeniedMessage,
       ),
       confirmText: appLocalizations.go,
     );
@@ -77,7 +77,7 @@ class _OnDemandViewState extends ConsumerState<OnDemandView>
     final appLocalizations = context.appLocalizations;
     final newSSID = await globalState.showCommonDialog<String>(
       child: InputDialog(
-        title: ssid == null ? '添加SSID' : '编辑SSID',
+        title: ssid == null ? appLocalizations.addSsid : appLocalizations.editSsid,
         value: ssid ?? '',
         maxLength: 32,
         validator: (value) {
@@ -225,7 +225,9 @@ class _OnDemandViewState extends ConsumerState<OnDemandView>
                                 onPressed:
                                     _handleOpenBatteryOptimizationSettings,
                                 child: Text(
-                                  batteryOptimizationDisable ? '已授权' : '点击授权',
+                                  batteryOptimizationDisable
+                                      ? appLocalizations.authorized
+                                      : appLocalizations.tapToAuthorize,
                                 ),
                               ),
                             ),
@@ -246,7 +248,9 @@ class _OnDemandViewState extends ConsumerState<OnDemandView>
                           ),
                           onPressed: _handleRequestLocationPermission,
                           child: Text(
-                            locationPermissionsGranted ? '已授权' : '点击授权',
+                            locationPermissionsGranted
+                                ? appLocalizations.authorized
+                                : appLocalizations.tapToAuthorize,
                           ),
                         ),
                       ),

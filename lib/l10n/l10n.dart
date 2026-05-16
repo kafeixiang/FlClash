@@ -4768,6 +4768,46 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Location permission was denied, so the current Wi-Fi name cannot be obtained. Please open location permission manually in system settings.`
+  String get locationPermissionDeniedMessage {
+    return Intl.message(
+      'Location permission was denied, so the current Wi-Fi name cannot be obtained. Please open location permission manually in system settings.',
+      name: 'locationPermissionDeniedMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add SSID`
+  String get addSsid {
+    return Intl.message('Add SSID', name: 'addSsid', desc: '', args: []);
+  }
+
+  /// `Edit SSID`
+  String get editSsid {
+    return Intl.message('Edit SSID', name: 'editSsid', desc: '', args: []);
+  }
+
+  /// `Authorized`
+  String get authorized {
+    return Intl.message('Authorized', name: 'authorized', desc: '', args: []);
+  }
+
+  /// `Tap to authorize`
+  String get tapToAuthorize {
+    return Intl.message(
+      'Tap to authorize',
+      name: 'tapToAuthorize',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Suspended...`
+  String get suspended {
+    return Intl.message('Suspended...', name: 'suspended', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -28,15 +28,16 @@ class _ConnectivityManagerState extends State<ConnectivityManager> {
   @override
   void initState() {
     super.initState();
-    subscription = Connectivity().onConnectivityChanged.listen((results) async {
+    subscription = Connectivity().onConnectivityChanged.listen((results) {
       if (results.contains(ConnectivityResult.wifi)) {
         WifiSsidManager.instance.getSsid().then((ssid) {
+          globalState.container.read(currentSSIDProvider.notifier).value = ssid;
           if (ssid?.value != null) {
-            globalState.container.read(currentSSIDProvider.notifier).value =
-                ssid;
             commonPrint.log('Wifi ssid $ssid', logLevel: LogLevel.info);
           }
         });
+      } else {
+        globalState.container.read(currentSSIDProvider.notifier).value = null;
       }
       if (widget.onConnectivityChanged != null) {
         widget.onConnectivityChanged!(results);

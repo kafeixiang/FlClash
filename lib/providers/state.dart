@@ -845,7 +845,7 @@ class RuleProvider extends _$RuleProvider with AutoDisposeNotifierMixin {
 }
 
 @riverpod
-bool ssidDemand(Ref ref) {
+bool suspend(Ref ref) {
   final currentSSID = ref.watch(currentSSIDProvider);
   final excludeSSIDs = ref.watch(excludeSSIDsProvider);
   return excludeSSIDs.contains(currentSSID);

@@ -141,7 +141,7 @@ class SetupAction extends _$SetupAction {
     //The local status must be updated when performing the run task
     ref.read(commonActionProvider.notifier).updateRunTime();
     ref.read(commonActionProvider.notifier).updateTraffic();
-    if (!ref.read(ssidDemandProvider)) {
+    if (!ref.read(suspendProvider)) {
       await coreController.startListener();
     }
     _updateTimer = Timer.periodic(const Duration(seconds: 1), (_) {

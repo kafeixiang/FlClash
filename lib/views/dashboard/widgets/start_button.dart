@@ -74,8 +74,9 @@ class _StartButtonState extends ConsumerState<StartButton>
     if (!hasProfile) {
       return Container();
     }
-    final ssidDemand = ref.watch(ssidDemandProvider);
+    final suspend = ref.watch(suspendProvider);
     final theme = Theme.of(context);
+    final appLocalizations = context.appLocalizations;
     return RepaintBoundary(
       child: Theme(
         data: theme.copyWith(
@@ -90,9 +91,7 @@ class _StartButtonState extends ConsumerState<StartButton>
                 globalState.measure
                     .computeTextSize(
                       Text(
-                        ssidDemand
-                            ? '挂起中...'
-                            : utils.getTimeDifference(DateTime.now()),
+                        utils.getTimeDifference(DateTime.now()),
                         style: context.textTheme.titleMedium?.toSoftBold,
                       ),
                     )
@@ -125,13 +124,14 @@ class _StartButtonState extends ConsumerState<StartButton>
               ),
             );
           },
-          child: ssidDemand
+          child: suspend
               ? Text(
-                  '挂起中...',
+                  appLocalizations.suspended,
                   maxLines: 1,
                   overflow: TextOverflow.visible,
-                  style: Theme.of(context).textTheme.titleMedium?.toSoftBold
-                      .copyWith(color: context.colorScheme.onPrimaryContainer),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: context.colorScheme.onPrimaryContainer,
+                  ),
                 )
               : Consumer(
                   builder: (_, ref, _) {

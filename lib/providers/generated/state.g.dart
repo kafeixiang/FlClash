@@ -3139,24 +3139,24 @@ abstract class _$RuleProvider extends $Notifier<Rule> {
   }
 }
 
-@ProviderFor(ssidDemand)
-final ssidDemandProvider = SsidDemandProvider._();
+@ProviderFor(suspend)
+final suspendProvider = SuspendProvider._();
 
-final class SsidDemandProvider extends $FunctionalProvider<bool, bool, bool>
+final class SuspendProvider extends $FunctionalProvider<bool, bool, bool>
     with $Provider<bool> {
-  SsidDemandProvider._()
+  SuspendProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'ssidDemandProvider',
+        name: r'suspendProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$ssidDemandHash();
+  String debugGetCreateSourceHash() => _$suspendHash();
 
   @$internal
   @override
@@ -3165,7 +3165,7 @@ final class SsidDemandProvider extends $FunctionalProvider<bool, bool, bool>
 
   @override
   bool create(Ref ref) {
-    return ssidDemand(ref);
+    return suspend(ref);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -3177,4 +3177,4 @@ final class SsidDemandProvider extends $FunctionalProvider<bool, bool, bool>
   }
 }
 
-String _$ssidDemandHash() => r'349dc06e83db0a57fdb1623093054f622f3b67d5';
+String _$suspendHash() => r'9ab9210f4f3c70f63d9858d492a9c09b3fb24bf1';
