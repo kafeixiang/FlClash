@@ -52,9 +52,7 @@ class _OnDemandViewState extends ConsumerState<OnDemandView>
     }
     final needGo = await globalState.showMessage(
       title: appLocalizations.locationPermissionRequired,
-      message: TextSpan(
-        text: appLocalizations.locationPermissionDeniedMessage,
-      ),
+      message: TextSpan(text: appLocalizations.locationPermissionDeniedMessage),
       confirmText: appLocalizations.go,
     );
     if (needGo != true) {
@@ -77,7 +75,9 @@ class _OnDemandViewState extends ConsumerState<OnDemandView>
     final appLocalizations = context.appLocalizations;
     final newSSID = await globalState.showCommonDialog<String>(
       child: InputDialog(
-        title: ssid == null ? appLocalizations.addSsid : appLocalizations.editSsid,
+        title: ssid == null
+            ? appLocalizations.addSsid
+            : appLocalizations.editSsid,
         value: ssid ?? '',
         maxLength: 32,
         validator: (value) {
