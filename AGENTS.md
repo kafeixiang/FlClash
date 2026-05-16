@@ -31,6 +31,12 @@ bash plugins/setup/buildkit/run_build_tool.sh android
 ### Flutter Development
 
 ```bash
+# Project is pinned with FVM (.fvmrc currently uses Flutter 3.35.7)
+fvm flutter pub get
+fvm flutter run
+fvm flutter test
+
+# Plain Flutter also works when your global SDK matches the project constraints
 flutter pub get
 flutter run        # Run on connected device/desktop
 flutter test        # Run all tests (use flutter test, not dart test — models pull in Flutter types)
@@ -59,6 +65,8 @@ flutter test test/core/        # CoreController tests (mocked CoreHandlerInterfa
 flutter test test/providers/   # Riverpod provider tests (config & app state notifiers)
 flutter test test/common/      # Utility function tests (utils, string, iterable, fixed, etc.)
 flutter test test/database/    # Database type converter tests
+flutter test test/widgets/     # Widget-level rendering/interaction tests
+flutter test test/setup_test.dart
 ```
 
 **Mocking `CoreHandlerInterface`:** Use `CoreController.test(mock)` to inject a mock interface. Call
@@ -114,9 +122,13 @@ Providers are generated into `lib/providers/generated/`.
 
 ### Database (Drift/SQLite)
 
-Type-safe SQLite via Drift in `lib/database/`. Tables: `Profiles`, `Scripts`, `ProxyGroups`, `GlobalRules`,
-`ProfileAddedRules`, `ProfileCustomRules`, `ProfileDisabledRuleIds`, `Icons`, `Links`. Uses fractional indexing for
-ordering.
+Type-safe SQLite via Drift in `lib/database/`. Current schema version is 2. Tables are `Profiles`, `Scripts`, `Rules`,
+`ProfileRuleLinks` (`profile_rule_mapping`), `ProxyGroups`, and `IconRecords` (`icon_records`). Rule scenes distinguish
+global added rules, profile added rules, profile custom rules, and disabled links. Uses fractional indexing for rule and
+proxy-group ordering.
+
+Generated Drift output lives in `lib/database/generated/database.g.dart`. After schema changes, run code generation and
+add/update focused database tests under `test/database/` when converter or migration behavior changes.
 
 ### Manager Stack (Widget Tree)
 
