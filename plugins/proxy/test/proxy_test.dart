@@ -53,6 +53,93 @@ void main() {
         '[]',
       );
     });
+
+    test('builds MATE commands with MATE proxy schema', () {
+      final commands = Proxy.buildLinuxStartCommandsForTest(
+        port: 7890,
+        bypassDomain: ['localhost'],
+        desktop: 'MATE',
+        homeDir: '/home/user',
+      );
+
+      expect(
+        commands.any(
+          (command) => command.args.contains('org.mate.system.proxy'),
+        ),
+        isTrue,
+      );
+      expect(
+        commands.any(
+          (command) => command.args.contains('org.gnome.system.proxy'),
+        ),
+        isFalse,
+      );
+    });
+
+    test('falls back to GNOME gsettings commands for XFCE when available', () {
+      final commands = Proxy.buildLinuxStartCommandsForTest(
+        port: 7890,
+        bypassDomain: ['localhost'],
+        desktop: 'XFCE',
+        homeDir: '/home/user',
+        availableExecutables: {'gsettings'},
+      );
+
+      expect(commands.map((command) => command.executable).toSet(), {
+        'gsettings',
+      });
+      expect(
+        commands.any(
+          (command) =>
+              command.args.contains('org.gnome.system.proxy') &&
+              command.args.contains('manual'),
+        ),
+        isTrue,
+      );
+    });
+
+    test('prefers kwriteconfig6 for KDE when available', () {
+      final commands = Proxy.buildLinuxStartCommandsForTest(
+        port: 7890,
+        bypassDomain: ['localhost'],
+        desktop: 'KDE',
+        homeDir: '/home/user',
+        availableExecutables: {'kwriteconfig6', 'kwriteconfig5'},
+      );
+
+      expect(commands.map((command) => command.executable).toSet(), {
+        'kwriteconfig6',
+      });
+    });
+
+    test('falls back to kwriteconfig5 for KDE when kwriteconfig6 is missing',
+        () {
+      final commands = Proxy.buildLinuxStartCommandsForTest(
+        port: 7890,
+        bypassDomain: ['localhost'],
+        desktop: 'KDE',
+        homeDir: '/home/user',
+        availableExecutables: {'kwriteconfig5'},
+      );
+
+      expect(commands.map((command) => command.executable).toSet(), {
+        'kwriteconfig5',
+      });
+    });
+
+    test('uses available backend for unknown desktops', () {
+      final commands = Proxy.buildLinuxStartCommandsForTest(
+        port: 7890,
+        bypassDomain: ['localhost'],
+        desktop: 'UNKNOWN',
+        homeDir: '/home/user',
+        availableExecutables: {'kwriteconfig5'},
+      );
+
+      expect(commands.map((command) => command.executable).toSet(), {
+        'kwriteconfig5',
+      });
+    });
   });
 
   group('macOS proxy command builders', () {

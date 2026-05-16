@@ -33,7 +33,7 @@ Widget fadeAndSlideTransition(
       opacity: Tween(begin: 1.0, end: 0.0)
           .chain(CurveTween(curve: Curves.easeOutExpo))
           .animate(secondaryAnimation),
-      child: const CupertinoPageTransitionsBuilder().buildTransitions(
+      child: const CommonPageTransitionsBuilder().buildTransitions(
         ModalRoute.of(context) as PageRoute,
         context,
         animation,
