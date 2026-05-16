@@ -94,9 +94,13 @@ class _OnDemandViewState extends ConsumerState<OnDemandView>
     if (newSSID == null || ssid == newSSID) {
       return;
     }
-    globalState.container
-        .read(excludeSSIDsProvider.notifier)
-        .update((state) => [...state, newSSID]);
+    globalState.container.read(excludeSSIDsProvider.notifier).update((state) {
+      final newSSIDS = state.toSet();
+      if (ssid != null) {
+        newSSIDS.remove(ssid);
+      }
+      return [...newSSIDS, newSSID];
+    });
   }
 
   void _handleReorder(int oldIndex, newIndex) {

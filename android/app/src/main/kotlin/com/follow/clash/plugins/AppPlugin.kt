@@ -218,9 +218,7 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
 
     private fun openBatteryOptimizationSettings(): Boolean {
         return try {
-            val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
-                data = android.net.Uri.parse("package:${GlobalState.application.packageName}")
-            }
+            val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
             activityRef?.get()?.startActivity(intent)
             true
         } catch (_: Exception) {
