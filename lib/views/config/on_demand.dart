@@ -97,6 +97,27 @@ class _OnDemandViewState extends ConsumerState<OnDemandView> {
         .update((state) => [...state, newSSID]);
   }
 
+  Widget _buildItem({
+    required String ssid,
+    required int index,
+    required int length,
+  }) {
+    final position = ItemPosition.get(index, length);
+    return Padding(
+      key: ValueKey(ssid),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: ItemPositionProvider(
+        position: position,
+        child: DecorationListItem(
+          minVerticalPadding: 8,
+          title: TooltipText(
+            text: Text(ssid, maxLines: 2, overflow: TextOverflow.ellipsis),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final appLocalizations = context.appLocalizations;
@@ -106,6 +127,7 @@ class _OnDemandViewState extends ConsumerState<OnDemandView> {
     final batteryOptimizationDisable = ref.watch(
       batteryOptimizationDisableProvider,
     );
+    final excludeSSIDs = ref.watch(excludeSSIDsProvider);
     final locationPermissionsGranted = ref.watch(
       locationPermissionsProvider.select(
         (state) => state == WifiSsidPermission.granted,
@@ -200,21 +222,37 @@ class _OnDemandViewState extends ConsumerState<OnDemandView> {
               ),
             ),
           ),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-            ).copyWith(top: 12),
-            sliver: SliverToBoxAdapter(
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 0,
-                  vertical: 48,
+          if (excludeSSIDs.isEmpty)
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+              ).copyWith(top: 12),
+              sliver: SliverToBoxAdapter(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 0,
+                    vertical: 48,
+                  ),
+                  // type: CommonCardType.filled,
+                  child: NullStatus(label: appLocalizations.ssidsEmpty),
                 ),
-                // type: CommonCardType.filled,
-                child: NullStatus(label: appLocalizations.ssidsEmpty),
               ),
+            )
+          else
+            SliverReorderableList(
+              itemBuilder: (_, index) {
+                final ssid = excludeSSIDs[index];
+                return _buildItem(
+                  ssid: ssid,
+                  index: index,
+                  length: excludeSSIDs.length,
+                );
+              },
+              itemCount: excludeSSIDs.length,
+              onReorder: (int oldIndex, int newIndex) {
+                // _handleReorder(oldIndex, newIndex);
+              },
             ),
-          ),
         ],
       ),
       title: appLocalizations.onDemand,

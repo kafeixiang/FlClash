@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:animations/animations.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
@@ -391,7 +390,7 @@ class _AddOrEditProxyGroupNestedSheetState
                 child: PagedSheetRouteTheme(
                   data: const PagedSheetRouteThemeData(
                     transitionsBuilder: fadeAndSlideTransition,
-                    transitionDuration: Duration(milliseconds: 500),
+                    transitionDuration: Duration(milliseconds: 400),
                   ),
                   child: PagedSheet(
                     decoration: MaterialSheetDecoration(

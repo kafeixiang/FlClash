@@ -360,7 +360,7 @@ class _AddOrEditRuleNestedSheetState
                 child: PagedSheetRouteTheme(
                   data: const PagedSheetRouteThemeData(
                     transitionsBuilder: fadeAndSlideTransition,
-                    transitionDuration: Duration(milliseconds: 500),
+                    transitionDuration: Duration(milliseconds: 400),
                   ),
                   child: PagedSheet(
                     decoration: MaterialSheetDecoration(
