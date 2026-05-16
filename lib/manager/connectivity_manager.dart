@@ -33,7 +33,7 @@ class _ConnectivityManagerState extends State<ConnectivityManager> {
         WifiSsidManager.instance.getSsid().then((ssid) {
           globalState.container.read(currentSSIDProvider.notifier).value = ssid;
           if (ssid?.value != null) {
-            commonPrint.log('Wifi ssid $ssid', logLevel: LogLevel.info);
+            commonPrint.log('Wi-fi SSID $ssid: ', logLevel: LogLevel.info);
           }
         });
       } else {
