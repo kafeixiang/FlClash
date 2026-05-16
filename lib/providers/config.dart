@@ -118,6 +118,7 @@ Config _config(Ref ref) {
   final hotKeyActions = ref.watch(hotKeyActionsProvider);
   final proxiesStyleProps = ref.watch(proxiesStyleSettingProvider);
   final patchClashConfig = ref.watch(patchClashConfigProvider);
+  final excludeSSIDs = ref.watch(excludeSSIDsProvider);
   return Config(
     appSettingProps: appSettingProps,
     windowProps: windowProps,
@@ -130,6 +131,7 @@ Config _config(Ref ref) {
     hotKeyActions: hotKeyActions,
     proxiesStyleProps: proxiesStyleProps,
     patchClashConfig: patchClashConfig,
+    excludeSSIDs: excludeSSIDs,
   );
 }
 

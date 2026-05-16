@@ -16,7 +16,8 @@ class OnDemandView extends ConsumerStatefulWidget {
   ConsumerState createState() => _OnDemandViewState();
 }
 
-class _OnDemandViewState extends ConsumerState<OnDemandView> {
+class _OnDemandViewState extends ConsumerState<OnDemandView>
+    with UniqueKeyStateMixin {
   void _handlePermanentlyDeniedLocationPermission() {
     if (system.isMacOS) {
       final appLocalizations = context.appLocalizations;
@@ -76,8 +77,9 @@ class _OnDemandViewState extends ConsumerState<OnDemandView> {
     final appLocalizations = context.appLocalizations;
     final newSSID = await globalState.showCommonDialog<String>(
       child: InputDialog(
-        title: '请输入SSID',
-        value: '',
+        title: ssid == null ? '添加SSID' : '编辑SSID',
+        value: ssid ?? '',
+        maxLength: 32,
         validator: (value) {
           if (value == null || value.isEmpty) {
             return appLocalizations.emptyTip('SSID').trim();
@@ -97,25 +99,72 @@ class _OnDemandViewState extends ConsumerState<OnDemandView> {
         .update((state) => [...state, newSSID]);
   }
 
+  void _handleReorder(int oldIndex, newIndex) {
+    globalState.container.read(excludeSSIDsProvider.notifier).update((value) {
+      final nextItems = List<String>.from(value);
+      if (oldIndex < newIndex) {
+        newIndex -= 1;
+      }
+      final item = nextItems.removeAt(oldIndex);
+      nextItems.insert(newIndex, item);
+      return nextItems;
+    });
+  }
+
   Widget _buildItem({
     required String ssid,
     required int index,
     required int length,
+    required bool isSelected,
+    required bool isEditing,
   }) {
     final position = ItemPosition.get(index, length);
-    return Padding(
+    return ReorderableDelayedDragStartListener(
       key: ValueKey(ssid),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: ItemPositionProvider(
-        position: position,
-        child: DecorationListItem(
-          minVerticalPadding: 8,
-          title: TooltipText(
-            text: Text(ssid, maxLines: 2, overflow: TextOverflow.ellipsis),
+      index: index,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: ItemPositionProvider(
+          position: position,
+          child: SelectedDecorationListItem(
+            isEditing: isEditing,
+            minVerticalPadding: 8,
+            title: TooltipText(
+              text: Text(ssid, maxLines: 2, overflow: TextOverflow.ellipsis),
+            ),
+            isSelected: isSelected,
+            onSelected: () {
+              ref.read(itemsProvider(key).notifier).update((state) {
+                final newState = Set<String>.from(state)..addOrRemove(ssid);
+                return newState;
+              });
+            },
+            onPressed: () {
+              _handleAddOrUpdate(ssid);
+            },
           ),
         ),
       ),
     );
+  }
+
+  void _handleSelectAll() {
+    final excludeSSIDs = ref.read(excludeSSIDsProvider).toSet();
+    ref.read(itemsProvider(key).notifier).update((selected) {
+      return selected.containsAll(excludeSSIDs) ? {} : excludeSSIDs;
+    });
+  }
+
+  void _handleDelete() {
+    final selectedItems = ref.read(itemsProvider(key));
+    globalState.container.read(excludeSSIDsProvider.notifier).update((
+      excludeSSIDs,
+    ) {
+      return excludeSSIDs
+          .where((item) => !selectedItems.contains(item))
+          .toList();
+    });
+    ref.read(itemsProvider(key).notifier).value = {};
   }
 
   @override
@@ -133,6 +182,7 @@ class _OnDemandViewState extends ConsumerState<OnDemandView> {
         (state) => state == WifiSsidPermission.granted,
       ),
     );
+    final selectedItems = ref.watch(itemsProvider(key));
     return CommonScaffold(
       body: CustomScrollView(
         slivers: [
@@ -212,11 +262,25 @@ class _OnDemandViewState extends ConsumerState<OnDemandView> {
                 title: appLocalizations.excludeSsids,
                 subTitle: appLocalizations.excludeSsidsDesc,
                 actions: [
-                  CommonMinFilledButtonTheme(
-                    child: FilledButton.tonal(
-                      onPressed: _handleAddOrUpdate,
-                      child: Text(appLocalizations.add),
+                  const SizedBox(width: 8),
+                  if (selectedItems.isNotEmpty)
+                    CommonMinIconButtonTheme(
+                      child: IconButton.filledTonal(
+                        onPressed: _handleDelete,
+                        icon: const Icon(Icons.delete),
+                      ),
                     ),
+                  const SizedBox(width: 2),
+                  CommonMinFilledButtonTheme(
+                    child: selectedItems.isNotEmpty
+                        ? FilledButton(
+                            onPressed: _handleSelectAll,
+                            child: Text(appLocalizations.selectAll),
+                          )
+                        : FilledButton.tonal(
+                            onPressed: _handleAddOrUpdate,
+                            child: Text(appLocalizations.add),
+                          ),
                   ),
                 ],
               ),
@@ -233,25 +297,41 @@ class _OnDemandViewState extends ConsumerState<OnDemandView> {
                     horizontal: 0,
                     vertical: 48,
                   ),
-                  // type: CommonCardType.filled,
                   child: NullStatus(label: appLocalizations.ssidsEmpty),
                 ),
               ),
             )
           else
-            SliverReorderableList(
-              itemBuilder: (_, index) {
-                final ssid = excludeSSIDs[index];
-                return _buildItem(
-                  ssid: ssid,
-                  index: index,
-                  length: excludeSSIDs.length,
-                );
-              },
-              itemCount: excludeSSIDs.length,
-              onReorder: (int oldIndex, int newIndex) {
-                // _handleReorder(oldIndex, newIndex);
-              },
+            SliverPadding(
+              padding: const EdgeInsets.only(top: 12),
+              sliver: SliverReorderableList(
+                itemBuilder: (_, index) {
+                  final ssid = excludeSSIDs[index];
+                  return _buildItem(
+                    isEditing: selectedItems.isNotEmpty,
+                    ssid: ssid,
+                    index: index,
+                    isSelected: selectedItems.contains(ssid),
+                    length: excludeSSIDs.length,
+                  );
+                },
+                proxyDecorator: (child, index, animation) {
+                  final ssid = excludeSSIDs[index];
+                  return commonProxyDecorator(
+                    _buildItem(
+                      isEditing: selectedItems.isNotEmpty,
+                      ssid: ssid,
+                      index: index,
+                      isSelected: selectedItems.contains(ssid),
+                      length: excludeSSIDs.length,
+                    ),
+                    index,
+                    animation,
+                  );
+                },
+                itemCount: excludeSSIDs.length,
+                onReorder: _handleReorder,
+              ),
             ),
         ],
       ),

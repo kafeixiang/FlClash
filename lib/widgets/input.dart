@@ -101,6 +101,7 @@ class InputDialog extends StatefulWidget {
   final FormFieldValidator<String>? validator;
   final AutovalidateMode? autovalidateMode;
   final bool? obscureText;
+  final int? maxLength;
 
   const InputDialog({
     super.key,
@@ -112,6 +113,7 @@ class InputDialog extends StatefulWidget {
     this.validator,
     this.obscureText,
     this.labelText,
+    this.maxLength,
     this.autovalidateMode = AutovalidateMode.onUserInteraction,
   });
 
@@ -186,6 +188,7 @@ class _InputDialogState extends State<InputDialog> {
           runSpacing: 16,
           children: [
             TextFormField(
+              maxLength: widget.maxLength,
               obscureText: widget.obscureText ?? false,
               keyboardType: TextInputType.url,
               maxLines: widget.obscureText == true ? 1 : 5,
