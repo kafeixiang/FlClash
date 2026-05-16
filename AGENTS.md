@@ -67,7 +67,12 @@ flutter test test/common/      # Utility function tests (utils, string, iterable
 flutter test test/database/    # Database type converter tests
 flutter test test/widgets/     # Widget-level rendering/interaction tests
 flutter test test/setup_test.dart
+flutter test plugins/proxy/test/proxy_test.dart  # Dart tests for bundled plugin packages
 ```
+
+Root `flutter test` only discovers the root package's `test/` directory by default. Include bundled plugin Dart tests by
+passing their paths explicitly, or run `flutter test` from that plugin package directory. Native plugin tests under
+platform folders (for example Windows C++ tests) are not run by `flutter test`.
 
 **Mocking `CoreHandlerInterface`:** Use `CoreController.test(mock)` to inject a mock interface. Call
 `CoreController.resetInstance()` in `tearDown` to clean up the singleton between tests. Remember to
