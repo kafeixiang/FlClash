@@ -10,7 +10,7 @@ add_dependencies(${BINARY_NAME} setup_buildkit_build)
 # Project root is one level up from this plugin's CMakeLists.txt
 get_filename_component(PROJECT_ROOT "${CMAKE_SOURCE_DIR}" DIRECTORY)
 
-set(setup_bundled_libraries
-  "${PROJECT_ROOT}/libclash/linux/FlClashCore"
-  PARENT_SCOPE
+install(FILES "${PROJECT_ROOT}/libclash/linux/FlClashCore"
+  DESTINATION "${CMAKE_BINARY_DIR}/bundle"
+  COMPONENT Runtime
 )
