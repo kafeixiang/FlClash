@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
 import android.os.Build
 import androidx.annotation.NonNull
@@ -119,11 +118,6 @@ class WifiSsidPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             result.success(PERMISSION_GRANTED)
             return
         }
-        if (!ActivityCompat.shouldShowRequestPermissionRationale(act, Manifest.permission.ACCESS_FINE_LOCATION) &&
-            ContextCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // First time or permanently denied — try requesting
-        }
         pendingPermissionResult = result
         ActivityCompat.requestPermissions(act, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_CODE_LOCATION)
     }
@@ -131,6 +125,11 @@ class WifiSsidPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     // MARK: - SSID
 
     private fun getSsid(result: Result) {
+        val wm = wifiManager ?: run {
+            result.error("UNAVAILABLE", "WifiManager not available", null)
+            return
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val cm = connectivityManager ?: run {
                 result.error("UNAVAILABLE", "ConnectivityManager not available", null)
@@ -146,17 +145,11 @@ class WifiSsidPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 result.success(null)
                 return
             }
-            val info = caps.transportInfo as? WifiInfo
-            result.success(normalizeSsid(info?.ssid))
-        } else {
-            val wm = wifiManager ?: run {
-                result.error("UNAVAILABLE", "WifiManager not available", null)
-                return
-            }
-            @Suppress("DEPRECATION")
-            val info = wm.connectionInfo
-            result.success(normalizeSsid(info.ssid))
         }
+
+        @Suppress("DEPRECATION")
+        val info = wm.connectionInfo
+        result.success(normalizeSsid(info.ssid))
     }
 
     private fun normalizeSsid(ssid: String?): String? {

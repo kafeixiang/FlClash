@@ -327,7 +327,7 @@ static gchar* get_ssid_from_nmcli() {
   return ssid;
 }
 
-static FlMethodResponse* get_ssid() {
+static gchar* get_ssid_value() {
   g_autofree gchar* ssid = get_ssid_from_network_manager();
   if (ssid == nullptr || strlen(ssid) == 0) {
     g_clear_pointer(&ssid, g_free);
@@ -343,12 +343,35 @@ static FlMethodResponse* get_ssid() {
   }
 
   if (ssid == nullptr || strlen(ssid) == 0) {
-    return FL_METHOD_RESPONSE(
-        fl_method_success_response_new(fl_value_new_null()));
+    return nullptr;
   }
 
-  FlValue* result = fl_value_new_string(ssid);
-  return FL_METHOD_RESPONSE(fl_method_success_response_new(result));
+  return g_steal_pointer(&ssid);
+}
+
+static void get_ssid_task(GTask* task, gpointer source_object,
+                          gpointer task_data, GCancellable* cancellable) {
+  g_task_return_pointer(task, get_ssid_value(), g_free);
+}
+
+static void get_ssid_done(GObject* source_object, GAsyncResult* result,
+                          gpointer user_data) {
+  FlMethodCall* method_call = FL_METHOD_CALL(user_data);
+  g_autoptr(GError) error = nullptr;
+  g_autofree gchar* ssid =
+      static_cast<gchar*>(g_task_propagate_pointer(G_TASK(result), &error));
+
+  g_autoptr(FlMethodResponse) response = nullptr;
+  if (error != nullptr || ssid == nullptr || strlen(ssid) == 0) {
+    response = FL_METHOD_RESPONSE(
+        fl_method_success_response_new(fl_value_new_null()));
+  } else {
+    response = FL_METHOD_RESPONSE(
+        fl_method_success_response_new(fl_value_new_string(ssid)));
+  }
+
+  fl_method_call_respond(method_call, response, nullptr);
+  g_object_unref(method_call);
 }
 
 static void wifi_ssid_plugin_handle_method_call(WifiSsidPlugin* self,
@@ -357,7 +380,10 @@ static void wifi_ssid_plugin_handle_method_call(WifiSsidPlugin* self,
   const gchar* method = fl_method_call_get_name(method_call);
 
   if (strcmp(method, "getSsid") == 0) {
-    response = get_ssid();
+    g_autoptr(GTask) task =
+        g_task_new(nullptr, nullptr, get_ssid_done, g_object_ref(method_call));
+    g_task_run_in_thread(task, get_ssid_task);
+    return;
   } else if (strcmp(method, "checkPermission") == 0 || strcmp(method, "requestPermission") == 0) {
     // Linux does not require location permission for WiFi SSID
     response = FL_METHOD_RESPONSE(

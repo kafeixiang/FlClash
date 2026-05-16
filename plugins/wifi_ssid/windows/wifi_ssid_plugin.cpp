@@ -17,46 +17,78 @@ namespace wifi_ssid {
 
 namespace {
 
-enum class SsidQueryStatus {
-  kSuccess,
-  kNoSsid,
-  kAccessDenied,
-  kError,
-};
-
-struct SsidQueryResult {
-  SsidQueryStatus status;
-  std::string ssid;
-  DWORD error_code;
-};
-
 std::unique_ptr<
     flutter::MethodChannel<flutter::EncodableValue>,
     std::default_delete<flutter::MethodChannel<flutter::EncodableValue>>>
     channel = nullptr;
 
 constexpr int kPermissionGranted = 0;
-constexpr int kPermissionDenied = 1;
 
-SsidQueryResult QuerySsid() {
+}  // namespace
+
+void WifiSsidPlugin::RegisterWithRegistrar(
+    flutter::PluginRegistrarWindows *registrar) {
+  channel =
+      std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
+          registrar->messenger(), "wifi_ssid",
+          &flutter::StandardMethodCodec::GetInstance());
+
+  auto plugin = std::make_unique<WifiSsidPlugin>();
+
+  channel->SetMethodCallHandler(
+      [plugin_pointer = plugin.get()](const auto &call, auto result) {
+        plugin_pointer->HandleMethodCall(call, std::move(result));
+      });
+
+  registrar->AddPlugin(std::move(plugin));
+}
+
+WifiSsidPlugin::WifiSsidPlugin() {}
+
+WifiSsidPlugin::~WifiSsidPlugin() {}
+
+void WifiSsidPlugin::HandleMethodCall(
+    const flutter::MethodCall<flutter::EncodableValue> &method_call,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+  if (method_call.method_name().compare("getSsid") == 0) {
+    GetSsid(std::move(result));
+  } else if (method_call.method_name().compare("checkPermission") == 0 ||
+             method_call.method_name().compare("requestPermission") == 0) {
+    result->Success(flutter::EncodableValue(kPermissionGranted));
+  } else {
+    result->NotImplemented();
+  }
+}
+
+void WifiSsidPlugin::GetSsid(
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
   HANDLE hClient = nullptr;
   DWORD dwMaxClient = 2;
   DWORD dwCurVersion = 0;
   DWORD dwResult =
       WlanOpenHandle(dwMaxClient, nullptr, &dwCurVersion, &hClient);
+  if (dwResult == ERROR_ACCESS_DENIED) {
+    result->Success(flutter::EncodableValue());
+    return;
+  }
   if (dwResult != ERROR_SUCCESS) {
-    return {dwResult == ERROR_ACCESS_DENIED ? SsidQueryStatus::kAccessDenied
-                                            : SsidQueryStatus::kError,
-            "", dwResult};
+    result->Error("WLAN_ERROR", "Failed to open WLAN handle",
+                  flutter::EncodableValue(static_cast<int>(dwResult)));
+    return;
   }
 
   PWLAN_INTERFACE_INFO_LIST pIfList = nullptr;
   dwResult = WlanEnumInterfaces(hClient, nullptr, &pIfList);
+  if (dwResult == ERROR_ACCESS_DENIED) {
+    WlanCloseHandle(hClient, nullptr);
+    result->Success(flutter::EncodableValue());
+    return;
+  }
   if (dwResult != ERROR_SUCCESS) {
     WlanCloseHandle(hClient, nullptr);
-    return {dwResult == ERROR_ACCESS_DENIED ? SsidQueryStatus::kAccessDenied
-                                            : SsidQueryStatus::kError,
-            "", dwResult};
+    result->Error("WLAN_ERROR", "Failed to enumerate WLAN interfaces",
+                  flutter::EncodableValue(static_cast<int>(dwResult)));
+    return;
   }
 
   std::string ssid;
@@ -95,74 +127,12 @@ SsidQueryResult QuerySsid() {
   WlanFreeMemory(pIfList);
   WlanCloseHandle(hClient, nullptr);
 
-  if (query_error == ERROR_ACCESS_DENIED) {
-    return {SsidQueryStatus::kAccessDenied, "", query_error};
-  }
-
-  if (ssid.empty()) {
-    return {SsidQueryStatus::kNoSsid, "", query_error};
-  }
-
-  return {SsidQueryStatus::kSuccess, ssid, ERROR_SUCCESS};
-}
-
-}  // namespace
-
-void WifiSsidPlugin::RegisterWithRegistrar(
-    flutter::PluginRegistrarWindows *registrar) {
-  channel =
-      std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
-          registrar->messenger(), "wifi_ssid",
-          &flutter::StandardMethodCodec::GetInstance());
-
-  auto plugin = std::make_unique<WifiSsidPlugin>();
-
-  channel->SetMethodCallHandler(
-      [plugin_pointer = plugin.get()](const auto &call, auto result) {
-        plugin_pointer->HandleMethodCall(call, std::move(result));
-      });
-
-  registrar->AddPlugin(std::move(plugin));
-}
-
-WifiSsidPlugin::WifiSsidPlugin() {}
-
-WifiSsidPlugin::~WifiSsidPlugin() {}
-
-void WifiSsidPlugin::HandleMethodCall(
-    const flutter::MethodCall<flutter::EncodableValue> &method_call,
-    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
-  if (method_call.method_name().compare("getSsid") == 0) {
-    GetSsid(std::move(result));
-  } else if (method_call.method_name().compare("checkPermission") == 0 ||
-             method_call.method_name().compare("requestPermission") == 0) {
-    const auto query_result = QuerySsid();
-    const bool denied =
-        query_result.status == SsidQueryStatus::kAccessDenied;
-    result->Success(flutter::EncodableValue(
-        denied ? kPermissionDenied : kPermissionGranted));
-  } else {
-    result->NotImplemented();
-  }
-}
-
-void WifiSsidPlugin::GetSsid(
-    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
-  const auto query_result = QuerySsid();
-  if (query_result.status == SsidQueryStatus::kSuccess) {
-    result->Success(flutter::EncodableValue(query_result.ssid));
-    return;
-  }
-
-  if (query_result.status == SsidQueryStatus::kNoSsid ||
-      query_result.status == SsidQueryStatus::kAccessDenied) {
+  if (query_error == ERROR_ACCESS_DENIED || ssid.empty()) {
     result->Success(flutter::EncodableValue());
     return;
   }
 
-  result->Error("WLAN_ERROR", "Failed to query current WiFi SSID",
-                flutter::EncodableValue(
-                    static_cast<int>(query_result.error_code)));
+  result->Success(flutter::EncodableValue(ssid));
 }
 
 }  // namespace wifi_ssid
