@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fl_clash/common/tray.dart';
 import 'package:test/test.dart';
 
@@ -16,14 +18,18 @@ void main() {
     test('returns normal mode icon when core is started without TUN', () {
       expect(
         tray.getTryIcon(isStart: true, tunEnable: false),
-        'assets/images/icon/status_2.$suffix',
+        Platform.isMacOS
+            ? 'assets/images/icon/status_1.$suffix'
+            : 'assets/images/icon/status_2.$suffix',
       );
     });
 
     test('returns enhanced mode icon when core is started with TUN', () {
       expect(
         tray.getTryIcon(isStart: true, tunEnable: true),
-        'assets/images/icon/status_3.$suffix',
+        Platform.isMacOS
+            ? 'assets/images/icon/status_1.$suffix'
+            : 'assets/images/icon/status_3.$suffix',
       );
     });
   });
