@@ -15,12 +15,6 @@ if not exist "%PROJECT_DIR%\core\" (
     exit /b 1
 )
 
-set DEBUG_MODE=0
-if /I "%BUILDKIT_CONFIGURATION%"=="Debug" set DEBUG_MODE=1
-if "%DEBUG_MODE%"=="1" (
-    taskkill /F /IM FlClashHelperService.exe >nul 2>&1
-)
-
 SET BUILD_TOOL_PKG_DIR=%BASEDIR%build_tool
 SET BUILD_TOOL_TEMP_DIR=%PROJECT_DIR%\build\setup_build_tool
 

@@ -154,6 +154,11 @@ class BuildWindowsCommand extends BuildCommand {
     _log.info('Build mode: ${debug ? 'debug' : 'release'}');
 
     if (debug) {
+      await Process.run('taskkill', [
+        '/F',
+        '/IM',
+        '${config.helperName}${targets.first.executableExtension}',
+      ]);
       final rustBuilder = RustBuilder(rootDir: _rootDir, config: config);
       await rustBuilder.build(targets.first, '', release: false);
     } else {
