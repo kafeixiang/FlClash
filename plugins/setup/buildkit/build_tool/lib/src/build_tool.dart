@@ -5,6 +5,7 @@ import 'package:args/command_runner.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 
+import 'environment.dart';
 import 'error.dart';
 import 'go_builder.dart';
 import 'logging.dart';
