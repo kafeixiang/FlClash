@@ -23,17 +23,19 @@ function(apply_buildkit)
   if(WIN32)
     set(_output "${PROJECT_ROOT}/libclash/windows/FlClashCore.exe")
     set(_platform_args "windows")
-    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-       list(APPEND _platform_args "--dev")
-    endif()
   else()
     set(_output "${PROJECT_ROOT}/libclash/linux/FlClashCore")
     set(_platform_args "linux")
   endif()
 
+  set(BUILDKIT_ENV
+    "BUILDKIT_CONFIGURATION=$<CONFIG>"
+  )
+
   add_custom_command(
     OUTPUT ${_output}
-    COMMAND "${_launcher}" ${_platform_args}
+    COMMAND ${CMAKE_COMMAND} -E env ${BUILDKIT_ENV}
+    "${_launcher}" ${_platform_args}
     WORKING_DIRECTORY "${PROJECT_ROOT}"
     COMMENT "Building Go core via buildkit..."
     VERBATIM

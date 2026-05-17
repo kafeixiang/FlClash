@@ -104,9 +104,8 @@ class BuildLinuxCommand extends BuildCommand {
     final config = BuildConfig.load(rootDir: _rootDir);
 
     final arch = archName ?? await _hostGoArch();
-    final targets = Target.forPlatform('linux')
-        .where((t) => t.goarch == arch)
-        .toList();
+    final targets =
+        Target.forPlatform('linux').where((t) => t.goarch == arch).toList();
 
     if (targets.isEmpty) {
       throw BuildException('Invalid arch: $arch');
@@ -126,10 +125,6 @@ class BuildWindowsCommand extends BuildCommand {
       valueHelp: 'amd64,arm64',
       help: 'Target architecture (default: auto-detect)',
     );
-    argParser.addFlag(
-      'dev',
-      help: 'Dev mode: skip SHA256, build helper in debug mode (for flutter run)',
-    );
   }
 
   @override
@@ -141,13 +136,12 @@ class BuildWindowsCommand extends BuildCommand {
   @override
   Future<void> runBuildCommand() async {
     final archName = argResults?['arch'] as String?;
-    final dev = argResults?['dev'] as bool? ?? false;
+    final debug = Environment.isDebug;
     final config = BuildConfig.load(rootDir: _rootDir);
 
     final arch = archName ?? await _hostGoArch();
-    final targets = Target.forPlatform('windows')
-        .where((t) => t.goarch == arch)
-        .toList();
+    final targets =
+        Target.forPlatform('windows').where((t) => t.goarch == arch).toList();
 
     if (targets.isEmpty) {
       throw BuildException('Invalid arch: $arch');
@@ -156,9 +150,9 @@ class BuildWindowsCommand extends BuildCommand {
     final goBuilder = GoBuilder(rootDir: _rootDir, config: config);
     final corePaths = await goBuilder.buildAll(targets);
 
-    _log.info('Build mode: ${dev ? 'dev' : 'stable'}');
+    _log.info('Build mode: ${debug ? 'debug' : 'release'}');
 
-    if (dev) {
+    if (debug) {
       final rustBuilder = RustBuilder(rootDir: _rootDir, config: config);
       await rustBuilder.build(targets.first, '', release: false);
     } else {
@@ -194,9 +188,8 @@ class BuildMacosCommand extends BuildCommand {
     final config = BuildConfig.load(rootDir: _rootDir);
 
     final arch = archName ?? await _hostGoArch();
-    final targets = Target.forPlatform('darwin')
-        .where((t) => t.goarch == arch)
-        .toList();
+    final targets =
+        Target.forPlatform('darwin').where((t) => t.goarch == arch).toList();
 
     if (targets.isEmpty) {
       throw BuildException('Invalid arch: $arch');
@@ -219,9 +212,10 @@ Future<void> runMain(List<String> args) async {
         valueHelp: '<path>',
         help: 'Project root directory (default: auto-detect)',
       )
-      ..addCommand(BuildAndroidCommand())..addCommand(
-          BuildLinuxCommand())..addCommand(BuildWindowsCommand())..addCommand(
-          BuildMacosCommand());
+      ..addCommand(BuildAndroidCommand())
+      ..addCommand(BuildLinuxCommand())
+      ..addCommand(BuildWindowsCommand())
+      ..addCommand(BuildMacosCommand());
 
     final topResults = runner.parse(args);
     _rootDir = (topResults['root-dir'] as String?) ?? _findProjectRoot();

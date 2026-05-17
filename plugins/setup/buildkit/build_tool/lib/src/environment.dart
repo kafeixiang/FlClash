@@ -17,7 +17,9 @@ String _get(String key, {String? defaultValue}) {
 class Environment {
   static String get androidNdk => _require('ANDROID_NDK');
   static String get appEnv => _get('APP_ENV', defaultValue: 'pre');
-  static String get buildMode => _get('BUILD_MODE', defaultValue: 'core');
+  static String get configuration =>
+      _get('BUILDKIT_CONFIGURATION', defaultValue: 'Release').toLowerCase();
+  static bool get isDebug => configuration == 'debug';
 
   static String get hostOs {
     if (Platform.isWindows) return 'windows';
