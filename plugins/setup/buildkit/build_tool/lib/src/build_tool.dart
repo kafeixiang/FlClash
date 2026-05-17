@@ -156,6 +156,8 @@ class BuildWindowsCommand extends BuildCommand {
     final goBuilder = GoBuilder(rootDir: _rootDir, config: config);
     final corePaths = await goBuilder.buildAll(targets);
 
+    _log.info('Build mode: ${dev ? 'dev' : 'stable'}');
+
     if (dev) {
       final rustBuilder = RustBuilder(rootDir: _rootDir, config: config);
       await rustBuilder.build(targets.first, '', release: false);
@@ -217,10 +219,9 @@ Future<void> runMain(List<String> args) async {
         valueHelp: '<path>',
         help: 'Project root directory (default: auto-detect)',
       )
-      ..addCommand(BuildAndroidCommand())
-      ..addCommand(BuildLinuxCommand())
-      ..addCommand(BuildWindowsCommand())
-      ..addCommand(BuildMacosCommand());
+      ..addCommand(BuildAndroidCommand())..addCommand(
+          BuildLinuxCommand())..addCommand(BuildWindowsCommand())..addCommand(
+          BuildMacosCommand());
 
     final topResults = runner.parse(args);
     _rootDir = (topResults['root-dir'] as String?) ?? _findProjectRoot();
