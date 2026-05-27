@@ -78,12 +78,13 @@ class KeepAliveIntervalItem extends ConsumerWidget {
     return ListItem.input(
       leading: const Icon(Icons.timer_outlined),
       title: Text(appLocalizations.keepAliveIntervalDesc),
-      subtitle: Text('$keepAliveInterval ${appLocalizations.seconds}'),
+      subtitle: Text(appLocalizations.secondsCount(keepAliveInterval)),
       delegate: InputDelegate(
         title: appLocalizations.keepAliveIntervalDesc,
         suffixText: appLocalizations.seconds,
         resetValue: '$defaultKeepAliveInterval',
         value: '$keepAliveInterval',
+        maxLength: TextInputLimits.interval,
         validator: (String? value) {
           if (value == null || value.isEmpty) {
             return appLocalizations.emptyTip(appLocalizations.interval);
@@ -125,6 +126,7 @@ class TestUrlItem extends ConsumerWidget {
         resetValue: defaultTestUrl,
         title: appLocalizations.testUrl,
         value: testUrl,
+        maxLength: TextInputLimits.url,
         validator: (String? value) {
           if (value == null || value.isEmpty) {
             return appLocalizations.emptyTip(appLocalizations.testUrl);
@@ -219,6 +221,8 @@ class HostsItem extends ConsumerWidget {
         widget: MapInputPage(
           title: 'Hosts',
           map: hosts,
+          keyMaxLength: TextInputLimits.domain,
+          valueMaxLength: TextInputLimits.hostValue,
           titleBuilder: (item) => Text(item.key),
           subtitleBuilder: (item) => Text(item.value),
         ),
@@ -610,9 +614,12 @@ class _PortDialogState extends ConsumerState<_PortDialog> {
               spacing: 24,
               children: [
                 TextFormField(
-                  keyboardType: TextInputType.url,
+                  keyboardType: TextInputType.number,
                   maxLines: 1,
                   minLines: 1,
+                  inputFormatters: TextInputLimits.digitsOnly(
+                    TextInputLimits.port,
+                  ),
                   controller: _mixedPortController,
                   onFieldSubmitted: (_) {
                     _handleUpdate();
@@ -652,9 +659,12 @@ class _PortDialogState extends ConsumerState<_PortDialog> {
                 ),
                 if (_isMore) ...[
                   TextFormField(
-                    keyboardType: TextInputType.url,
+                    keyboardType: TextInputType.number,
                     maxLines: 1,
                     minLines: 1,
+                    inputFormatters: TextInputLimits.digitsOnly(
+                      TextInputLimits.port,
+                    ),
                     controller: _portController,
                     onFieldSubmitted: (_) {
                       _handleUpdate();
@@ -692,9 +702,12 @@ class _PortDialogState extends ConsumerState<_PortDialog> {
                     },
                   ),
                   TextFormField(
-                    keyboardType: TextInputType.url,
+                    keyboardType: TextInputType.number,
                     maxLines: 1,
                     minLines: 1,
+                    inputFormatters: TextInputLimits.digitsOnly(
+                      TextInputLimits.port,
+                    ),
                     controller: _socksPortController,
                     onFieldSubmitted: (_) {
                       _handleUpdate();
@@ -736,9 +749,12 @@ class _PortDialogState extends ConsumerState<_PortDialog> {
                     },
                   ),
                   TextFormField(
-                    keyboardType: TextInputType.url,
+                    keyboardType: TextInputType.number,
                     maxLines: 1,
                     minLines: 1,
+                    inputFormatters: TextInputLimits.digitsOnly(
+                      TextInputLimits.port,
+                    ),
                     controller: _redirPortController,
                     onFieldSubmitted: (_) {
                       _handleUpdate();
@@ -780,9 +796,12 @@ class _PortDialogState extends ConsumerState<_PortDialog> {
                     },
                   ),
                   TextFormField(
-                    keyboardType: TextInputType.url,
+                    keyboardType: TextInputType.number,
                     maxLines: 1,
                     minLines: 1,
+                    inputFormatters: TextInputLimits.digitsOnly(
+                      TextInputLimits.port,
+                    ),
                     controller: _tProxyPortController,
                     onFieldSubmitted: (_) {
                       _handleUpdate();

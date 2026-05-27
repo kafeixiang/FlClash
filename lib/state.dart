@@ -112,6 +112,9 @@ class GlobalState {
           WidgetsBinding.instance.platformDispatcher.locale,
     );
     await window?.init(version, config.windowProps);
+    if (system.isAndroid) {
+      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    }
     return container;
   }
 
@@ -302,10 +305,12 @@ class GlobalState {
 
   Future<void> _initApp() async {
     FlutterError.onError = (details) {
-      commonPrint.log(
-        'exception: ${details.exception} stack: ${details.stack}',
-        logLevel: LogLevel.warning,
-      );
+      Future.microtask(() {
+        commonPrint.log(
+          'exception: ${details.exception} stack: ${details.stack}',
+          logLevel: LogLevel.warning,
+        );
+      });
     };
     container.read(systemActionProvider.notifier).updateTray();
     container.read(profilesActionProvider.notifier).autoUpdateProfiles();

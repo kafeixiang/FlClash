@@ -17,6 +17,79 @@ T roundTrip<T>(
 }
 
 void main() {
+  group('GeoResource JSON', () {
+    test('exposes lowercase GeoResource values', () {
+      expect(GeoResource.MMDB.value, 'mmdb');
+      expect(GeoResource.ASN.value, 'asn');
+      expect(GeoResource.GEOIP.value, 'geo-ip');
+      expect(GeoResource.GEOSITE.value, 'geo-site');
+    });
+
+    test('parses current lowercase GeoResource keys from config JSON', () {
+      final config = PatchClashConfig.fromJson({
+        'geox-url': {
+          'mmdb': 'https://example.com/mmdb',
+          'asn': 'https://example.com/asn.mmdb',
+          'geo-ip': 'https://example.com/geoip.dat',
+          'geo-site': 'https://example.com/geosite.dat',
+        },
+      });
+
+      expect(config.geoXUrl, {
+        GeoResource.MMDB: 'https://example.com/mmdb',
+        GeoResource.ASN: 'https://example.com/asn.mmdb',
+        GeoResource.GEOIP: 'https://example.com/geoip.dat',
+        GeoResource.GEOSITE: 'https://example.com/geosite.dat',
+      });
+    });
+
+    test('parses legacy GeoResource keys from config JSON', () {
+      final config = PatchClashConfig.fromJson({
+        'geox-url': {
+          'geoip': 'https://example.com/legacy-geoip.dat',
+          'geosite': 'https://example.com/legacy-geosite.dat',
+        },
+      });
+
+      expect(config.geoXUrl, {
+        GeoResource.GEOIP: 'https://example.com/legacy-geoip.dat',
+        GeoResource.GEOSITE: 'https://example.com/legacy-geosite.dat',
+      });
+    });
+
+    test('GeoXUrl defaults use GeoResource keys', () {
+      expect(defaultGeoXUrl.keys, GeoResource.values);
+    });
+
+    test('PatchClashConfig serializes geoXUrl map with lowercase keys', () {
+      final json = const PatchClashConfig(
+        geoXUrl: {GeoResource.GEOIP: 'https://example.com/geoip.dat'},
+      ).toJson();
+
+      expect(json['geox-url'], {'geo-ip': 'https://example.com/geoip.dat'});
+    });
+
+    test('converts geoXUrl map to raw config map', () {
+      const geoXUrl = {
+        GeoResource.MMDB: 'https://example.com/mmdb',
+        GeoResource.GEOSITE: 'https://example.com/geosite.dat',
+      };
+
+      expect(geoXUrl.raw, {
+        'mmdb': 'https://example.com/mmdb',
+        'geo-site': 'https://example.com/geosite.dat',
+      });
+    });
+
+    test('PatchClashConfig parses geoXUrl map with GeoResource keys', () {
+      final config = PatchClashConfig.fromJson({
+        'geox-url': {'mmdb': 'https://example.com/mmdb'},
+      });
+
+      expect(config.geoXUrl, {GeoResource.MMDB: 'https://example.com/mmdb'});
+    });
+  });
+
   group('AppSettingProps JSON round-trip', () {
     test('default values survive round-trip', () {
       const props = AppSettingProps();
@@ -159,6 +232,41 @@ void main() {
       expect(restored.systemProxy, false);
       expect(restored.bypassDomain, ['example.com']);
       expect(restored.routeMode, RouteMode.bypassPrivate);
+    });
+  });
+
+  group('PatchClashConfig JSON round-trip', () {
+    test('defaults match Clash patch defaults', () {
+      const config = PatchClashConfig();
+
+      expect(config.mixedPort, defaultMixedPort);
+      expect(config.allowLan, false);
+      expect(config.mode, Mode.rule);
+      expect(config.externalController, ExternalControllerStatus.close);
+      expect(config.geodataLoader, GeodataLoader.memconservative);
+    });
+
+    test('custom values survive round-trip', () {
+      const config = PatchClashConfig(
+        mixedPort: 7890,
+        allowLan: true,
+        mode: Mode.rule,
+        logLevel: LogLevel.debug,
+        externalController: ExternalControllerStatus.open,
+        geodataLoader: GeodataLoader.memconservative,
+      );
+
+      final restored = roundTrip(
+        () => config.toJson(),
+        PatchClashConfig.fromJson,
+      );
+
+      expect(restored.mixedPort, 7890);
+      expect(restored.allowLan, true);
+      expect(restored.mode, Mode.rule);
+      expect(restored.logLevel, LogLevel.debug);
+      expect(restored.externalController, ExternalControllerStatus.open);
+      expect(restored.geodataLoader, GeodataLoader.memconservative);
     });
   });
 
