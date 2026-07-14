@@ -4,17 +4,27 @@ on:
     tags:
       - 'trigger-*'
   workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *' # 每天自动检查更新
 
 jobs:
   update-dependencies:
     runs-on: ubuntu-latest
     steps:
+      - name: Generate Token
+        uses: tibdex/github-app-token@v2
+        id: generate-token
+        with:
+          app_id: ${{ secrets.MAINTAINER_APPID }}
+          private_key: ${{ secrets.MAINTAINER_APP_PRIVATE_KEY }}
+
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           ref: dev-core
           submodules: recursive
           fetch-depth: 0
+          token: ${{ steps.generate-token.outputs.token }}
 
       - name: Update submodules
         run: |
@@ -36,13 +46,6 @@ jobs:
           cd core
           update-go-mod-replace ./Clash.Meta/go.mod ./go.mod
           go mod tidy
-
-      - name: Generate Token
-        uses: tibdex/github-app-token@v2
-        id: generate-token
-        with:
-          app_id: ${{ secrets.MAINTAINER_APPID }}
-          private_key: ${{ secrets.MAINTAINER_APP_PRIVATE_KEY }}
 
       - name: Sync and Push or Prepare PR
         id: sync
