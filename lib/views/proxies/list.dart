@@ -125,7 +125,9 @@ class _ProxiesListViewState extends State<ProxiesListView> {
       final isExpand = currentUnfoldSet.contains(groupName);
       items.addAll([
         ListHeader(
-          onScrollToSelected: _scrollToGroupSelected,
+          onScrollToSelected: (groupName) {
+            _scrollToGroupSelected(groupName, columns);
+          },
           isExpand: isExpand,
           group: group,
           onChange: (String groupName) {
@@ -174,6 +176,7 @@ class _ProxiesListViewState extends State<ProxiesListView> {
     WidgetRef ref, {
     required Group group,
     required Set<String> currentUnfoldSet,
+    required int columns,
   }) {
     final groupName = group.name;
     final isExpand = currentUnfoldSet.contains(groupName);
@@ -181,7 +184,9 @@ class _ProxiesListViewState extends State<ProxiesListView> {
       height: listHeaderHeight,
       child: ListHeader(
         enterAnimated: false,
-        onScrollToSelected: _scrollToGroupSelected,
+        onScrollToSelected: (groupName) {
+          _scrollToGroupSelected(groupName, columns);
+        },
         key: Key(groupName),
         isExpand: isExpand,
         group: group,
@@ -254,7 +259,7 @@ class _ProxiesListViewState extends State<ProxiesListView> {
     );
   }
 
-  void _scrollToGroupSelected(String groupName) {
+  void _scrollToGroupSelected(String groupName, int columns) {
     final currentInitOffset = _getGroupOffset(groupName);
     final currentGroups = getCurrentGroups();
     final proxies = currentGroups.getGroup(groupName)?.all;
@@ -264,6 +269,7 @@ class _ProxiesListViewState extends State<ProxiesListView> {
           getScrollToSelectedOffset(
             groupName: groupName,
             proxies: proxies ?? [],
+            columns: columns,
           ),
     );
   }
@@ -288,87 +294,99 @@ class _ProxiesListViewState extends State<ProxiesListView> {
       builder: (_, ref, _) {
         final state = ref.watch(proxiesListStateProvider);
         ref.watch(themeSettingProvider.select((state) => state.textScale));
+        final proxiesLayout = ref.watch(
+          proxiesStyleSettingProvider.select((state) => state.layout),
+        );
         if (state.groups.isEmpty) {
           return NullStatus(
             illustration: const ProxyEmptyIllustration(),
             label: appLocalizations.nullTip(appLocalizations.proxies),
           );
         }
-        final items = _buildItems(
-          ref,
-          groups: state.groups,
-          currentUnfoldSet: state.currentUnfoldSet,
-          columns: state.columns,
-          cardType: state.proxyCardType,
-        );
-        final itemsOffset = _getItemHeightList(items, state.proxyCardType);
-        return CommonScrollBar(
-          controller: _controller,
-          thumbVisibility: true,
-          trackVisibility: true,
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: ScrollConfiguration(
-                  behavior: HiddenBarScrollBehavior(),
-                  child: ListView.builder(
-                    key: proxiesListStoreKey,
-                    padding: const EdgeInsets.all(16),
-                    controller: _controller,
-                    itemExtentBuilder: (index, _) {
-                      return itemsOffset[index];
-                    },
-                    itemCount: items.length,
-                    itemBuilder: (_, index) {
-                      return items[index];
-                    },
+        return LayoutBuilder(
+          builder: (_, constraints) {
+            final columns = utils.getProxiesColumns(
+              max(constraints.maxWidth - 32, 0),
+              proxiesLayout,
+            );
+            final items = _buildItems(
+              ref,
+              groups: state.groups,
+              currentUnfoldSet: state.currentUnfoldSet,
+              columns: columns,
+              cardType: state.proxyCardType,
+            );
+            final itemsOffset = _getItemHeightList(items, state.proxyCardType);
+            return CommonScrollBar(
+              controller: _controller,
+              thumbVisibility: true,
+              trackVisibility: true,
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: ScrollConfiguration(
+                      behavior: HiddenBarScrollBehavior(),
+                      child: ListView.builder(
+                        key: proxiesListStoreKey,
+                        padding: const EdgeInsets.all(16),
+                        controller: _controller,
+                        itemExtentBuilder: (index, _) {
+                          return itemsOffset[index];
+                        },
+                        itemCount: items.length,
+                        itemBuilder: (_, index) {
+                          return items[index];
+                        },
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              LayoutBuilder(
-                builder: (_, container) {
-                  containerHeight = container.maxHeight;
-                  return ValueListenableBuilder(
-                    valueListenable: _headerStateNotifier,
-                    builder: (_, headerState, _) {
-                      if (headerState == null) {
-                        return const SizedBox();
-                      }
-                      final index =
-                          headerState.currentIndex > state.groups.length - 1
-                          ? 0
-                          : headerState.currentIndex;
-                      if (index < 0 || state.groups.isEmpty) {
-                        return Container();
-                      }
-                      return Stack(
-                        children: [
-                          Positioned(
-                            top: -headerState.offset,
-                            child: Container(
-                              width: container.maxWidth,
-                              color: context.colorScheme.surface,
-                              padding: const EdgeInsets.only(
-                                top: 16,
-                                left: 16,
-                                right: 16,
-                                bottom: 8,
+                  LayoutBuilder(
+                    builder: (_, container) {
+                      containerHeight = container.maxHeight;
+                      return ValueListenableBuilder(
+                        valueListenable: _headerStateNotifier,
+                        builder: (_, headerState, _) {
+                          if (headerState == null) {
+                            return const SizedBox();
+                          }
+                          final index =
+                              headerState.currentIndex > state.groups.length - 1
+                              ? 0
+                              : headerState.currentIndex;
+                          if (index < 0 || state.groups.isEmpty) {
+                            return Container();
+                          }
+                          return Stack(
+                            children: [
+                              Positioned(
+                                top: -headerState.offset,
+                                child: Container(
+                                  width: container.maxWidth,
+                                  color: context.colorScheme.surface,
+                                  padding: const EdgeInsets.only(
+                                    top: 16,
+                                    left: 16,
+                                    right: 16,
+                                    bottom: 8,
+                                  ),
+                                  child: _buildHeader(
+                                    ref,
+                                    group: state.groups[index],
+                                    currentUnfoldSet: state.currentUnfoldSet,
+                                    columns: columns,
+                                  ),
+                                ),
                               ),
-                              child: _buildHeader(
-                                ref,
-                                group: state.groups[index],
-                                currentUnfoldSet: state.currentUnfoldSet,
-                              ),
-                            ),
-                          ),
-                        ],
+                            ],
+                          );
+                        },
                       );
                     },
-                  );
-                },
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );

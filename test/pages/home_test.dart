@@ -3,6 +3,8 @@ import 'package:fl_clash/common/theme.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/manager/app_manager.dart';
+import 'package:fl_clash/manager/theme_manager.dart';
+import 'package:fl_clash/manager/window_manager.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/pages/home.dart';
 import 'package:fl_clash/providers/providers.dart';
@@ -171,6 +173,48 @@ void main() {
   );
 
   testWidgets(
+    'profile trailing controls stay valid while a maximized window restores',
+    (tester) async {
+      tester.view.physicalSize = const Size(1440, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final profile = Profile.normal();
+      final container = ProviderContainer(
+        overrides: [
+          profilesProvider.overrideWith(() => _HomeTestProfiles([profile])),
+          currentProfileIdProvider.overrideWithBuild((_, _) => profile.id),
+          versionProvider.overrideWithBuild((_, _) => 15),
+        ],
+      );
+      addTearDown(container.dispose);
+      globalState.container = container;
+      container
+          .read(currentPageLabelProvider.notifier)
+          .toPage(PageLabel.profiles);
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: const _TestApp(
+            child: ThemeManager(
+              child: WindowHeaderContainer(child: HomePage()),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+      expect(tester.takeException(), isNull);
+
+      tester.view.physicalSize = const Size(380, 900);
+      await tester.pump(const Duration(milliseconds: 16));
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
     'desktop navigation keeps the tools route when logs are enabled',
     (tester) async {
       tester.view.physicalSize = const Size(1400, 1000);
@@ -268,4 +312,13 @@ class _StatefulContentState extends State<_StatefulContent> {
       ),
     );
   }
+}
+
+class _HomeTestProfiles extends Profiles {
+  final List<Profile> initial;
+
+  _HomeTestProfiles(this.initial);
+
+  @override
+  List<Profile> build() => initial;
 }

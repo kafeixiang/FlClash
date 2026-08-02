@@ -23,7 +23,7 @@ void main() {
     final container = ProviderContainer(
       overrides: [
         dashboardStateProvider.overrideWithValue(
-          const DashboardState(dashboardWidgets: [], contentWidth: 1600),
+          const DashboardState(dashboardWidgets: []),
         ),
       ],
     );

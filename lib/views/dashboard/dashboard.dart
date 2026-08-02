@@ -135,10 +135,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   @override
   Widget build(BuildContext context) {
     final dashboardState = ref.watch(dashboardStateProvider);
-    final columns = min(
-      max(4 * ((dashboardState.contentWidth / 280).ceil()), 8),
-      _maxCrossAxisCount,
-    );
     final spacing = 14.mAp;
     final children = [
       ...dashboardState.dashboardWidgets
@@ -170,31 +166,39 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
               alignment: Alignment.topCenter,
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: _maxGridWidth),
-                child: isEdit
-                    ? SystemBackBlock(
-                        child: CommonPopScope(
-                          child: SuperGrid(
-                            key: key,
+                child: LayoutBuilder(
+                  builder: (_, constraints) {
+                    final columns = min(
+                      max(4 * ((constraints.maxWidth / 280).ceil()), 8),
+                      _maxCrossAxisCount,
+                    );
+                    return isEdit
+                        ? SystemBackBlock(
+                            child: CommonPopScope(
+                              child: SuperGrid(
+                                key: key,
+                                crossAxisCount: columns,
+                                crossAxisSpacing: spacing,
+                                mainAxisSpacing: spacing,
+                                children: children,
+                                onUpdate: () {
+                                  _handleSave();
+                                },
+                              ),
+                              onPop: (context) {
+                                _handleUpdateIsEdit();
+                                return false;
+                              },
+                            ),
+                          )
+                        : Grid(
                             crossAxisCount: columns,
                             crossAxisSpacing: spacing,
                             mainAxisSpacing: spacing,
                             children: children,
-                            onUpdate: () {
-                              _handleSave();
-                            },
-                          ),
-                          onPop: (context) {
-                            _handleUpdateIsEdit();
-                            return false;
-                          },
-                        ),
-                      )
-                    : Grid(
-                        crossAxisCount: columns,
-                        crossAxisSpacing: spacing,
-                        mainAxisSpacing: spacing,
-                        children: children,
-                      ),
+                          );
+                  },
+                ),
               ),
             ),
           ),

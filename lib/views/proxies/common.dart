@@ -94,9 +94,9 @@ Future<void> delayTest(List<Proxy> proxies, [String? testUrl]) async {
 double getScrollToSelectedOffset({
   required String groupName,
   required List<Proxy> proxies,
+  required int columns,
 }) {
   final ref = globalState.container;
-  final columns = ref.read(proxiesColumnsProvider);
   final proxyCardType = ref.read(
     proxiesStyleSettingProvider.select((state) => state.cardType),
   );
