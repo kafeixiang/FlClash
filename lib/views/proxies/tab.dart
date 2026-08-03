@@ -216,9 +216,6 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
                     dividerColor: Colors.transparent,
                     isScrollable: true,
                     tabAlignment: TabAlignment.start,
-                    overlayColor: const WidgetStatePropertyAll(
-                      Colors.transparent,
-                    ),
                     tabs: [
                       for (final group in groups)
                         Tab(

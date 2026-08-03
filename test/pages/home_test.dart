@@ -14,6 +14,7 @@ import 'package:fl_clash/views/tools.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -257,6 +258,251 @@ void main() {
 
       expect(container.read(appSettingProvider).openLogs, isTrue);
       expect(find.byType(ApplicationSettingView), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'desktop navigation is keyboard-reachable and activates destinations',
+    (tester) async {
+      tester.view.physicalSize = const Size(1200, 800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final container = ProviderContainer(
+        overrides: [
+          navigationItemsStateProvider.overrideWithValue(
+            NavigationItemsState(
+              value: [
+                NavigationItem(
+                  icon: const Icon(Icons.space_dashboard),
+                  label: PageLabel.dashboard,
+                  builder: (_) => const SizedBox.shrink(),
+                ),
+                NavigationItem(
+                  icon: const Icon(Icons.construction),
+                  label: PageLabel.tools,
+                  builder: (_) => const SizedBox.shrink(),
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+      globalState.container = container;
+      container.read(viewSizeProvider.notifier).value = const Size(1200, 800);
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: const _TestApp(child: HomePage()),
+        ),
+      );
+      await tester.pump();
+      expect(find.byType(NavigationRail), findsOneWidget);
+
+      bool focusInRail() {
+        final context = FocusManager.instance.primaryFocus?.context;
+        return context?.findAncestorWidgetOfExactType<NavigationRail>() != null;
+      }
+
+      for (var i = 0; i < 30 && !focusInRail(); i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+      }
+      expect(focusInRail(), isTrue);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pump();
+
+      expect(container.read(currentPageLabelProvider), PageLabel.tools);
+      final rail = tester.widget<NavigationRail>(find.byType(NavigationRail));
+      expect(rail.selectedIndex, 1);
+    },
+  );
+
+  testWidgets('mobile bottom navigation keeps page and highlight consistent', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(500, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final container = ProviderContainer(
+      overrides: [
+        navigationItemsStateProvider.overrideWithValue(
+          NavigationItemsState(
+            value: [
+              NavigationItem(
+                icon: const Icon(Icons.space_dashboard),
+                label: PageLabel.dashboard,
+                builder: (_) => const Text('page:dashboard'),
+              ),
+              NavigationItem(
+                icon: const Icon(Icons.folder),
+                label: PageLabel.profiles,
+                builder: (_) => const Text('page:profiles'),
+              ),
+              NavigationItem(
+                icon: const Icon(Icons.construction),
+                label: PageLabel.tools,
+                builder: (_) => const Text('page:tools'),
+              ),
+              NavigationItem(
+                icon: const Icon(Icons.article),
+                label: PageLabel.logs,
+                builder: (_) => const Text('page:logs'),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+    addTearDown(container.dispose);
+    globalState.container = container;
+    container.read(viewSizeProvider.notifier).value = const Size(500, 800);
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const _TestApp(child: HomePage()),
+      ),
+    );
+    await tester.pump();
+    expect(find.byType(NavigationBar), findsOneWidget);
+
+    NavigationBar navBar() =>
+        tester.widget<NavigationBar>(find.byType(NavigationBar));
+
+    await tester.tap(find.byIcon(Icons.construction));
+    await tester.pumpAndSettle();
+    expect(container.read(currentPageLabelProvider), PageLabel.tools);
+    expect(navBar().selectedIndex, 2);
+    expect(find.text('page:tools'), findsOneWidget);
+
+    bool focusInNav() {
+      final context = FocusManager.instance.primaryFocus?.context;
+      return context?.findAncestorWidgetOfExactType<NavigationBar>() != null;
+    }
+
+    for (var i = 0; i < 20 && !focusInNav(); i++) {
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pump();
+    }
+    expect(focusInNav(), isTrue);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(container.read(currentPageLabelProvider), PageLabel.profiles);
+    expect(navBar().selectedIndex, 1);
+    expect(find.text('page:profiles'), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.construction));
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.tap(find.byIcon(Icons.article));
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.tap(find.byIcon(Icons.folder));
+    await tester.pumpAndSettle();
+    expect(container.read(currentPageLabelProvider), PageLabel.profiles);
+    expect(navBar().selectedIndex, 1);
+    expect(find.text('page:profiles'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+    'desktop tabbing past page content does not scroll the PageView',
+    (tester) async {
+      tester.view.physicalSize = const Size(1200, 800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      Widget pageContent(String label) {
+        return Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('page:$label'),
+              const SizedBox(height: 16),
+              TextButton(onPressed: () {}, child: const Text('button')),
+            ],
+          ),
+        );
+      }
+
+      final container = ProviderContainer(
+        overrides: [
+          navigationItemsStateProvider.overrideWithValue(
+            NavigationItemsState(
+              value: [
+                NavigationItem(
+                  icon: const Icon(Icons.space_dashboard),
+                  label: PageLabel.dashboard,
+                  builder: (_) => pageContent('dashboard'),
+                ),
+                NavigationItem(
+                  icon: const Icon(Icons.folder),
+                  label: PageLabel.profiles,
+                  builder: (_) => pageContent('profiles'),
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+      globalState.container = container;
+      container.read(viewSizeProvider.notifier).value = const Size(1200, 800);
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: const _TestApp(child: HomePage()),
+        ),
+      );
+      await tester.pump();
+      expect(find.byType(NavigationRail), findsOneWidget);
+
+      Finder railIcon(IconData icon) => find.descendant(
+        of: find.byType(NavigationRail),
+        matching: find.byIcon(icon),
+      );
+
+      // Visit another page so its content stays alive in the PageView cache.
+      await tester.tap(railIcon(Icons.folder));
+      await tester.pumpAndSettle();
+      expect(container.read(currentPageLabelProvider), PageLabel.profiles);
+      await tester.tap(railIcon(Icons.space_dashboard));
+      await tester.pumpAndSettle();
+      expect(container.read(currentPageLabelProvider), PageLabel.dashboard);
+
+      bool focusInRail() {
+        final context = FocusManager.instance.primaryFocus?.context;
+        return context?.findAncestorWidgetOfExactType<NavigationRail>() != null;
+      }
+
+      for (var i = 0; i < 40 && !focusInRail(); i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+        expect(
+          container.read(currentPageLabelProvider),
+          PageLabel.dashboard,
+          reason: 'tab $i flipped the page',
+        );
+      }
+      expect(focusInRail(), isTrue);
+      expect(
+        find.text('page:profiles').hitTestable(),
+        findsNothing,
+        reason: 'focus traversal scrolled the PageView to another page',
+      );
       expect(tester.takeException(), isNull);
     },
   );
