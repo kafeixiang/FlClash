@@ -54,7 +54,7 @@ class HomePage extends StatelessWidget {
                   Flexible(
                     flex: 1,
                     child: FocusTraversalGroup(
-                      policy: EscapingReadingOrderTraversalPolicy(),
+                      policy: PageTraversalPolicy(),
                       child: MediaQuery.removePadding(
                         removeTop: false,
                         removeBottom: isMobile,
@@ -90,16 +90,17 @@ class HomePage extends StatelessWidget {
                   pageBuilder: (_, index) {
                     final navigationItem = navigationItems[index];
                     final navigationView = navigationItem.builder(context);
+                    final scopedView = PageFocusScope(child: navigationView);
                     final view = KeepScope(
                       key: ValueKey(navigationItem.label),
                       keep: navigationItem.keep,
                       child: isMobile
-                          ? navigationView
+                          ? scopedView
                           : Navigator(
                               key: ValueKey(
                                 '${navigationItem.label.name}_navigator',
                               ),
-                              pages: [MaterialPage(child: navigationView)],
+                              pages: [MaterialPage(child: scopedView)],
                               onDidRemovePage: (_) {},
                             ),
                     );
