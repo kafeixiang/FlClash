@@ -105,4 +105,63 @@ class ProxiesAction extends _$ProxiesAction {
       ref.read(isUpdatingProvider(provider.updatingKey).notifier).value = false;
     }
   }
+
+  Future<String> sideLoadExternalProvider(
+    ExternalProvider provider,
+    String data,
+  ) async {
+    final message = await coreController.sideLoadExternalProvider(
+      providerName: provider.name,
+      data: data,
+    );
+    if (message.isNotEmpty) return message;
+    ref
+        .read(providersProvider.notifier)
+        .setProvider(await coreController.getExternalProvider(provider.name));
+    return '';
+  }
+
+  Future<void> proxyDelayTest(Proxy proxy, [String? testUrl]) async {
+    final groups = ref.read(groupsProvider);
+    final selectedMap = ref.read(
+      currentProfileProvider.select((state) => state?.selectedMap ?? {}),
+    );
+    final state = computeRealSelectedProxyState(
+      proxy.name,
+      groups: groups,
+      selectedMap: selectedMap,
+    );
+    final currentTestUrl = state.testUrl.takeFirstValid([
+      ref.read(realTestUrlProvider(testUrl)),
+    ]);
+    if (state.proxyName.isEmpty) {
+      return;
+    }
+    setDelay(Delay(url: currentTestUrl, name: state.proxyName, value: 0));
+    try {
+      final delay = await coreController.getDelay(
+        currentTestUrl,
+        state.proxyName,
+      );
+      setDelay(delay);
+    } catch (error) {
+      commonPrint.log(
+        'Delay test failed for ${state.proxyName}: $error',
+        logLevel: LogLevel.error,
+      );
+      setDelay(Delay(url: currentTestUrl, name: state.proxyName, value: -1));
+    }
+  }
+
+  Future<void> delayTest(List<Proxy> proxies, [String? testUrl]) async {
+    final batches = proxies.batch(100);
+    for (final batch in batches) {
+      await Future.wait(
+        batch.map((proxy) async {
+          await proxyDelayTest(proxy, testUrl);
+        }),
+      );
+    }
+    ref.read(sortNumProvider.notifier).add();
+  }
 }

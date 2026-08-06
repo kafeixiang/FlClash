@@ -33,6 +33,10 @@ class ProfilesAction extends _$ProfilesAction {
     }
   }
 
+  Future<String> validateConfigWithData(String data) async {
+    return coreController.validateConfigWithData(data);
+  }
+
   Future<void> autoUpdateProfiles() async {
     for (final profile in ref.read(profilesProvider)) {
       if (!profile.autoUpdate) continue;

@@ -4,7 +4,6 @@ import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/common.dart';
 import 'package:fl_clash/providers/providers.dart';
-import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -66,7 +65,9 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
     if (group == null) {
       return;
     }
-    await delayTest(group.all, group.testUrl);
+    await ref
+        .read(proxiesActionProvider.notifier)
+        .delayTest(group.all, group.testUrl);
   }
 
   Group? get currentGroup {
@@ -124,7 +125,9 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
                             );
                             if (index == -1) return;
                             _tabController?.animateTo(index);
-                            updateCurrentGroupName(groupName);
+                            ref
+                                .read(proxiesActionProvider.notifier)
+                                .updateCurrentGroupName(groupName);
                             Navigator.of(context).pop();
                           },
                           isSelected: groupName == currentGroupName,
@@ -150,7 +153,9 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
       if (!mounted) {
         return;
       }
-      updateCurrentGroupName(group.name);
+      ref
+          .read(proxiesActionProvider.notifier)
+          .updateCurrentGroupName(group.name);
     });
   }
 
@@ -306,7 +311,7 @@ class _ProxyGroupViewState extends ConsumerState<ProxyGroupView> {
   }
 
   PageStorageKey _getPageStorageKey() {
-    final profile = globalState.container.read(currentProfileProvider);
+    final profile = ref.read(currentProfileProvider);
     final key =
         '${profile?.id}_${ScrollPositionCacheKey.proxiesTabList.name}_${widget.group.name}';
     return ProxiesTabView.pageListStoreMap.updateCacheValue(
@@ -329,6 +334,7 @@ class _ProxyGroupViewState extends ConsumerState<ProxyGroupView> {
       min(
         16 +
             getScrollToSelectedOffset(
+              ref: ref,
               groupName: widget.group.name,
               proxies: widget.group.all,
               columns: widget.columns,

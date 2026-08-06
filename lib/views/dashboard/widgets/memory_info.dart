@@ -4,23 +4,26 @@ import 'dart:io';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/core/controller.dart';
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/providers/action.dart';
 import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final _memoryStateNotifier = ValueNotifier<num>(0);
 
-class MemoryInfo extends StatefulWidget {
+class MemoryInfo extends ConsumerStatefulWidget {
   final Future<num> Function()? memoryReader;
 
   const MemoryInfo({super.key, @visibleForTesting this.memoryReader});
 
   @override
-  State<MemoryInfo> createState() => _MemoryInfoState();
+  ConsumerState<MemoryInfo> createState() => _MemoryInfoState();
 }
 
-class _MemoryInfoState extends State<MemoryInfo> with WidgetsBindingObserver {
+class _MemoryInfoState extends ConsumerState<MemoryInfo>
+    with WidgetsBindingObserver {
   Timer? _timer;
   bool _isForeground = false;
   bool _isUpdating = false;
@@ -82,7 +85,7 @@ class _MemoryInfoState extends State<MemoryInfo> with WidgetsBindingObserver {
     final memoryReader = widget.memoryReader;
     final memory = memoryReader != null
         ? await memoryReader()
-        : await _readMemory();
+        : await _readMemory(ref);
     if (!mounted ||
         !_isForeground ||
         !_isUpdating ||
@@ -113,7 +116,7 @@ class _MemoryInfoState extends State<MemoryInfo> with WidgetsBindingObserver {
             label: appLocalizations.memoryInfo,
           ),
           onPressed: () {
-            coreController.requestGc();
+            ref.read(coreActionProvider.notifier).requestGc();
           },
           child: Container(
             padding: baseInfoEdgeInsets.copyWith(top: 0),
@@ -156,10 +159,9 @@ class _MemoryInfoState extends State<MemoryInfo> with WidgetsBindingObserver {
   }
 }
 
-Future<num> _readMemory() async {
+Future<num> _readMemory(WidgetRef ref) async {
   final rss = ProcessInfo.currentRss;
-  final coreConnected =
-      globalState.container.read(coreStatusProvider) == CoreStatus.connected;
+  final coreConnected = ref.read(coreStatusProvider) == CoreStatus.connected;
   if (system.isDesktop && coreConnected) {
     return await coreController.getMemory() + rss;
   }

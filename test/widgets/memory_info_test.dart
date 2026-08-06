@@ -1,13 +1,10 @@
 import 'dart:async';
 
-import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/common/theme.dart';
-import 'package:fl_clash/l10n/l10n.dart';
-import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/dashboard/widgets/memory_info.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../helpers/test_app.dart';
 
 void main() {
   testWidgets('MemoryInfo refreshes only while the app is resumed', (
@@ -22,7 +19,10 @@ void main() {
 
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
     await tester.pumpWidget(
-      _TestApp(child: MemoryInfo(memoryReader: readMemory)),
+      TestApp(
+        child: MemoryInfo(memoryReader: readMemory),
+        homeBuilder: (child) => Scaffold(body: child),
+      ),
     );
     await tester.pump();
 
@@ -64,7 +64,10 @@ void main() {
 
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
     await tester.pumpWidget(
-      _TestApp(child: MemoryInfo(memoryReader: readMemory)),
+      TestApp(
+        child: MemoryInfo(memoryReader: readMemory),
+        homeBuilder: (child) => Scaffold(body: child),
+      ),
     );
     await tester.pump();
 
@@ -86,30 +89,4 @@ void main() {
     await tester.pump();
     await tester.pumpWidget(const SizedBox.shrink());
   });
-}
-
-class _TestApp extends StatelessWidget {
-  final Widget child;
-
-  const _TestApp({required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: globalState.navigatorKey,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ],
-      supportedLocales: AppLocalizations.delegate.supportedLocales,
-      builder: (context, child) {
-        globalState.measure = Measure.of(context, 1);
-        globalState.theme = CommonTheme.of(context, 1);
-        return child!;
-      },
-      home: Scaffold(body: child),
-    );
-  }
 }

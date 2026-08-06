@@ -13,14 +13,14 @@ import 'add.dart';
 import 'edit.dart';
 import 'preview.dart';
 
-class ProfilesView extends StatefulWidget {
+class ProfilesView extends ConsumerStatefulWidget {
   const ProfilesView({super.key});
 
   @override
-  State<ProfilesView> createState() => _ProfilesViewState();
+  ConsumerState<ProfilesView> createState() => _ProfilesViewState();
 }
 
-class _ProfilesViewState extends State<ProfilesView> {
+class _ProfilesViewState extends ConsumerState<ProfilesView> {
   Function? applyConfigDebounce;
   bool _isUpdating = false;
 
@@ -65,7 +65,7 @@ class _ProfilesViewState extends State<ProfilesView> {
     final updateProfiles = profiles.map<Future>((profile) async {
       if (profile.type == ProfileType.file) return;
       try {
-        await globalState.container
+        await ref
             .read(profilesActionProvider.notifier)
             .updateProfile(profile, showLoading: true);
       } catch (e) {
@@ -180,7 +180,7 @@ class _ProfilesViewState extends State<ProfilesView> {
   }
 }
 
-class ProfileItem extends StatelessWidget {
+class ProfileItem extends ConsumerWidget {
   final Profile profile;
   final int? groupValue;
   final void Function(int? value) onChanged;
@@ -192,7 +192,7 @@ class ProfileItem extends StatelessWidget {
     required this.onChanged,
   });
 
-  Future<void> _handleDeleteProfile(BuildContext context) async {
+  Future<void> _handleDeleteProfile(BuildContext context, WidgetRef ref) async {
     final appLocalizations = context.appLocalizations;
     final res = await globalState.showMessage(
       title: appLocalizations.tip,
@@ -203,19 +203,17 @@ class ProfileItem extends StatelessWidget {
     if (res != true) {
       return;
     }
-    await globalState.container
-        .read(profilesActionProvider.notifier)
-        .deleteProfile(profile.id);
+    await ref.read(profilesActionProvider.notifier).deleteProfile(profile.id);
   }
 
   Future<void> _handlePreview(BuildContext context) async {
     BaseNavigator.push<String>(context, PreviewProfileView(profile: profile));
   }
 
-  Future updateProfile() async {
+  Future updateProfile(WidgetRef ref) async {
     if (profile.type == ProfileType.file) return;
     await globalState.loadingRun(() async {
-      await globalState.container
+      await ref
           .read(profilesActionProvider.notifier)
           .updateProfile(profile, showLoading: true);
     }, tag: LoadingTag.profiles);
@@ -284,7 +282,7 @@ class ProfileItem extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final appLocalizations = context.appLocalizations;
     return CommonCard(
       enterActionsOnRight: true,
@@ -334,7 +332,7 @@ class ProfileItem extends StatelessWidget {
                                 icon: Icons.sync_alt_sharp,
                                 label: appLocalizations.sync,
                                 onPressed: () {
-                                  updateProfile();
+                                  updateProfile(ref);
                                 },
                               ),
                             ],
@@ -375,7 +373,7 @@ class ProfileItem extends StatelessWidget {
                               icon: Icons.delete_outlined,
                               label: appLocalizations.delete,
                               onPressed: () {
-                                _handleDeleteProfile(context);
+                                _handleDeleteProfile(context, ref);
                               },
                             ),
                           ],
@@ -452,17 +450,18 @@ class LastUpdateTimeText extends StatelessWidget {
   }
 }
 
-class ReorderableProfilesSheet extends StatefulWidget {
+class ReorderableProfilesSheet extends ConsumerStatefulWidget {
   final List<Profile> profiles;
 
   const ReorderableProfilesSheet({super.key, required this.profiles});
 
   @override
-  State<ReorderableProfilesSheet> createState() =>
+  ConsumerState<ReorderableProfilesSheet> createState() =>
       _ReorderableProfilesSheetState();
 }
 
-class _ReorderableProfilesSheetState extends State<ReorderableProfilesSheet> {
+class _ReorderableProfilesSheetState
+    extends ConsumerState<ReorderableProfilesSheet> {
   late List<Profile> profiles;
 
   @override
@@ -489,7 +488,7 @@ class _ReorderableProfilesSheetState extends State<ReorderableProfilesSheet> {
 
   void _handleSave() {
     Navigator.of(context).pop();
-    globalState.container.read(profilesProvider.notifier).reorder(profiles);
+    ref.read(profilesProvider.notifier).reorder(profiles);
   }
 
   @override

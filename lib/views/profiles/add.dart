@@ -4,40 +4,35 @@ import 'package:fl_clash/providers/action.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AddProfileView extends StatelessWidget {
+class AddProfileView extends ConsumerWidget {
   final BuildContext context;
 
   const AddProfileView({super.key, required this.context});
 
-  Future<void> _handleAddProfileFormFile() async {
-    globalState.container
-        .read(profilesActionProvider.notifier)
-        .addProfileFormFile();
+  Future<void> _handleAddProfileFormFile(WidgetRef ref) async {
+    ref.read(profilesActionProvider.notifier).addProfileFormFile();
   }
 
-  Future<void> _handleAddProfileFormURL(String url) async {
-    globalState.container
-        .read(profilesActionProvider.notifier)
-        .addProfileFormURL(url);
+  Future<void> _handleAddProfileFormURL(WidgetRef ref, String url) async {
+    ref.read(profilesActionProvider.notifier).addProfileFormURL(url);
   }
 
-  Future<void> _toScan() async {
+  Future<void> _toScan(WidgetRef ref) async {
     if (system.isDesktop) {
-      globalState.container
-          .read(profilesActionProvider.notifier)
-          .addProfileFormQrCode();
+      ref.read(profilesActionProvider.notifier).addProfileFormQrCode();
       return;
     }
     final url = await BaseNavigator.push(context, const ScanPage());
     if (url != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _handleAddProfileFormURL(url);
+        _handleAddProfileFormURL(ref, url);
       });
     }
   }
 
-  Future<void> _toAdd() async {
+  Future<void> _toAdd(WidgetRef ref) async {
     final appLocalizations = context.appLocalizations;
     final url = await globalState.showCommonDialog<String>(
       child: InputDialog(
@@ -58,12 +53,12 @@ class AddProfileView extends StatelessWidget {
       ),
     );
     if (url != null) {
-      _handleAddProfileFormURL(url);
+      _handleAddProfileFormURL(ref, url);
     }
   }
 
   @override
-  Widget build(context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final appLocalizations = context.appLocalizations;
     return ListView(
       children: [
@@ -71,19 +66,19 @@ class AddProfileView extends StatelessWidget {
           leading: const Icon(Icons.qr_code_sharp),
           title: Text(appLocalizations.qrcode),
           subtitle: Text(appLocalizations.qrcodeDesc),
-          onTap: _toScan,
+          onTap: () => _toScan(ref),
         ),
         ListItem(
           leading: const Icon(Icons.upload_file_sharp),
           title: Text(appLocalizations.file),
           subtitle: Text(appLocalizations.fileDesc),
-          onTap: _handleAddProfileFormFile,
+          onTap: () => _handleAddProfileFormFile(ref),
         ),
         ListItem(
           leading: const Icon(Icons.cloud_download_sharp),
           title: Text(appLocalizations.url),
           subtitle: Text(appLocalizations.urlDesc),
-          onTap: _toAdd,
+          onTap: () => _toAdd(ref),
         ),
       ],
     );

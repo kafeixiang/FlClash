@@ -9,15 +9,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-class OutboundMode extends StatelessWidget {
+class OutboundMode extends ConsumerWidget {
   const OutboundMode({super.key});
 
-  void _handleChangeMode(Mode mode) {
-    globalState.container.read(setupActionProvider.notifier).changeMode(mode);
+  void _handleChangeMode(Mode mode, WidgetRef ref) {
+    ref.read(setupActionProvider.notifier).changeMode(mode);
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final appLocalizations = context.appLocalizations;
     final height = getWidgetHeight(2);
     return SizedBox(
@@ -47,7 +47,7 @@ class OutboundMode extends StatelessWidget {
                     if (value == null) {
                       return;
                     }
-                    _handleChangeMode(value);
+                    _handleChangeMode(value, ref);
                   },
                   child: LayoutBuilder(
                     builder: (_, constraints) {
@@ -71,7 +71,7 @@ class OutboundMode extends StatelessWidget {
                                 right: 16.ap,
                               ),
                               onTap: () {
-                                _handleChangeMode(item);
+                                _handleChangeMode(item, ref);
                               },
                               value: item,
                               title: Text(
@@ -98,8 +98,8 @@ class OutboundMode extends StatelessWidget {
 class OutboundModeV2 extends StatelessWidget {
   const OutboundModeV2({super.key});
 
-  void _handleChangeMode(Mode mode) {
-    globalState.container.read(setupActionProvider.notifier).changeMode(mode);
+  void _handleChangeMode(Mode mode, WidgetRef ref) {
+    ref.read(setupActionProvider.notifier).changeMode(mode);
   }
 
   Color _getTextColor(BuildContext context, Mode mode) {
@@ -168,7 +168,7 @@ class OutboundModeV2 extends StatelessWidget {
                             if (value == null) {
                               return;
                             }
-                            _handleChangeMode(value);
+                            _handleChangeMode(value, ref);
                           },
                           thumbColor: thumbColor,
                         ),

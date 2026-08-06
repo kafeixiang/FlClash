@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/core/controller.dart';
 import 'package:fl_clash/models/models.dart';
+import 'package:fl_clash/providers/action.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,7 +30,7 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView> {
     return [
       IconButton(
         onPressed: () async {
-          coreController.closeConnections();
+          ref.read(coreActionProvider.notifier).closeConnections();
           await _updateConnections();
         },
         icon: const Icon(Icons.delete_sweep_outlined),
@@ -73,7 +74,7 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView> {
   }
 
   Future<void> _handleBlockConnection(String id) async {
-    await coreController.closeConnection(id);
+    await ref.read(coreActionProvider.notifier).closeConnection(id);
     await _updateConnections();
   }
 

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/enum/enum.dart';
 
 extension StringExtension on String {
   bool get isUrl {
@@ -56,6 +57,10 @@ extension StringExtension on String {
     try {
       return base64.decode(realValue);
     } catch (e) {
+      commonPrint.log(
+        'invalid base64 data ${e.toString()}',
+        logLevel: LogLevel.debug,
+      );
       return null;
     }
   }

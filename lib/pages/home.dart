@@ -3,7 +3,6 @@ import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/manager/app_manager.dart';
 import 'package:fl_clash/models/common.dart';
 import 'package:fl_clash/providers/providers.dart';
-import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,10 +13,8 @@ typedef OnSelected = void Function(int index);
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
-  void _handleToPage(PageLabel pageLabel) {
-    globalState.container
-        .read(currentPageLabelProvider.notifier)
-        .toPage(pageLabel);
+  void _handleToPage(PageLabel pageLabel, WidgetRef ref) {
+    ref.read(currentPageLabelProvider.notifier).toPage(pageLabel);
   }
 
   @override
@@ -50,7 +47,7 @@ class HomePage extends ConsumerWidget {
                       )
                       .toList(),
                   onDestinationSelected: (index) {
-                    _handleToPage(navigationItems[index].label);
+                    _handleToPage(navigationItems[index].label, ref);
                   },
                   selectedIndex: currentIndex,
                 ),
@@ -314,9 +311,7 @@ class HomeBackScopeContainer extends ConsumerWidget {
         if (canPop) {
           Navigator.of(realContext).pop();
         } else {
-          await globalState.container
-              .read(systemActionProvider.notifier)
-              .handleClose();
+          await ref.read(systemActionProvider.notifier).handleClose();
         }
         return false;
       },

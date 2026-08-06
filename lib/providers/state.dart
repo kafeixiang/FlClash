@@ -4,8 +4,8 @@ import 'package:fl_clash/core/controller.dart';
 import 'package:fl_clash/database/database.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
-import 'package:fl_clash/state.dart';
 import 'package:flutter/material.dart';
+import 'package:material_color_utilities/palettes/core_palette.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -487,6 +487,20 @@ VM3<bool, int, bool> checkIp(Ref ref) {
   return VM3(isInit, checkIpNum, containsDetection);
 }
 
+@Riverpod(keepAlive: true)
+class DynamicColor extends _$DynamicColor {
+  @override
+  // ignore: deprecated_member_use
+  VM2<CorePalette?, Color> build() {
+    return const VM2(null, Color(defaultPrimaryColor));
+  }
+
+  // ignore: deprecated_member_use
+  void seed({CorePalette? corePalette, required Color accentColor}) {
+    state = VM2(corePalette, accentColor);
+  }
+}
+
 @riverpod
 ColorScheme genColorScheme(
   Ref ref,
@@ -499,16 +513,12 @@ ColorScheme genColorScheme(
       (state) => VM2(state.primaryColor, state.schemeVariant),
     ),
   );
+  final dynamicColor = ref.watch(dynamicColorProvider);
   if (color == null && (ignoreConfig == true || vm2.a == null)) {
-    // if (globalState.corePalette != null) {
-    //   return globalState.corePalette!.toColorScheme(brightness: brightness);
-    // }
     return ColorScheme.fromSeed(
       seedColor:
-          globalState.corePalette
-              ?.toColorScheme(brightness: brightness)
-              .primary ??
-          globalState.accentColor,
+          dynamicColor.a?.toColorScheme(brightness: brightness).primary ??
+          dynamicColor.b,
       brightness: brightness,
       dynamicSchemeVariant: vm2.b,
     );

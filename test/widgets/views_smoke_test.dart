@@ -1,7 +1,4 @@
-import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/common/theme.dart';
 import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/providers/config.dart';
@@ -25,10 +22,12 @@ import 'package:fl_clash/views/views.dart';
 import 'package:fl_clash/widgets/inherited.dart';
 import 'package:fl_clash/widgets/sheet.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
+
+import '../helpers/test_app.dart';
+import '../helpers/test_profiles.dart';
 
 void main() {
   final cases = <String, Widget>{
@@ -59,7 +58,7 @@ void main() {
       addTearDown(tester.view.resetDevicePixelRatio);
 
       final container = ProviderContainer(
-        overrides: [profilesProvider.overrideWith(_TestProfiles.new)],
+        overrides: [profilesProvider.overrideWith(TestProfiles.new)],
       );
       addTearDown(container.dispose);
       globalState.container = container;
@@ -67,7 +66,7 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: _TestApp(child: entry.value),
+          child: TestApp(child: entry.value),
         ),
       );
       await tester.pump();
@@ -105,7 +104,7 @@ void main() {
       addTearDown(tester.view.resetDevicePixelRatio);
 
       final container = ProviderContainer(
-        overrides: [profilesProvider.overrideWith(_TestProfiles.new)],
+        overrides: [profilesProvider.overrideWith(TestProfiles.new)],
       );
       addTearDown(container.dispose);
       globalState.container = container;
@@ -116,7 +115,7 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: const _TestApp(child: ToolsView()),
+          child: const TestApp(child: ToolsView()),
         ),
       );
       await tester.pump();
@@ -142,7 +141,7 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
 
     final container = ProviderContainer(
-      overrides: [profilesProvider.overrideWith(_TestProfiles.new)],
+      overrides: [profilesProvider.overrideWith(TestProfiles.new)],
     );
     addTearDown(container.dispose);
     globalState.container = container;
@@ -153,7 +152,7 @@ void main() {
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: _TestApp(
+        child: TestApp(
           child: Scaffold(body: ListView(children: const [UaItem()])),
         ),
       ),
@@ -183,7 +182,7 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
 
     final container = ProviderContainer(
-      overrides: [profilesProvider.overrideWith(_TestProfiles.new)],
+      overrides: [profilesProvider.overrideWith(TestProfiles.new)],
     );
     addTearDown(container.dispose);
     globalState.container = container;
@@ -194,7 +193,7 @@ void main() {
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: const _TestApp(child: Scaffold(body: DnsModeItem())),
+        child: const TestApp(child: Scaffold(body: DnsModeItem())),
       ),
     );
     await tester.pump();
@@ -216,7 +215,7 @@ void main() {
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: const _TestApp(
+        child: const TestApp(
           child: Scaffold(
             body: Column(
               children: [
@@ -280,7 +279,7 @@ void main() {
     );
     final container = ProviderContainer(
       overrides: [
-        profilesProvider.overrideWith(() => _TestProfiles([profile])),
+        profilesProvider.overrideWith(() => TestProfiles([profile])),
         currentProfileIdProvider.overrideWithBuild((_, _) => profile.id),
         currentGroupsStateProvider.overrideWithValue(
           GroupsState(value: [group]),
@@ -297,7 +296,7 @@ void main() {
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: const _TestApp(child: ProxiesView()),
+        child: const TestApp(child: ProxiesView()),
       ),
     );
     await tester.pump();
@@ -354,7 +353,7 @@ void main() {
     );
     final container = ProviderContainer(
       overrides: [
-        profilesProvider.overrideWith(() => _TestProfiles([profile])),
+        profilesProvider.overrideWith(() => TestProfiles([profile])),
         currentProfileIdProvider.overrideWithBuild((_, _) => profile.id),
         profileCustomRulesProvider.overrideWith2(
           (_) => _TestProfileCustomRules(rules),
@@ -411,7 +410,7 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: _TestApp(child: view),
+          child: TestApp(child: view),
         ),
       );
       await tester.pump();
@@ -472,15 +471,6 @@ void main() {
   });
 }
 
-class _TestProfiles extends Profiles {
-  final List<Profile> initial;
-
-  _TestProfiles([this.initial = const []]);
-
-  @override
-  List<Profile> build() => initial;
-}
-
 class _TestProfileCustomRules extends ProfileCustomRules {
   final List<Rule> initial;
 
@@ -503,30 +493,4 @@ class _TestProxyGroups extends ProxyGroups {
 
   @override
   void order(int oldIndex, int newIndex) {}
-}
-
-class _TestApp extends StatelessWidget {
-  final Widget child;
-
-  const _TestApp({required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: globalState.navigatorKey,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ],
-      supportedLocales: AppLocalizations.delegate.supportedLocales,
-      builder: (context, child) {
-        globalState.measure = Measure.of(context, 1);
-        globalState.theme = CommonTheme.of(context, 1);
-        return child!;
-      },
-      home: child,
-    );
-  }
 }

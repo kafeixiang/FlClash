@@ -1,6 +1,6 @@
-import 'package:collection/collection.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/features/overwrite/overwrite.dart';
 import 'package:fl_clash/models/models.dart' hide FileInfo;
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
@@ -8,8 +8,6 @@ import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
-
-import 'widgets.dart';
 
 class EditProxyProvidersView extends ConsumerStatefulWidget {
   const EditProxyProvidersView({super.key});
@@ -20,49 +18,23 @@ class EditProxyProvidersView extends ConsumerStatefulWidget {
 }
 
 class _EditProxyProvidersViewState extends ConsumerState<EditProxyProvidersView>
-    with UniqueKeyStateMixin {
+    with UniqueKeyStateMixin, OverwriteStageFlowMixin<EditProxyProvidersView> {
   @override
   void initState() {
     super.initState();
-    ref.listenManual(itemsProvider(key), (prev, next) {
-      if (!const SetEquality().equals(prev, next)) {
-        _handleRealRemove();
-      }
-    });
+    listenForStageChanges(
+      tag: 'EditProxyProvidersViewState_handleRealRemove',
+      apply: (state, staged) {
+        final next = List<String>.from(state.use ?? []);
+        next.removeWhere((item) => staged.contains(item));
+        return state.copyWith(use: next);
+      },
+    );
   }
 
   void _handleToAddProxyProvidersView() {
     Navigator.of(context).push(
       PagedSheetRoute(builder: (context) => const _AddProxyProvidersView()),
-    );
-  }
-
-  void _handleRemove(String providerName) {
-    ref.read(itemsProvider(key).notifier).update((state) {
-      final newSet = Set.from(state);
-      newSet.add(providerName);
-      return newSet;
-    });
-  }
-
-  void _handleRealRemove() {
-    debouncer.call(
-      'EditProxyProvidersViewState_handleRealRemove',
-      () {
-        if (!ref.context.mounted) {
-          return;
-        }
-        final dismissItems = ref.read(itemsProvider(key));
-        ref.read(proxyGroupProvider.notifier).update((state) {
-          final newProxyProviders = List<String>.from(state.use ?? []);
-          newProxyProviders.removeWhere(
-            (state) => dismissItems.contains(state),
-          );
-          return state.copyWith(use: newProxyProviders);
-        });
-        ref.read(itemsProvider(key).notifier).update((state) => <dynamic>{});
-      },
-      duration: const Duration(milliseconds: 450),
     );
   }
 
@@ -73,67 +45,32 @@ class _EditProxyProvidersViewState extends ConsumerState<EditProxyProvidersView>
     required ItemPosition position,
     required bool dismiss,
   }) {
-    return ExternalDismissible(
-      dismiss: dismiss,
+    return OverwriteDismissItem(
       key: ValueKey(providerName),
-      onDismissed: _handleRealRemove,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: ItemPositionProvider(
-          position: position,
-          child: Consumer(
-            builder: (_, ref, _) {
-              final profileId = ProfileIdProvider.of(context)!.profileId;
-              final isValid = ref.watch(
-                customOverwriteProxyProviderIsValidProvider(
-                  profileId,
-                  providerName,
-                ),
-              );
-              return DecorationListItem(
-                invalid: !isValid,
-                minVerticalPadding: 8,
-                title: TooltipText(
-                  text: Text(
-                    providerName,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                contentPadding: const EdgeInsets.only(left: 16, right: 0),
-                leading: CommonMinIconButtonTheme(
-                  child: IconButton.filledTonal(
-                    onPressed: () {
-                      _handleRemove(providerName);
-                    },
-                    icon: const Icon(Icons.remove, size: 18),
-                    padding: EdgeInsets.zero,
-                  ),
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (!isValid)
-                      InfoMessageButton(
-                        message: context.appLocalizations.invalidProxyProvider(
-                          providerName,
-                        ),
-                      ),
-                    ReorderableDelayedDragStartListener(
-                      index: index,
-                      child: Container(
-                        color: Colors.transparent,
-                        padding: const EdgeInsets.all(16),
-                        child: const Icon(Icons.drag_handle),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-      ),
+      title: providerName,
+      position: position,
+      dismiss: dismiss,
+      index: index,
+      dragIconPadding: 16,
+      isValidOf: (ref, profileId, title) {
+        return ref.watch(
+          customOverwriteProxyProviderIsValidProvider(profileId, title),
+        );
+      },
+      invalidMessageOf: (context, title) {
+        return context.appLocalizations.invalidProxyProvider(title);
+      },
+      onRemove: () => handleStage(providerName),
+      onDismissed: () {
+        handleRealStage(
+          tag: 'EditProxyProvidersViewState_handleRealRemove',
+          apply: (state, staged) {
+            final next = List<String>.from(state.use ?? []);
+            next.removeWhere((item) => staged.contains(item));
+            return state.copyWith(use: next);
+          },
+        );
+      },
     );
   }
 
@@ -168,7 +105,7 @@ class _EditProxyProvidersViewState extends ConsumerState<EditProxyProvidersView>
     final isBottomSheet =
         SheetProvider.of(context)?.type == SheetType.bottomSheet;
     final height = isBottomSheet
-        ? globalState.container.read(viewSizeProvider).height * 0.85
+        ? ref.read(viewSizeProvider).height * 0.85
         : double.maxFinite;
     return SizedBox(
       height: height,
@@ -302,39 +239,16 @@ class _AddProxyProvidersView extends ConsumerStatefulWidget {
 }
 
 class _AddProxyProvidersViewState extends ConsumerState<_AddProxyProvidersView>
-    with UniqueKeyStateMixin {
+    with UniqueKeyStateMixin, OverwriteStageFlowMixin<_AddProxyProvidersView> {
   @override
   void initState() {
     super.initState();
-    ref.listenManual(itemsProvider(key), (prev, next) {
-      if (!const SetEquality().equals(prev, next)) {
-        _handleRealAdd();
-      }
-    });
-  }
-
-  void _handleAdd(String name) {
-    ref.read(itemsProvider(key).notifier).update((state) {
-      final newSet = Set.from(state);
-      newSet.add(name);
-      return newSet;
-    });
-  }
-
-  void _handleRealAdd() {
-    debouncer.call(
-      'AddProxyProvidersViewState_handleRealAdd',
-      () {
-        if (!ref.context.mounted) {
-          return;
-        }
-        final dismissItems = ref.read(itemsProvider(key));
-        ref.read(proxyGroupProvider.notifier).update((state) {
-          return state.copyWith(use: [...state.use ?? [], ...dismissItems]);
-        });
-        ref.read(itemsProvider(key).notifier).update((state) => <dynamic>{});
-      },
+    listenForStageChanges(
+      tag: 'AddProxyProvidersViewState_handleRealAdd',
       duration: const Duration(milliseconds: 350),
+      apply: (state, staged) {
+        return state.copyWith(use: [...state.use ?? [], ...staged]);
+      },
     );
   }
 
@@ -392,7 +306,7 @@ class _AddProxyProvidersViewState extends ConsumerState<_AddProxyProvidersView>
         .where((item) => !excludeProxyProviderNames.contains(item))
         .toList();
     final height = isBottomSheet
-        ? globalState.container.read(viewSizeProvider).height * 0.80
+        ? ref.read(viewSizeProvider).height * 0.80
         : double.maxFinite;
     return SizedBox(
       height: height,
@@ -428,7 +342,7 @@ class _AddProxyProvidersViewState extends ConsumerState<_AddProxyProvidersView>
                           position: position,
                           dismiss: dismissProxyProviders.contains(providerName),
                           onAdd: () {
-                            _handleAdd(providerName);
+                            handleStage(providerName);
                           },
                         );
                       }, childCount: providerNames.length),

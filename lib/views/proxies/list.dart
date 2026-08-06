@@ -3,8 +3,7 @@ import 'dart:math';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
-import 'package:fl_clash/providers/config.dart';
-import 'package:fl_clash/providers/state.dart';
+import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,14 +13,14 @@ import 'common.dart';
 
 typedef GroupNameProxiesMap = Map<String, List<Proxy>>;
 
-class ProxiesListView extends StatefulWidget {
+class ProxiesListView extends ConsumerStatefulWidget {
   const ProxiesListView({super.key});
 
   @override
-  State<ProxiesListView> createState() => _ProxiesListViewState();
+  ConsumerState<ProxiesListView> createState() => _ProxiesListViewState();
 }
 
-class _ProxiesListViewState extends State<ProxiesListView> {
+class _ProxiesListViewState extends ConsumerState<ProxiesListView> {
   final _controller = ScrollController();
   List<double> _groupOffsets = [];
   double containerHeight = 0;
@@ -40,7 +39,9 @@ class _ProxiesListViewState extends State<ProxiesListView> {
     } else {
       tempUnfoldSet.add(groupName);
     }
-    updateCurrentUnfoldSet(tempUnfoldSet);
+    ref
+        .read(proxiesActionProvider.notifier)
+        .updateCurrentUnfoldSet(tempUnfoldSet);
   }
 
   List<double> _getGroupOffsets({
@@ -154,7 +155,7 @@ class _ProxiesListViewState extends State<ProxiesListView> {
         _groupOffsets.isEmpty) {
       return 0;
     }
-    final currentGroups = getCurrentGroups();
+    final currentGroups = getCurrentGroups(ref);
     final findIndex = currentGroups.indexWhere(
       (item) => item.name == groupName,
     );
@@ -214,12 +215,13 @@ class _ProxiesListViewState extends State<ProxiesListView> {
 
   void _scrollToGroupSelected(String groupName, int columns) {
     final currentInitOffset = _getGroupOffset(groupName);
-    final currentGroups = getCurrentGroups();
+    final currentGroups = getCurrentGroups(ref);
     final proxies = currentGroups.getGroup(groupName)?.all;
     _jumpTo(
       currentInitOffset +
           8 +
           getScrollToSelectedOffset(
+            ref: ref,
             groupName: groupName,
             proxies: proxies ?? [],
             columns: columns,
@@ -302,7 +304,7 @@ class _ProxiesListViewState extends State<ProxiesListView> {
   }
 }
 
-class ListHeader extends StatefulWidget {
+class ListHeader extends ConsumerStatefulWidget {
   final Group group;
 
   final Function(String groupName) onChange;
@@ -321,10 +323,10 @@ class ListHeader extends StatefulWidget {
   });
 
   @override
-  State<ListHeader> createState() => _ListHeaderState();
+  ConsumerState<ListHeader> createState() => _ListHeaderState();
 }
 
-class _ListHeaderState extends State<ListHeader> {
+class _ListHeaderState extends ConsumerState<ListHeader> {
   var isLock = false;
 
   String get icon => widget.group.icon;
@@ -338,7 +340,9 @@ class _ListHeaderState extends State<ListHeader> {
   Future<void> _delayTest() async {
     if (isLock) return;
     isLock = true;
-    await delayTest(widget.group.all, widget.group.testUrl);
+    await ref
+        .read(proxiesActionProvider.notifier)
+        .delayTest(widget.group.all, widget.group.testUrl);
     isLock = false;
   }
 

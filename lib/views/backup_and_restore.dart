@@ -64,9 +64,7 @@ class _BackupAndRestoreState extends ConsumerState<BackupAndRestore>
         if (client == null) {
           return false;
         }
-        final path = await globalState.container
-            .read(backupActionProvider.notifier)
-            .backup();
+        final path = await ref.read(backupActionProvider.notifier).backup();
         if (path.isEmpty) {
           return false;
         }
@@ -91,9 +89,7 @@ class _BackupAndRestoreState extends ConsumerState<BackupAndRestore>
           return false;
         }
         await client.restore();
-        await globalState.container
-            .read(backupActionProvider.notifier)
-            .restore(option);
+        await ref.read(backupActionProvider.notifier).restore(option);
         return true;
       },
       tag: LoadingTag.backup_restore,
@@ -118,9 +114,7 @@ class _BackupAndRestoreState extends ConsumerState<BackupAndRestore>
     final appLocalizations = context.appLocalizations;
     final res = await globalState.loadingRun<bool>(
       () async {
-        final path = await globalState.container
-            .read(backupActionProvider.notifier)
-            .backup();
+        final path = await ref.read(backupActionProvider.notifier).backup();
         if (path.isEmpty) {
           return false;
         }
@@ -149,9 +143,7 @@ class _BackupAndRestoreState extends ConsumerState<BackupAndRestore>
     await File(path).safeCopy(await appPath.backupFilePath);
     final res = await globalState.loadingRun<bool>(
       () async {
-        await globalState.container
-            .read(backupActionProvider.notifier)
-            .restore(option);
+        await ref.read(backupActionProvider.notifier).restore(option);
         return true;
       },
       tag: LoadingTag.backup_restore,

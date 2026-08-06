@@ -8,7 +8,6 @@ import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/state.dart';
-import 'package:flutter/cupertino.dart';
 
 class Request {
   late final Dio dio;
@@ -51,22 +50,23 @@ class Request {
   }
 
   Future<Response<String>> getTextResponseForUrl(String url) async {
-    final response = await _clashDio.get<String>(
-      url,
-      options: Options(responseType: ResponseType.plain),
-    );
-    return response;
-  }
-
-  Future<MemoryImage?> getImage(String url) async {
-    if (url.isEmpty) return null;
-    final response = await dio.get<Uint8List>(
-      url,
-      options: Options(responseType: ResponseType.bytes),
-    );
-    final data = response.data;
-    if (data == null) return null;
-    return MemoryImage(data);
+    try {
+      return await _clashDio.get<String>(
+        url,
+        options: Options(responseType: ResponseType.plain),
+      );
+    } catch (e) {
+      commonPrint.log('getTextResponseForUrl error ${e.toString()}');
+      if (e is DioException) {
+        if (e.type == DioExceptionType.unknown) {
+          throw currentAppLocalizations.unknownNetworkError;
+        } else if (e.type == DioExceptionType.badResponse) {
+          throw currentAppLocalizations.networkException;
+        }
+        rethrow;
+      }
+      throw currentAppLocalizations.unknownNetworkError;
+    }
   }
 
   Future<Map<String, dynamic>?> checkForUpdate() async {

@@ -76,7 +76,7 @@ class _CoreStatusButtonState extends ConsumerState<CoreStatusButton> {
     if (res != true) {
       return;
     }
-    globalState.container.read(coreActionProvider.notifier).restartCore();
+    ref.read(coreActionProvider.notifier).restartCore();
   }
 
   @override

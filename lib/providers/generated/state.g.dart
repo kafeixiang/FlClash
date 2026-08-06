@@ -1785,6 +1785,59 @@ final class CheckIpProvider
 
 String _$checkIpHash() => r'7d8be66f0e8164bcf20c32659da2a4bea9893596';
 
+@ProviderFor(DynamicColor)
+final dynamicColorProvider = DynamicColorProvider._();
+
+final class DynamicColorProvider
+    extends $NotifierProvider<DynamicColor, VM2<CorePalette?, Color>> {
+  DynamicColorProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'dynamicColorProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$dynamicColorHash();
+
+  @$internal
+  @override
+  DynamicColor create() => DynamicColor();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(VM2<CorePalette?, Color> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<VM2<CorePalette?, Color>>(value),
+    );
+  }
+}
+
+String _$dynamicColorHash() => r'0b50a5e3f7c89f5c7860bd66149c8f39e3c6cc40';
+
+abstract class _$DynamicColor extends $Notifier<VM2<CorePalette?, Color>> {
+  VM2<CorePalette?, Color> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref =
+        this.ref as $Ref<VM2<CorePalette?, Color>, VM2<CorePalette?, Color>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<VM2<CorePalette?, Color>, VM2<CorePalette?, Color>>,
+              VM2<CorePalette?, Color>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(genColorScheme)
 final genColorSchemeProvider = GenColorSchemeFamily._();
 
@@ -1848,7 +1901,7 @@ final class GenColorSchemeProvider
   }
 }
 
-String _$genColorSchemeHash() => r'25f648db7c33ac00e7152f3d304da372a4de9fdd';
+String _$genColorSchemeHash() => r'42a040492be5df339d9aec22440fef1e663b0f8a';
 
 final class GenColorSchemeFamily extends $Family
     with

@@ -22,20 +22,20 @@ class Contributor {
   });
 }
 
-class AboutView extends StatelessWidget {
+class AboutView extends ConsumerWidget {
   const AboutView({super.key});
 
-  Future<void> _checkUpdate(BuildContext context) async {
+  Future<void> _checkUpdate(BuildContext context, WidgetRef ref) async {
     final data = await globalState.safeRun<Map<String, dynamic>?>(
       request.checkForUpdate,
       title: context.appLocalizations.checkUpdate,
     );
-    globalState.container
+    ref
         .read(commonActionProvider.notifier)
         .checkUpdateResultHandle(data: data, isUser: true);
   }
 
-  List<Widget> _buildMoreSection(BuildContext context) {
+  List<Widget> _buildMoreSection(BuildContext context, WidgetRef ref) {
     final appLocalizations = context.appLocalizations;
     return generateSection(
       separated: false,
@@ -44,7 +44,7 @@ class AboutView extends StatelessWidget {
         ListItem(
           title: Text(appLocalizations.checkUpdate),
           onTap: () {
-            _checkUpdate(context);
+            _checkUpdate(context, ref);
           },
         ),
         ListItem(
@@ -108,7 +108,7 @@ class AboutView extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final appLocalizations = context.appLocalizations;
     final items = [
       ListTile(
@@ -166,7 +166,7 @@ class AboutView extends StatelessWidget {
       ),
       const SizedBox(height: 12),
       ..._buildContributorsSection(appLocalizations),
-      ..._buildMoreSection(context),
+      ..._buildMoreSection(context, ref),
     ];
     return BaseScaffold(
       title: appLocalizations.about,

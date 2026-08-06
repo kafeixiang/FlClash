@@ -9,12 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:riverpod/riverpod.dart';
 
+import '../helpers/test_profiles.dart';
+
 void main() {
   late ProviderContainer container;
 
   setUp(() {
     container = ProviderContainer(
-      overrides: [profilesProvider.overrideWith(_TestProfiles.new)],
+      overrides: [profilesProvider.overrideWith(TestProfiles.new)],
     );
   });
 
@@ -370,15 +372,6 @@ void main() {
   });
 }
 
-_TestProfiles _profiles(ProviderContainer container) {
-  return container.read(profilesProvider.notifier) as _TestProfiles;
-}
-
-class _TestProfiles extends Profiles {
-  @override
-  List<Profile> build() => [];
-
-  void replace(List<Profile> profiles) {
-    state = profiles;
-  }
+TestProfiles _profiles(ProviderContainer container) {
+  return container.read(profilesProvider.notifier) as TestProfiles;
 }

@@ -38,6 +38,22 @@ class CoreAction extends _$CoreAction {
     return coreController.restart();
   }
 
+  Future<void> closeConnection(String id) async {
+    await coreController.closeConnection(id);
+  }
+
+  Future<void> closeConnections() async {
+    await coreController.closeConnections();
+  }
+
+  Future<void> requestGc() async {
+    await coreController.requestGc();
+  }
+
+  Future<void> crash() async {
+    await coreController.crash();
+  }
+
   Future<void> restartCore([bool start = false]) {
     _requestedRestartRevision++;
     _latestExplicitStart = start;

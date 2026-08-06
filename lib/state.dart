@@ -31,7 +31,6 @@ class GlobalState {
   Function? updateCurrentDelayDebounce;
   late Measure measure;
   late CommonTheme theme;
-  Color accentColor = const Color(defaultPrimaryColor);
   late ProviderContainer container;
   bool needInitStatus = true;
   bool _didCrashOnPreviousExecution = false;
@@ -45,8 +44,6 @@ class GlobalState {
     return isDebug || appEnv == 'dev';
   }
 
-  // ignore: deprecated_member_use
-  CorePalette? corePalette;
   String? lastConfigMd5;
   VpnState? lastVpnState;
   bool isAttach = false;
@@ -60,19 +57,24 @@ class GlobalState {
 
   Future<ProviderContainer> init(int version) async {
     appEnv = const String.fromEnvironment('APP_ENV', defaultValue: 'pre');
-    await _initDynamicColor();
-    return _initData(version);
+    final dynamicColor = await _initDynamicColor();
+    return _initData(version, dynamicColor);
   }
 
-  Future<void> _initDynamicColor() async {
+  // ignore: deprecated_member_use
+  Future<VM2<CorePalette?, Color>> _initDynamicColor() async {
     try {
-      corePalette = await DynamicColorPlugin.getCorePalette();
-      accentColor = await DynamicColorPlugin.getAccentColor() ?? accentColor;
+      final corePalette = await DynamicColorPlugin.getCorePalette();
+      final accentColor =
+          await DynamicColorPlugin.getAccentColor() ??
+          const Color(defaultPrimaryColor);
+      return VM2(corePalette, accentColor);
     } catch (error) {
       commonPrint.log(
         'Failed to initialize dynamic color: $error',
         logLevel: LogLevel.warning,
       );
+      return const VM2(null, Color(defaultPrimaryColor));
     }
   }
 
@@ -82,7 +84,11 @@ class GlobalState {
 
   BuildContext get _context => navigatorKey.currentContext!;
 
-  Future<ProviderContainer> _initData(int version) async {
+  Future<ProviderContainer> _initData(
+    int version,
+    // ignore: deprecated_member_use
+    VM2<CorePalette?, Color> dynamicColor,
+  ) async {
     packageInfo = await PackageInfo.fromPlatform();
     var config = await migration.run();
     _didCrashOnPreviousExecution = await system.didCrashOnPreviousExecution();
@@ -105,6 +111,9 @@ class GlobalState {
     container = ProviderContainer(
       overrides: [...appStateOverrides, ...configOverrides],
     );
+    container
+        .read(dynamicColorProvider.notifier)
+        .seed(corePalette: dynamicColor.a, accentColor: dynamicColor.b);
     final profiles = await database.profilesDao.query().get();
     container.read(profilesProvider.notifier).setAndReorder(profiles);
     await AppLocalizations.load(
@@ -304,14 +313,6 @@ class GlobalState {
   }
 
   Future<void> _initApp() async {
-    FlutterError.onError = (details) {
-      Future.microtask(() {
-        commonPrint.log(
-          'exception: ${details.exception} stack: ${details.stack}',
-          logLevel: LogLevel.warning,
-        );
-      });
-    };
     container.read(systemActionProvider.notifier).updateTray();
     container.read(profilesActionProvider.notifier).autoUpdateProfiles();
     container.read(commonActionProvider.notifier).autoCheckUpdate();

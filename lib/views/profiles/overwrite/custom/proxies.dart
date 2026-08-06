@@ -1,6 +1,6 @@
-import 'package:collection/collection.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/features/overwrite/overwrite.dart';
 import 'package:fl_clash/models/models.dart' hide FileInfo;
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
@@ -8,8 +8,6 @@ import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
-
-import 'widgets.dart';
 
 class EditProxiesView extends ConsumerStatefulWidget {
   const EditProxiesView({super.key});
@@ -19,48 +17,24 @@ class EditProxiesView extends ConsumerStatefulWidget {
 }
 
 class _EditProxiesViewState extends ConsumerState<EditProxiesView>
-    with UniqueKeyStateMixin {
+    with UniqueKeyStateMixin, OverwriteStageFlowMixin<EditProxiesView> {
   @override
   void initState() {
     super.initState();
-    ref.listenManual(itemsProvider(key), (prev, next) {
-      if (!const SetEquality().equals(prev, next)) {
-        _handleRealRemove();
-      }
-    });
+    listenForStageChanges(
+      tag: 'EditProxiesViewState_handleRealRemove',
+      apply: (state, staged) {
+        final next = List<String>.from(state.proxies ?? []);
+        next.removeWhere((item) => staged.contains(item));
+        return state.copyWith(proxies: next);
+      },
+    );
   }
 
   void _handleToAddProxiesView() {
     Navigator.of(
       context,
     ).push(PagedSheetRoute(builder: (context) => const _AddProxiesView()));
-  }
-
-  void _handleRemove(String proxyName) {
-    ref.read(itemsProvider(key).notifier).update((state) {
-      final newSet = Set.from(state);
-      newSet.add(proxyName);
-      return newSet;
-    });
-  }
-
-  void _handleRealRemove() {
-    debouncer.call(
-      'EditProxiesViewState_handleRealRemove',
-      () {
-        if (!ref.context.mounted) {
-          return;
-        }
-        final dismissItems = ref.read(itemsProvider(key));
-        ref.read(proxyGroupProvider.notifier).update((state) {
-          final newProxies = List<String>.from(state.proxies ?? []);
-          newProxies.removeWhere((state) => dismissItems.contains(state));
-          return state.copyWith(proxies: newProxies);
-        });
-        ref.read(itemsProvider(key).notifier).update((state) => <dynamic>{});
-      },
-      duration: const Duration(milliseconds: 450),
-    );
   }
 
   Widget _buildItem({
@@ -71,69 +45,36 @@ class _EditProxiesViewState extends ConsumerState<EditProxiesView>
     required ItemPosition position,
     required bool dismiss,
   }) {
-    return ExternalDismissible(
-      dismiss: dismiss,
+    return OverwriteDismissItem(
       key: ValueKey(proxyName),
-      onDismissed: _handleRealRemove,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: ItemPositionProvider(
-          position: position,
-          child: Consumer(
-            builder: (_, ref, _) {
-              final profileId = ProfileIdProvider.of(context)!.profileId;
-              final isValid = ref.watch(
-                customOverwriteTargetIsValidProvider(profileId, proxyName),
-              );
-              return DecorationListItem(
-                invalid: !isValid,
-                minVerticalPadding: 8,
-                title: TooltipText(
-                  text: Text(
-                    proxyName,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                subtitle: proxyType != null
-                    ? Text(proxyType)
-                    : (RuleTarget.baseTargets.contains(proxyName)
-                          ? Text(proxyName.toLowerCase())
-                          : null),
-                contentPadding: const EdgeInsets.only(left: 16, right: 0),
-                leading: CommonMinIconButtonTheme(
-                  child: IconButton.filledTonal(
-                    onPressed: () {
-                      _handleRemove(proxyName);
-                    },
-                    icon: const Icon(Icons.remove, size: 18),
-                    padding: EdgeInsets.zero,
-                  ),
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (!isValid)
-                      InfoMessageButton(
-                        message: context.appLocalizations.invalidProxy(
-                          proxyName,
-                        ),
-                      ),
-                    ReorderableDelayedDragStartListener(
-                      index: index,
-                      child: Container(
-                        color: Colors.transparent,
-                        padding: const EdgeInsets.all(12),
-                        child: const Icon(Icons.drag_handle),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-      ),
+      title: proxyName,
+      subtitle:
+          proxyType ??
+          (RuleTarget.baseTargets.contains(proxyName)
+              ? proxyName.toLowerCase()
+              : null),
+      position: position,
+      dismiss: dismiss,
+      index: index,
+      isValidOf: (ref, profileId, title) {
+        return ref.watch(
+          customOverwriteTargetIsValidProvider(profileId, title),
+        );
+      },
+      invalidMessageOf: (context, title) {
+        return context.appLocalizations.invalidProxy(title);
+      },
+      onRemove: () => handleStage(proxyName),
+      onDismissed: () {
+        handleRealStage(
+          tag: 'EditProxiesViewState_handleRealRemove',
+          apply: (state, staged) {
+            final next = List<String>.from(state.proxies ?? []);
+            next.removeWhere((item) => staged.contains(item));
+            return state.copyWith(proxies: next);
+          },
+        );
+      },
     );
   }
 
@@ -179,7 +120,7 @@ class _EditProxiesViewState extends ConsumerState<EditProxiesView>
     final isBottomSheet =
         SheetProvider.of(context)?.type == SheetType.bottomSheet;
     final height = isBottomSheet
-        ? globalState.container.read(viewSizeProvider).height * 0.85
+        ? ref.read(viewSizeProvider).height * 0.85
         : double.maxFinite;
     return SizedBox(
       height: height,
@@ -312,56 +253,20 @@ class _AddProxiesView extends ConsumerStatefulWidget {
 }
 
 class _AddProxiesViewState extends ConsumerState<_AddProxiesView>
-    with UniqueKeyStateMixin {
+    with UniqueKeyStateMixin, OverwriteStageFlowMixin<_AddProxiesView> {
   @override
   void initState() {
     super.initState();
-    ref.listenManual(itemsProvider('${key}_groups'), (prev, next) {
-      if (!const SetEquality().equals(prev, next)) {
-        _handleRealAdd('groups');
-      }
-    });
-    ref.listenManual(itemsProvider('${key}_proxies'), (prev, next) {
-      if (!const SetEquality().equals(prev, next)) {
-        _handleRealAdd('proxies');
-      }
-    });
-    ref.listenManual(itemsProvider('${key}_targets'), (prev, next) {
-      if (!const SetEquality().equals(prev, next)) {
-        _handleRealAdd('targets');
-      }
-    });
-  }
-
-  void _handleAdd(String name, String scene) {
-    final realKey = '${key}_$scene';
-    ref.read(itemsProvider(realKey).notifier).update((state) {
-      final newSet = Set.from(state);
-      newSet.add(name);
-      return newSet;
-    });
-  }
-
-  void _handleRealAdd(String scene) {
-    debouncer.call(
-      'AddProxiesViewState_handleRealAdd_$scene',
-      () {
-        if (!ref.context.mounted) {
-          return;
-        }
-        final realKey = '${key}_$scene';
-        final dismissItems = ref.read(itemsProvider(realKey));
-        ref.read(proxyGroupProvider.notifier).update((state) {
-          return state.copyWith(
-            proxies: [...state.proxies ?? [], ...dismissItems],
-          );
-        });
-        ref
-            .read(itemsProvider(realKey).notifier)
-            .update((state) => <dynamic>{});
-      },
-      duration: const Duration(milliseconds: 350),
-    );
+    for (final scene in ['groups', 'proxies', 'targets']) {
+      listenForStageChanges(
+        tag: 'AddProxiesViewState_handleRealAdd_$scene',
+        scene: scene,
+        duration: const Duration(milliseconds: 350),
+        apply: (state, staged) {
+          return state.copyWith(proxies: [...state.proxies ?? [], ...staged]);
+        },
+      );
+    }
   }
 
   Widget _buildItem({
@@ -403,7 +308,7 @@ class _AddProxiesViewState extends ConsumerState<_AddProxiesView>
     final isBottomSheet =
         SheetProvider.of(context)?.type == SheetType.bottomSheet;
     final height = isBottomSheet
-        ? globalState.container.read(viewSizeProvider).height * 0.8
+        ? ref.read(viewSizeProvider).height * 0.8
         : double.maxFinite;
     final profileId = ProfileIdProvider.of(context)!.profileId;
     final dismissGroups = ref.watch(itemsProvider('${key}_groups'));
@@ -478,7 +383,7 @@ class _AddProxiesViewState extends ConsumerState<_AddProxiesView>
                           position: position,
                           dismiss: dismissTargets.contains(target),
                           onAdd: () {
-                            _handleAdd(target, 'targets');
+                            handleStage(target, 'targets');
                           },
                         );
                       }, childCount: targets.length),
@@ -508,7 +413,7 @@ class _AddProxiesViewState extends ConsumerState<_AddProxiesView>
                           position: position,
                           dismiss: dismissGroups.contains(proxyGroup.name),
                           onAdd: () {
-                            _handleAdd(proxyGroup.name, 'groups');
+                            handleStage(proxyGroup.name, 'groups');
                           },
                         );
                       }, childCount: proxyGroups.length),
@@ -538,7 +443,7 @@ class _AddProxiesViewState extends ConsumerState<_AddProxiesView>
                           position: position,
                           dismiss: dismissProxies.contains(proxy.name),
                           onAdd: () {
-                            _handleAdd(proxy.name, 'proxies');
+                            handleStage(proxy.name, 'proxies');
                           },
                         );
                       }, childCount: proxies.length),

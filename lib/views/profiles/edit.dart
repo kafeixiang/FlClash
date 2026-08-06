@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/core/controller.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/pages/editor.dart';
@@ -11,8 +10,9 @@ import 'package:fl_clash/providers/action.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class EditProfileView extends StatefulWidget {
+class EditProfileView extends ConsumerStatefulWidget {
   final Profile profile;
   final BuildContext context;
 
@@ -23,10 +23,10 @@ class EditProfileView extends StatefulWidget {
   });
 
   @override
-  State<EditProfileView> createState() => _EditProfileViewState();
+  ConsumerState<EditProfileView> createState() => _EditProfileViewState();
 }
 
-class _EditProfileViewState extends State<EditProfileView> {
+class _EditProfileViewState extends ConsumerState<EditProfileView> {
   late final TextEditingController _labelController;
   late final TextEditingController _urlController;
   late final TextEditingController _autoUpdateDurationController;
@@ -34,6 +34,7 @@ class _EditProfileViewState extends State<EditProfileView> {
   String? _rawText;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _fileInfoNotifier = ValueNotifier<FileInfo?>(null);
+  late SetupAction _setupAction;
   Uint8List? _fileData;
 
   @override
@@ -45,6 +46,7 @@ class _EditProfileViewState extends State<EditProfileView> {
     _autoUpdateDurationController = TextEditingController(
       text: widget.profile.autoUpdateDuration.inMinutes.toString(),
     );
+    _setupAction = ref.read(setupActionProvider.notifier);
     _updateFileInfo();
   }
 
@@ -67,9 +69,7 @@ class _EditProfileViewState extends State<EditProfileView> {
         minutes: int.parse(_autoUpdateDurationController.text),
       ),
     );
-    final profilesAction = globalState.container.read(
-      profilesActionProvider.notifier,
-    );
+    final profilesAction = ref.read(profilesActionProvider.notifier);
     final hasUpdate = widget.profile.url != profile.url;
     if (_fileData != null) {
       if (profile.type == ProfileType.url && _autoUpdate) {
@@ -107,7 +107,9 @@ class _EditProfileViewState extends State<EditProfileView> {
 
   Future<void> _handleSaveEdit(BuildContext context, String data) async {
     final message = await globalState.safeRun<String>(() async {
-      final message = await coreController.validateConfigWithData(data);
+      final message = await ref
+          .read(profilesActionProvider.notifier)
+          .validateConfigWithData(data);
       return message;
     }, silence: false);
     if (message?.isNotEmpty == true) {
@@ -205,7 +207,7 @@ class _EditProfileViewState extends State<EditProfileView> {
     _fileInfoNotifier.dispose();
     _autoUpdateDurationController.dispose();
     super.dispose();
-    globalState.container.read(setupActionProvider.notifier).autoApplyProfile();
+    _setupAction.autoApplyProfile();
   }
 
   @override

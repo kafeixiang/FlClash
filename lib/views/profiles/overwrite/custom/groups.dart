@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/features/overwrite/overwrite.dart';
 import 'package:fl_clash/models/models.dart' hide FileInfo;
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
@@ -14,7 +15,6 @@ import 'package:smooth_sheets/smooth_sheets.dart';
 
 import 'icon.dart';
 import 'proxies.dart';
-import 'widgets.dart';
 
 class CustomProxyGroupsView extends ConsumerStatefulWidget {
   final int profileId;
@@ -59,7 +59,11 @@ class _CustomProxyGroupsViewState extends ConsumerState<CustomProxyGroupsView> {
             overrides: [
               proxyGroupProvider.overrideWithBuild((_, _) => proxyGroup),
             ],
-            child: const AddOrEditProxyGroupNestedSheet(),
+            child: OverwriteNestedSheet<ProxyGroup>(
+              currentOf: (ref) => ref.read(proxyGroupProvider),
+              save: _handleSaveProxyGroup,
+              formBuilder: (_) => const _EditProxyGroupView(),
+            ),
           ),
         );
       },
@@ -87,7 +91,11 @@ class _CustomProxyGroupsViewState extends ConsumerState<CustomProxyGroupsView> {
                 ),
               ),
             ],
-            child: const AddOrEditProxyGroupNestedSheet(),
+            child: OverwriteNestedSheet<ProxyGroup>(
+              currentOf: (ref) => ref.read(proxyGroupProvider),
+              save: _handleSaveProxyGroup,
+              formBuilder: (_) => const _EditProxyGroupView(),
+            ),
           ),
         );
       },
@@ -103,74 +111,44 @@ class _CustomProxyGroupsViewState extends ConsumerState<CustomProxyGroupsView> {
   @override
   Widget build(BuildContext context) {
     final appLocalizations = context.appLocalizations;
-    final proxyGroups = ref
-        .watch(
-          customOverwriteDateProvider(
-            widget.profileId,
-          ).select((state) => VM(state.proxyGroups)),
-        )
-        .a;
-    return CommonScaffold(
+    return OverwriteEditorPage<ProxyGroup>(
       title: appLocalizations.proxyGroup,
-      actions: [
-        CommonMinFilledButtonTheme(
-          child: FilledButton(
-            onPressed: _handleAdd,
-            child: Text(appLocalizations.add),
-          ),
-        ),
-        const SizedBox(width: 8),
-      ],
-      body: proxyGroups.isEmpty
-          ? NullStatus(label: appLocalizations.proxyGroupEmpty)
-          : CommonScrollBar(
-              controller: _scrollController,
-              child: ReorderableListView.builder(
-                scrollController: _scrollController,
-                buildDefaultDragHandles: false,
-                padding: const EdgeInsets.symmetric(
-                  vertical: 12,
-                ).copyWith(bottom: 24),
-                itemBuilder: (context, index) {
-                  final proxyGroup = proxyGroups[index];
-                  return _ProxyGroupItem(
-                    key: ValueKey(proxyGroup.id),
-                    profileId: widget.profileId,
-                    proxyGroup: proxyGroup,
-                    total: proxyGroups.length,
-                    index: index,
-                    onPressed: () {
-                      _handleEditProxyGroup(context, proxyGroup, index);
-                    },
-                  );
-                },
-                proxyDecorator: (child, index, animation) {
-                  final proxyGroup = proxyGroups[index];
-                  return commonProxyDecorator(
-                    _ProxyGroupItem(
-                      key: ValueKey(proxyGroup.id),
-                      profileId: widget.profileId,
-                      proxyGroup: proxyGroup,
-                      total: proxyGroups.length,
-                      index: index,
-                      onPressed: () {
-                        _handleEditProxyGroup(context, proxyGroup, index);
-                      },
-                    ),
-                    index,
-                    animation,
-                  );
-                },
-                itemCount: proxyGroups.length,
-                itemExtent:
-                    globalState.measure.bodyLargeHeight +
-                    globalState.measure.bodyMediumHeight +
-                    16,
-                onReorderItem: (oldIndex, newIndex) {
-                  _handleReorder(oldIndex, newIndex);
-                },
-              ),
-            ),
+      itemsOf: (ref) {
+        return ref
+            .watch(
+              customOverwriteDateProvider(
+                widget.profileId,
+              ).select((state) => VM(state.proxyGroups)),
+            )
+            .a;
+      },
+      itemBuilder:
+          (
+            context,
+            ref,
+            proxyGroup,
+            index,
+            isEditing,
+            isSelected,
+            onToggleSelected,
+          ) {
+            return _ProxyGroupItem(
+              key: ValueKey(proxyGroup.id),
+              profileId: widget.profileId,
+              proxyGroup: proxyGroup,
+              index: index,
+              onPressed: () {
+                _handleEditProxyGroup(context, proxyGroup, index);
+              },
+            );
+          },
+      onReorder: _handleReorder,
+      onAdd: _handleAdd,
+      emptyLabel: appLocalizations.proxyGroupEmpty,
+      itemExtent:
+          globalState.measure.bodyLargeHeight +
+          globalState.measure.bodyMediumHeight +
+          16,
     );
   }
 }
@@ -179,7 +157,6 @@ class _ProxyGroupItem extends ConsumerWidget {
   final int profileId;
   final ProxyGroup proxyGroup;
   final int index;
-  final int total;
   final VoidCallback onPressed;
 
   const _ProxyGroupItem({
@@ -187,7 +164,6 @@ class _ProxyGroupItem extends ConsumerWidget {
     required this.profileId,
     required this.proxyGroup,
     required this.index,
-    required this.total,
     required this.onPressed,
   });
 
@@ -197,54 +173,50 @@ class _ProxyGroupItem extends ConsumerWidget {
     final isValid = ref.watch(
       customOverwriteGroupIsValidProvider(profileId, proxyGroup),
     );
-    final position = ItemPosition.get(index, total);
-    return ItemPositionProvider(
-      position: position,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Consumer(
-          builder: (_, ref, _) {
-            return DecorationListItem(
-              invalid: !isValid,
-              onPressed: onPressed,
-              contentPadding: const EdgeInsets.only(left: 16, right: 0),
-              minVerticalPadding: 8,
-              leading: SizedBox.square(
-                dimension: 32,
-                child: IconTheme.merge(
-                  data: const IconThemeData(size: 32),
-                  child: CommonTargetIcon(src: proxyGroup.icon ?? ''),
-                ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Consumer(
+        builder: (_, ref, _) {
+          return DecorationListItem(
+            invalid: !isValid,
+            onPressed: onPressed,
+            contentPadding: const EdgeInsets.only(left: 16, right: 0),
+            minVerticalPadding: 8,
+            leading: SizedBox.square(
+              dimension: 32,
+              child: IconTheme.merge(
+                data: const IconThemeData(size: 32),
+                child: CommonTargetIcon(src: proxyGroup.icon ?? ''),
               ),
-              title: TooltipText(
-                text: Text(
-                  proxyGroup.name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+            ),
+            title: TooltipText(
+              text: Text(
+                proxyGroup.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              subtitle: Text(proxyGroup.type.name),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  if (!isValid)
-                    InfoMessageButton(
-                      message: appLocalizations.proxyGroupDetectedAbnormal,
-                    ),
-                  ReorderableDelayedDragStartListener(
-                    index: index,
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      color: Colors.transparent,
-                      child: const Icon(Icons.drag_handle),
-                    ),
+            ),
+            subtitle: Text(proxyGroup.type.name),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if (!isValid)
+                  InfoMessageButton(
+                    message: appLocalizations.proxyGroupDetectedAbnormal,
                   ),
-                ],
-              ),
-            );
-          },
-        ),
+                ReorderableDelayedDragStartListener(
+                  index: index,
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    color: Colors.transparent,
+                    child: const Icon(Icons.drag_handle),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -278,139 +250,6 @@ bool _handleSaveProxyGroup(BuildContext context, WidgetRef ref) {
     return false;
   } else {
     return true;
-  }
-}
-
-class AddOrEditProxyGroupNestedSheet extends ConsumerStatefulWidget {
-  const AddOrEditProxyGroupNestedSheet({super.key});
-
-  @override
-  ConsumerState<AddOrEditProxyGroupNestedSheet> createState() =>
-      _AddOrEditProxyGroupNestedSheetState();
-}
-
-class _AddOrEditProxyGroupNestedSheetState
-    extends ConsumerState<AddOrEditProxyGroupNestedSheet> {
-  final GlobalKey<NavigatorState> _nestedNavigatorKey = GlobalKey();
-  late final ProxyGroup _originProxyGroup;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _originProxyGroup = ref.read(proxyGroupProvider);
-    });
-  }
-
-  Future<void> _handleClose() async {
-    final state = _nestedNavigatorKey.currentState;
-    if (state != null && state.canPop()) {
-      final res = await globalState.showMessage(
-        message: TextSpan(text: currentAppLocalizations.confirmExitWindow),
-      );
-      if (res != true) {
-        return;
-      }
-    }
-    if (context.mounted) {
-      _handleExit();
-    }
-  }
-
-  Future<void> _handleExit() async {
-    final proxyGroup = ref.read(proxyGroupProvider);
-    if (_originProxyGroup == proxyGroup) {
-      Navigator.of(context).pop();
-      return;
-    }
-    final res = await globalState.showMessage(
-      message: TextSpan(text: currentAppLocalizations.dataChangedSave),
-    );
-    if (!mounted) {
-      return;
-    }
-    if (res != true) {
-      Navigator.of(context).pop();
-      return;
-    }
-    if (_handleSaveProxyGroup(context, ref)) {
-      Navigator.of(context).pop();
-    }
-  }
-
-  Future<void> _handlePop() async {
-    final state = _nestedNavigatorKey.currentState;
-    if (state != null && state.canPop()) {
-      state.pop();
-    } else {
-      _handleExit();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final nestedNavigator = Navigator(
-      key: _nestedNavigatorKey,
-      onGenerateInitialRoutes: (navigator, initialRoute) {
-        return [
-          PagedSheetRoute(
-            builder: (context) {
-              return const _EditProxyGroupView();
-            },
-          ),
-        ];
-      },
-    );
-    final sheetProvider = SheetProvider.of(context);
-    final fillColor = sheetProvider?.type == SheetType.bottomSheet
-        ? context.colorScheme.surfaceContainerLow
-        : context.colorScheme.surface;
-    return CommonPopScope(
-      onPop: (_) async {
-        _handlePop();
-        return false;
-      },
-      child: sheetProvider!.copyWith(
-        nestedNavigatorPop: ([data]) {
-          Navigator.of(context).pop(data);
-        },
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: GestureDetector(
-                onTap: () async {
-                  _handleClose();
-                },
-              ),
-            ),
-            SizedBox(
-              width: sheetProvider.type == SheetType.sideSheet ? 400 : null,
-              child: SheetViewport(
-                child: PagedSheetRouteTheme(
-                  data: const PagedSheetRouteThemeData(
-                    transitionsBuilder: fadeAndSlideTransition,
-                    transitionDuration: Duration(milliseconds: 300),
-                  ),
-                  child: PagedSheet(
-                    decoration: MaterialSheetDecoration(
-                      size: SheetSize.stretch,
-                      color: fillColor,
-                      borderRadius: sheetProvider.type == SheetType.bottomSheet
-                          ? const BorderRadius.vertical(
-                              top: Radius.circular(28),
-                            )
-                          : BorderRadius.zero,
-                      clipBehavior: Clip.antiAlias,
-                    ),
-                    navigator: nestedNavigator,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 
@@ -457,30 +296,11 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
     final VoidCallback? onPressed,
     bool invalid = false,
   }) {
-    return DecorationListItem(
+    return OverwriteFormRow(
       invalid: invalid,
       onPressed: onPressed,
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        spacing: 16,
-        children: [
-          title,
-          if (trailing != null)
-            Flexible(
-              child: IconTheme(
-                data: IconThemeData(
-                  size: 16.ap,
-                  color: context.colorScheme.onSurface.opacity60,
-                ),
-                child: Container(
-                  alignment: Alignment.centerRight,
-                  height: globalState.measure.bodyLargeHeight + 24,
-                  child: trailing,
-                ),
-              ),
-            ),
-        ],
-      ),
+      title: title,
+      trailing: trailing,
     );
   }
 
@@ -852,7 +672,7 @@ class _EditProxyGroupViewState extends ConsumerState<_EditProxyGroupView> {
     final profileId = ProfileIdProvider.of(context)!.profileId;
     final proxyGroup = ref.watch(proxyGroupProvider);
     final height = isBottomSheet
-        ? globalState.container.read(viewSizeProvider).height * 0.65
+        ? ref.read(viewSizeProvider).height * 0.65
         : double.maxFinite;
     return AdaptiveSheetScaffold(
       sheetTransparentToolBar: true,

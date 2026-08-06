@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/enum/enum.dart';
 
 class SingleInstanceLock {
   static SingleInstanceLock? _instance;
@@ -21,7 +22,11 @@ class SingleInstanceLock {
       _accessFile = await lockFile.open(mode: FileMode.write);
       await _accessFile?.lock();
       return true;
-    } catch (_) {
+    } catch (e) {
+      commonPrint.log(
+        'single instance lock acquire failed ${e.toString()}',
+        logLevel: LogLevel.warning,
+      );
       return false;
     }
   }
