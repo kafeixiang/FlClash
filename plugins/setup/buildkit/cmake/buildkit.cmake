@@ -22,10 +22,15 @@ function(apply_buildkit)
   # The output files the build_tool produces
   if(WIN32)
     set(_output "${PROJECT_ROOT}/libclash/windows/FlClashCore.exe")
+    set(_manifest "${PROJECT_ROOT}/libclash/windows/manifest.json")
     set(_platform_args "windows")
   else()
     set(_output "${PROJECT_ROOT}/libclash/linux/FlClashCore")
     set(_platform_args "linux")
+  endif()
+  set(_outputs ${_output})
+  if(WIN32)
+    list(APPEND _outputs ${_manifest})
   endif()
   set(_phony "${CMAKE_CURRENT_BINARY_DIR}/buildkit_phony")
 
@@ -35,7 +40,7 @@ function(apply_buildkit)
   )
 
   add_custom_command(
-    OUTPUT ${_output} "${_phony}"
+    OUTPUT ${_outputs} "${_phony}"
     COMMAND ${CMAKE_COMMAND} -E env ${BUILDKIT_ENV}
     "${_launcher}" ${_platform_args}
     WORKING_DIRECTORY "${PROJECT_ROOT}"
@@ -45,5 +50,5 @@ function(apply_buildkit)
   # Match Cargokit's symbolic-output and ALL-target structure so the native
   # generator reevaluates this build rule on each build.
   set_source_files_properties("${_phony}" PROPERTIES SYMBOLIC TRUE)
-  add_custom_target(setup_buildkit_build ALL DEPENDS ${_output})
+  add_custom_target(setup_buildkit_build ALL DEPENDS ${_outputs})
 endfunction()

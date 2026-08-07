@@ -49,7 +49,7 @@ Read `.agents/architecture.md` for the current core modes, manager stack, build 
 
 - Keep the Windows Helper protocol and Core SHA256 validation identical across
   Flutter build modes; the Helper owns executable integrity checks.
-- Protocol version 5 uses a 32-character lowercase-hex session ID. `/start` must return the submitted session and PID;
+- Protocol version 6 uses a 32-character lowercase-hex session ID. `/start` must return the submitted session and PID;
   `/stop` must never terminate a different session; Dart must verify the connected named-pipe peer PID.
 - A desktop process lease with unconfirmed exit must remain owned until cleanup succeeds. Do not discard it and start a
   replacement Core.

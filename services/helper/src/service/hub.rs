@@ -22,7 +22,7 @@ use windows_sys::Win32::Storage::FileSystem::FILE_SHARE_READ;
 const LISTEN_PORT: u16 = 47890;
 const CORE_PIPE_PREFIX: &str = r"\\.\pipe\FlClashCore_";
 const PROTOCOL_VERSION_HEADER: &str = "x-flclash-helper-protocol";
-const PROTOCOL_VERSION: &str = "5";
+const PROTOCOL_VERSION: &str = "6";
 const EXPECTED_CORE_SHA256: &str = env!("CORE_SHA256");
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -38,6 +38,13 @@ pub struct StartParams {
 pub struct StopParams {
     #[serde(rename = "sessionId")]
     pub session_id: String,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct PingParams {
+    #[serde(rename = "coreSha256")]
+    core_sha256: String,
 }
 
 #[derive(Serialize)]
@@ -339,8 +346,28 @@ fn ping_response(result: Result<PathBuf, Error>) -> warp::reply::Response {
     .into_response()
 }
 
-fn ping() -> warp::reply::Response {
-    let result = open_fixed_verified_core().and_then(|_| std::env::current_exe());
+fn ping_core_sha256_mismatch() -> warp::reply::Response {
+    warp::reply::with_header(
+        error_response(
+            "coreSha256Mismatch",
+            "Core SHA256 mismatch",
+            StatusCode::CONFLICT,
+        ),
+        PROTOCOL_VERSION_HEADER,
+        PROTOCOL_VERSION,
+    )
+    .into_response()
+}
+
+fn ping(ping_params: PingParams) -> warp::reply::Response {
+    if ping_params.core_sha256 != EXPECTED_CORE_SHA256 {
+        log_message("Helper ping rejected a Core SHA256 mismatch".to_string());
+        return ping_core_sha256_mismatch();
+    }
+
+    let result = core_path()
+        .and_then(|path| open_core(&path).map(|_| path))
+        .and_then(|_| std::env::current_exe());
     if let Err(error) = &result {
         log_message(format!("Helper ping failed: {error}"));
     }
@@ -373,8 +400,8 @@ async fn stop_request(stop_params: StopParams) -> Result<warp::reply::Response, 
     )
 }
 
-async fn ping_request() -> Result<warp::reply::Response, Infallible> {
-    Ok(tokio::task::spawn_blocking(ping)
+async fn ping_request(ping_params: PingParams) -> Result<warp::reply::Response, Infallible> {
+    Ok(tokio::task::spawn_blocking(move || ping(ping_params))
         .await
         .unwrap_or_else(|error| {
             ping_response(Err(Error::other(format!(
@@ -384,6 +411,13 @@ async fn ping_request() -> Result<warp::reply::Response, Infallible> {
 }
 
 async fn handle_rejection(rejection: Rejection) -> Result<warp::reply::Response, Infallible> {
+    if rejection.find::<warp::reject::InvalidQuery>().is_some() {
+        return Ok(error_response(
+            "invalidRequest",
+            "invalid ping query",
+            StatusCode::BAD_REQUEST,
+        ));
+    }
     if rejection
         .find::<warp::filters::body::BodyDeserializeError>()
         .is_some()
@@ -412,6 +446,7 @@ fn routes() -> impl Filter<Extract = (impl Reply,), Error = Infallible> + Clone 
     let api_ping = warp::get()
         .and(warp::path("ping"))
         .and(warp::path::end())
+        .and(warp::query::<PingParams>())
         .and_then(ping_request);
 
     let api_start = warp::post()
@@ -468,8 +503,8 @@ mod tests {
     use std::io::Write;
 
     #[test]
-    fn protocol_5_uses_lowercase_session_ownership() {
-        assert_eq!(PROTOCOL_VERSION, "5");
+    fn protocol_6_uses_lowercase_session_ownership() {
+        assert_eq!(PROTOCOL_VERSION, "6");
         assert!(is_valid_session_id("0123456789abcdef0123456789abcdef"));
         assert!(!is_valid_session_id("ABCDEF0123456789abcdef0123456789"));
         assert!(!is_valid_session_id("0123456789abcdef"));
@@ -509,7 +544,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn ping_rejects_unverified_core() {
+    async fn ping_response_renders_core_verification_error() {
         let response = ping_response(Err(Error::other("Core executable SHA256 mismatch")));
 
         assert_eq!(response.status(), StatusCode::CONFLICT);
@@ -529,7 +564,7 @@ mod tests {
     async fn ping_is_available_without_authentication() {
         let response = warp::test::request()
             .method("GET")
-            .path("/ping")
+            .path(&format!("/ping?coreSha256={EXPECTED_CORE_SHA256}"))
             .reply(&routes())
             .await;
 
@@ -538,6 +573,41 @@ mod tests {
             response.headers().get(PROTOCOL_VERSION_HEADER).unwrap(),
             PROTOCOL_VERSION
         );
+    }
+
+    #[tokio::test]
+    async fn ping_requires_the_core_sha256_query_parameter() {
+        let response = warp::test::request()
+            .method("GET")
+            .path("/ping")
+            .reply(&routes())
+            .await;
+
+        assert_eq!(response.status(), StatusCode::BAD_REQUEST);
+    }
+
+    #[tokio::test]
+    async fn ping_rejects_a_core_sha256_that_does_not_match() {
+        let requested = if EXPECTED_CORE_SHA256.starts_with('0') {
+            format!("1{}", EXPECTED_CORE_SHA256.get(1..).unwrap_or(""))
+        } else {
+            format!("0{}", EXPECTED_CORE_SHA256.get(1..).unwrap_or(""))
+        };
+        assert_ne!(requested, EXPECTED_CORE_SHA256);
+
+        let response = warp::test::request()
+            .method("GET")
+            .path(&format!("/ping?coreSha256={requested}"))
+            .reply(&routes())
+            .await;
+
+        assert_eq!(response.status(), StatusCode::CONFLICT);
+        assert_eq!(
+            response.headers().get(PROTOCOL_VERSION_HEADER).unwrap(),
+            PROTOCOL_VERSION
+        );
+        let body: serde_json::Value = serde_json::from_slice(response.body()).unwrap();
+        assert_eq!(body["code"], "coreSha256Mismatch");
     }
 
     #[tokio::test]
