@@ -2,14 +2,12 @@ import 'dart:async';
 
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/list.dart';
 import 'package:fl_clash/widgets/scaffold.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 
 class AboutView extends ConsumerWidget {
   const AboutView({super.key});
@@ -61,7 +59,6 @@ class AboutView extends ConsumerWidget {
       ],
     );
   }
-
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -133,7 +130,6 @@ class AboutView extends ConsumerWidget {
     );
   }
 }
-
 
 class _DeveloperModeDetector extends StatefulWidget {
   final Widget child;
