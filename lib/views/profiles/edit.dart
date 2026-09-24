@@ -1,14 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/icons/icons.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/pages/editor.dart';
 import 'package:fl_clash/providers/action.dart';
 import 'package:fl_clash/providers/core.dart';
+import 'package:fl_clash/providers/state.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
@@ -141,22 +142,16 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
   }
 
   Future<void> _editProfileFile() async {
-    if (_rawText == null) {
-      final profilePath = await appPath.getProfilePath(
-        widget.profile.id.toString(),
-      );
-      final file = File(profilePath);
-      if (await file.exists()) {
-        _rawText = await file.readAsString();
-      }
-    }
-    if (!mounted) return;
     final title = widget.profile.label.takeFirstValid([
       widget.profile.id.toString(),
     ]);
     final editorPage = EditorPage(
       title: title,
-      content: _rawText!,
+      load: () async => _rawText ??=
+          await readTextFileTask(
+            await appPath.getProfilePath(widget.profile.id.toString()),
+          ) ??
+          '',
       onSave: (context, _, content) {
         _handleSaveEdit(context, content);
       },
@@ -230,7 +225,12 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
   Widget build(BuildContext context) {
     final appLocalizations = context.appLocalizations;
     final items = <Widget>[
-      _ProfileNameField(controller: _labelController),
+      _ProfileNameField(
+        controller: _labelController,
+        reservedLabels: ref.watch(
+          appProviderLabelsProvider(ProviderKind.proxy),
+        ),
+      ),
       if (widget.profile.type == ProfileType.url) ...[
         _ProfileUrlField(controller: _urlController),
         ListItem.toggle(
@@ -258,31 +258,30 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
             _handleBack();
             return false;
           },
-          child: FloatLayout(
-            floatingWidget: FloatWrapper(
-              child: CommonFloatingActionButton(
+          child: CommonScaffold(
+            title: appLocalizations.edit,
+            iconActions: [
+              IconButtonData(
+                glyph: AppGlyphs.check,
                 onPressed: _handleConfirm,
-                icon: const Icon(Icons.save),
-                label: appLocalizations.save,
+                tooltip: appLocalizations.save,
               ),
-            ),
-            child: Form(
+            ],
+            body: Form(
               key: _formKey,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: Builder(
-                  builder: (context) => ListView.separated(
-                    padding: kMaterialListPadding.copyWith(
-                      bottom: BottomInsetScope.of(context),
-                    ),
-                    itemBuilder: (_, index) {
-                      return items[index];
-                    },
-                    separatorBuilder: (_, _) {
-                      return const SizedBox(height: 24);
-                    },
-                    itemCount: items.length,
+              child: Builder(
+                builder: (context) => ListView.separated(
+                  padding: kMaterialListPadding.copyWith(
+                    top: context.contentTopPadding,
+                    bottom: BottomInsetScope.of(context) + 16,
                   ),
+                  itemBuilder: (_, index) {
+                    return items[index];
+                  },
+                  separatorBuilder: (_, _) {
+                    return const SizedBox(height: 24);
+                  },
+                  itemCount: items.length,
                 ),
               ),
             ),
@@ -294,9 +293,13 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
 }
 
 class _ProfileNameField extends StatelessWidget {
-  const _ProfileNameField({required this.controller});
+  const _ProfileNameField({
+    required this.controller,
+    required this.reservedLabels,
+  });
 
   final TextEditingController controller;
+  final Set<String> reservedLabels;
 
   @override
   Widget build(BuildContext context) {
@@ -310,6 +313,9 @@ class _ProfileNameField extends StatelessWidget {
         validator: (String? value) {
           if (value == null || value.isEmpty) {
             return appLocalizations.profileNameNullValidationDesc;
+          }
+          if (reservedLabels.contains(value.trim())) {
+            return appLocalizations.existsTip(appLocalizations.name);
           }
           return null;
         },
@@ -414,12 +420,12 @@ class _ProfileFileItem extends StatelessWidget {
     final appLocalizations = context.appLocalizations;
     return [
       CommonPopupMenuItem(
-        icon: Icons.edit_outlined,
+        glyph: AppGlyphs.edit,
         label: appLocalizations.edit,
         onPressed: onEdit,
       ),
       CommonPopupMenuItem(
-        icon: Icons.upload_outlined,
+        glyph: AppGlyphs.upload,
         label: appLocalizations.upload,
         onPressed: onUpload,
       ),
@@ -452,7 +458,7 @@ class _ProfileFileItem extends StatelessWidget {
                           return IconButton(
                             tooltip: appLocalizations.more,
                             onPressed: open,
-                            icon: const Icon(Icons.more_vert),
+                            icon: const GlyphIcon(AppGlyphs.more),
                           );
                         },
                       ),
