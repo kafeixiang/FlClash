@@ -10,34 +10,8 @@ import 'package:fl_clash/widgets/scaffold.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-@immutable
-class Contributor {
-  final String avatar;
-  final String name;
-  final String link;
-
-  const Contributor({
-    required this.avatar,
-    required this.name,
-    required this.link,
-  });
-}
-
 class AboutView extends ConsumerWidget {
   const AboutView({super.key});
-
-  static const _contributors = [
-    Contributor(
-      avatar: 'assets/images/avatar/june2.jpg',
-      name: 'June2',
-      link: 'https://t.me/Jibadong',
-    ),
-    Contributor(
-      avatar: 'assets/images/avatar/arue.jpg',
-      name: 'Arue',
-      link: 'https://t.me/xrcm6868',
-    ),
-  ];
 
   Future<void> _checkUpdate(BuildContext context, WidgetRef ref) async {
     if (ref.read(loadingProvider(LoadingTag.checkUpdate))) return;
@@ -116,23 +90,6 @@ class AboutView extends ConsumerWidget {
                 url: 'https://t.me/FlClash',
                 label: 't.me/FlClash',
               ),
-            ],
-          ),
-          generateSectionV3(
-            title: appLocalizations.otherContributors,
-            items: [
-              for (final contributor in _contributors)
-                ListItem(
-                  leading: CircleAvatar(
-                    foregroundImage: AssetImage(contributor.avatar),
-                  ),
-                  title: Text(contributor.name),
-                  subtitle: Text(appLocalizations.appIconDesign),
-                  trailing: const GlyphIcon(AppGlyphs.openExternal),
-                  onTap: () {
-                    dialogs.openUrl(contributor.link);
-                  },
-                ),
             ],
           ),
         ],
