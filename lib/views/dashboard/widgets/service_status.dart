@@ -82,7 +82,7 @@ class ServiceStatusCard extends ConsumerStatefulWidget {
 }
 
 class _ServiceStatusCardState extends ConsumerState<ServiceStatusCard> {
-  static const _gap = 12.0;
+  static const _gap = 16.0;
   static const _nodeMinWidth = 260.0;
 
   late final PageController _controller;
@@ -226,7 +226,7 @@ class _ServiceStatusCardState extends ConsumerState<ServiceStatusCard> {
         radius: DashboardWidgetMetrics.radiusOf(context),
         onPressed: _openSheet,
         child: Padding(
-          padding: EdgeInsetsDirectional.only(start: inset - 8, end: inset),
+          padding: EdgeInsets.symmetric(horizontal: inset),
           child: LayoutBuilder(
             builder: (context, constraints) {
               final pickerWidth = (constraints.maxWidth * 0.3).clamp(
