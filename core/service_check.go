@@ -1,4 +1,4 @@
-package main
+package core
 
 import (
 	"context"
@@ -60,7 +60,7 @@ type ServiceCheckItem struct {
 }
 
 var (
-	serviceCheckSlots = make(chan struct{}, serviceCheckConcurrency)
+	serviceCheckSlots = make(slots, serviceCheckConcurrency)
 
 	serviceClaimsMu sync.Mutex
 	serviceClaims   = map[string]*context.CancelFunc{}
@@ -118,7 +118,7 @@ func handleServiceCheck(params *ServiceCheckParams) []ServiceCheckItem {
 		return items
 	}
 
-	timeout := probeTimeout(params.Timeout)
+	timeout := timeoutFromMillis(params.Timeout, defaultProbeTimeout)
 	ctx, cancel := context.WithTimeout(context.Background(), timeout*serviceSweepBudgetFactor)
 	defer cancel()
 
@@ -128,12 +128,12 @@ func handleServiceCheck(params *ServiceCheckParams) []ServiceCheckItem {
 	defer release()
 	var running sync.WaitGroup
 	for index, checker := range wanted {
-		granted := acquireSlot(contexts[index], serviceCheckSlots)
+		granted := serviceCheckSlots.acquire(contexts[index])
 		running.Add(1)
 		go func(index int, checker serviceChecker) {
 			defer running.Done()
 			if granted {
-				defer func() { <-serviceCheckSlots }()
+				defer serviceCheckSlots.release()
 			}
 			items[index] = runServiceCheck(contexts[index], checker, params.ProxyName, timeout)
 		}(index, checker)
@@ -278,9 +278,11 @@ func answered(item ServiceCheckItem, result *ProbeResult) bool {
 }
 
 func bodyContains(result *ProbeResult, needles ...string) bool {
-	body := strings.ToLower(result.Body)
+	if result.lowerBody == "" {
+		result.lowerBody = strings.ToLower(result.Body)
+	}
 	for _, needle := range needles {
-		if strings.Contains(body, needle) {
+		if strings.Contains(result.lowerBody, needle) {
 			return true
 		}
 	}

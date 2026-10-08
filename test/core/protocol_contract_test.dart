@@ -94,7 +94,9 @@ class _RecordingCoreHandler extends CoreHandlerInterface {
         'runtimeOther': 32,
       },
       CoreMethod.changeProxy => {'message': '', 'changed': true},
+      CoreMethod.compileRuleSet => {'behavior': 'ipcidr', 'format': 'text'},
       CoreMethod.getConnectionCount => 3,
+      CoreMethod.validateFilters => ['', 'missing closing )'],
       CoreMethod.watchRoute => {
         'core-epoch': 1,
         'picks-version': 0,
@@ -210,6 +212,15 @@ void main() {
     expect(handler.calls[CoreMethod.clearEffect], 42);
   });
 
+  test('validateFilters sends the filters and reads one error each', () async {
+    final handler = _RecordingCoreHandler();
+
+    final errors = await handler.validateFilters(['hk`jp', '(hk']);
+
+    expect(handler.calls[CoreMethod.validateFilters], ['hk`jp', '(hk']);
+    expect(errors, ['', 'missing closing )']);
+  });
+
   test('dumpRuleSet sends the rule set path', () async {
     final handler = _RecordingCoreHandler();
 
@@ -217,6 +228,27 @@ void main() {
 
     expect(handler.calls[CoreMethod.dumpRuleSet], '/rules.mrs');
   });
+
+  test(
+    'compileRuleSet names a cached file and reads what the Core found',
+    () async {
+      final handler = _RecordingCoreHandler();
+
+      final info = await handler.compileRuleSet(
+        'abc',
+        url: 'https://example.com/r.list',
+      );
+
+      expect(handler.calls[CoreMethod.compileRuleSet], {
+        'name': 'abc',
+        'url': 'https://example.com/r.list',
+      });
+      expect(info, (
+        behavior: RuleProviderBehavior.ipcidr,
+        format: RuleProviderFormat.text,
+      ));
+    },
+  );
 
   test('event contract accepts batches and legacy single events', () async {
     final fixture =
