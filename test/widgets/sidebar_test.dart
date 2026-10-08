@@ -32,6 +32,7 @@ Widget _sidebar({
   VoidCallback? onToggle,
   Size windowControls = Size.zero,
   EdgeInsets safePadding = EdgeInsets.zero,
+  Widget? footer,
 }) {
   return TestApp(
     child: Scaffold(
@@ -49,6 +50,7 @@ Widget _sidebar({
                   onSelected: onSelected ?? (_) {},
                   onToggle: onToggle,
                   windowControls: windowControls,
+                  footer: footer,
                 ),
               ),
             ),
@@ -161,7 +163,7 @@ void main() {
       ),
     );
 
-    expect(tester.getSize(_sidebarFinder).width, 48);
+    expect(tester.getSize(_sidebarFinder).width, 56);
     expect(_labelOpacities(tester, 'Proxies'), [0]);
     expect(_rowTooltip('Proxies'), findsOneWidget);
     await tester.tap(_glyph(AppGlyphs.profiles));
@@ -175,7 +177,7 @@ void main() {
     await tester.pumpWidget(_sidebar(onToggle: () {}));
     await tester.pump(const Duration(milliseconds: 120));
     final width = tester.getSize(_sidebarFinder).width;
-    expect(width, allOf(greaterThan(48), lessThan(220)));
+    expect(width, allOf(greaterThan(56), lessThan(220)));
     expect(tester.takeException(), isNull);
 
     await tester.pumpAndSettle();
@@ -227,6 +229,58 @@ void main() {
 
     await tester.pumpAndSettle();
     expect(glyph('Collapse'), isNot(midway));
+  });
+
+  testWidgets('the footer button is a square centred under the icons', (
+    tester,
+  ) async {
+    var taps = 0;
+    Widget sidebar({required bool expanded, Size windowControls = Size.zero}) =>
+        _sidebar(
+          expanded: expanded,
+          onToggle: () {},
+          windowControls: windowControls,
+          footer: SidebarFooterButton(
+            icon: const GlyphIcon(AppGlyphs.add, fill: 1),
+            tooltip: 'Start',
+            onPressed: () => taps++,
+          ),
+        );
+    Finder button() => find
+        .ancestor(of: find.byTooltip('Start'), matching: find.byType(Material))
+        .first;
+
+    for (final (windowControls, side) in [
+      (Size.zero, 40.0),
+      (const Size(78, 32), 48.0),
+    ]) {
+      await tester.pumpWidget(
+        sidebar(expanded: false, windowControls: windowControls),
+      );
+      await tester.pumpAndSettle();
+      final pane = tester.getRect(_sidebarFinder);
+      final compact = tester.getRect(button());
+      expect(compact.size, Size(side, side));
+      expect(compact.bottom, pane.bottom - 16);
+      expect(compact.center.dx, pane.center.dx);
+      expect(
+        compact.center.dx,
+        tester.getCenter(_glyph(AppGlyphs.profiles)).dx,
+      );
+
+      await tester.pumpWidget(
+        sidebar(expanded: true, windowControls: windowControls),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.getRect(button()), compact);
+    }
+    expect(
+      tester.widget<Material>(button()).color,
+      Theme.of(tester.element(_sidebarFinder)).colorScheme.primaryContainer,
+    );
+    expect(_rowTooltip('Start'), findsOneWidget);
+    await tester.tap(button());
+    expect(taps, 1);
   });
 
   testWidgets('window controls keep their corner clear', (tester) async {
@@ -282,7 +336,7 @@ void main() {
 
       await openOverlay(tester);
 
-      expect(tester.getSize(_sidebarFinder).width, 48);
+      expect(tester.getSize(_sidebarFinder).width, 56);
       expect(
         tester.getSize(find.byKey(const ValueKey('content'))).width,
         contentWidth,
@@ -318,7 +372,7 @@ void main() {
         _sidebar(expanded: false, safePadding: safePadding),
       );
       final sidebar = tester.getRect(_sidebarFinder);
-      expect(sidebar.width, 48 + safePadding.left);
+      expect(sidebar.width, 56 + safePadding.left);
       final toggle = tester.getTopLeft(find.byTooltip('Expand'));
       expect(toggle.dx, greaterThanOrEqualTo(sidebar.left + safePadding.left));
       expect(toggle.dy, greaterThanOrEqualTo(sidebar.top + safePadding.top));

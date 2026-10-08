@@ -145,12 +145,14 @@ class _Sidebar extends ConsumerWidget {
     required this.currentIndex,
     required this.viewMode,
     required this.onSelected,
+    required this.footer,
   });
 
   final List<NavigationItem> items;
   final int currentIndex;
   final ViewMode viewMode;
   final void Function(int index) onSelected;
+  final Widget? footer;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -181,14 +183,20 @@ class _Sidebar extends ConsumerWidget {
         isMacOS: system.isMacOS,
         version: version,
       ),
+      footer: footer,
     );
   }
 }
 
 class AppSidebarContainer extends ConsumerWidget {
   final Widget child;
+  final Widget? sidebarFooter;
 
-  const AppSidebarContainer({super.key, required this.child});
+  const AppSidebarContainer({
+    super.key,
+    required this.child,
+    this.sidebarFooter,
+  });
 
   Widget _buildBackground({
     required Color color,
@@ -262,6 +270,7 @@ class AppSidebarContainer extends ConsumerWidget {
                   currentIndex: currentIndex,
                   viewMode: viewMode,
                   onSelected: onSelected,
+                  footer: sidebarFooter,
                 ),
               ),
             ),

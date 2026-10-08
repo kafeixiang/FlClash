@@ -22,8 +22,12 @@ class HomePage extends ConsumerWidget {
     if (!hasViewSize) {
       return const SizedBox.shrink();
     }
+    final hasProfile = ref.watch(
+      profilesProvider.select((profiles) => profiles.isNotEmpty),
+    );
     return HomeBackScopeContainer(
       child: AppSidebarContainer(
+        sidebarFooter: hasProfile ? const StartButton() : null,
         child: _HomeShell(
           child: Consumer(
             builder: (_, ref, _) {
@@ -44,7 +48,7 @@ class HomePage extends ConsumerWidget {
                     key: ValueKey(navigationItem.label),
                     item: navigationItem,
                     isMobile: isMobile,
-                    docked: isMobile && floating,
+                    primaryActionInBar: !isMobile || floating,
                     view: navigationItem.builder(context),
                   );
                 },
@@ -196,19 +200,19 @@ class _NavigationPage extends StatelessWidget {
     super.key,
     required this.item,
     required this.isMobile,
-    required this.docked,
+    required this.primaryActionInBar,
     required this.view,
   });
 
   final NavigationItem item;
   final bool isMobile;
-  final bool docked;
+  final bool primaryActionInBar;
   final Widget view;
 
   @override
   Widget build(BuildContext context) {
     final scopedView = PageFocusScope(
-      child: DockedPageScope(docked: docked, child: view),
+      child: PrimaryActionInBarScope(inBar: primaryActionInBar, child: view),
     );
     final keptView = KeepScope(
       key: ValueKey(item.label),

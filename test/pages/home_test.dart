@@ -10,6 +10,7 @@ import 'package:fl_clash/pages/home.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/config/general.dart';
+import 'package:fl_clash/views/dashboard/widgets/start_button.dart';
 import 'package:fl_clash/views/tools.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:fl_clash/views/navigation.dart';
@@ -248,7 +249,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
     expect(container.read(appSettingProvider).sidebarExpanded, isFalse);
-    expect(tester.getSize(sidebar).width, 48);
+    expect(tester.getSize(sidebar).width, 56);
 
     await tester.tap(find.byTooltip('Expand'));
     await tester.pump();
@@ -259,12 +260,12 @@ void main() {
     container.read(viewSizeProvider.notifier).value = const Size(800, 800);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
-    expect(tester.getSize(sidebar).width, 48);
+    expect(tester.getSize(sidebar).width, 56);
 
     await tester.tap(find.byTooltip('Expand'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
-    expect(tester.getSize(sidebar).width, 48);
+    expect(tester.getSize(sidebar).width, 56);
     expect(find.text('Tools'), findsNWidgets(2));
     expect(container.read(appSettingProvider).sidebarExpanded, isTrue);
     expect(tester.takeException(), isNull);
@@ -738,7 +739,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('a non-floating bottom bar leaves pages undocked', (
+  testWidgets('a non-floating bottom bar leaves primary actions floating', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(500, 800);
@@ -749,7 +750,7 @@ void main() {
     Widget page(String label) {
       return Builder(
         builder: (context) => Text(
-          'page:$label docked:${DockedPageScope.of(context)} '
+          'page:$label inBar:${PrimaryActionInBarScope.of(context)} '
           'inset:${BottomInsetScope.of(context)}',
         ),
       );
@@ -791,7 +792,7 @@ void main() {
     await tester.pump();
     expect(find.byType(FloatingNavigationBar), findsNothing);
     expect(find.byType(NavigationBar), findsOneWidget);
-    expect(find.text('page:dashboard docked:false inset:0.0'), findsOneWidget);
+    expect(find.text('page:dashboard inBar:false inset:0.0'), findsOneWidget);
 
     await tester.tap(_glyph(AppGlyphs.tools));
     await tester.pumpAndSettle();
@@ -807,9 +808,73 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(NavigationBar), findsNothing);
     expect(find.byType(FloatingNavigationBar), findsOneWidget);
-    expect(find.textContaining('page:tools docked:true'), findsOneWidget);
+    expect(find.textContaining('page:tools inBar:true'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets(
+    'the desktop sidebar holds the start button and pages their primary '
+    'actions in the bar',
+    (tester) async {
+      tester.view.physicalSize = const Size(1200, 800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final container = ProviderContainer(
+        overrides: [
+          profilesProvider.overrideWithValue([
+            const Profile(id: 1, autoUpdateDuration: Duration.zero),
+          ]),
+          navigationItemsStateProvider.overrideWithValue(
+            NavigationItemsState(
+              value: [
+                NavigationItem(
+                  glyph: AppGlyphs.dashboard,
+                  label: PageLabel.dashboard,
+                  builder: (_) => Builder(
+                    builder: (context) =>
+                        Text('inBar:${PrimaryActionInBarScope.of(context)}'),
+                  ),
+                ),
+                NavigationItem(
+                  glyph: AppGlyphs.tools,
+                  label: PageLabel.tools,
+                  builder: (_) => const SizedBox.shrink(),
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+      globalState.container = container;
+      container.read(viewSizeProvider.notifier).value = const Size(1200, 800);
+      container
+          .read(appSettingProvider.notifier)
+          .update((state) => state.copyWith(floatingNavigationBar: false));
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: const TestApp(includeNavigatorKey: false, child: HomePage()),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text('inBar:true'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(NavigationSidebar),
+          matching: find.byType(StartButton),
+        ),
+        findsOneWidget,
+      );
+      expect(find.byType(SidebarFooterButton), findsOneWidget);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('the fade tab switch cross-fades the pages in place', (
     tester,

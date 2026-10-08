@@ -30,8 +30,8 @@ Future<List<String>> _pumpBar(
   await tester.pumpWidget(
     TestApp(
       wrapInProviderScope: true,
-      child: DockedPageScope(
-        docked: true,
+      child: PrimaryActionInBarScope(
+        inBar: true,
         child: CommonScaffold(
           title: 'Page',
           searchState: hasSearch ? AppBarSearchState(onSearch: (_) {}) : null,
@@ -222,5 +222,32 @@ void main() {
 
     await tester.tap(find.byTooltip('Select all'));
     expect(taps, ['Select all']);
+  });
+
+  testWidgets('a selection groups two actions and stands the rest apart', (
+    tester,
+  ) async {
+    await _pumpBar(
+      tester,
+      hasSearch: true,
+      selection: ['Delete', 'Select all', 'Copy'],
+    );
+
+    void expectSplit(String lead) {
+      expect(
+        _barButtons(tester),
+        containsAllInOrder([lead, 'Delete', 'Select all', 'Copy']),
+      );
+      expect(_inGroup('Delete'), findsOneWidget);
+      expect(_inGroup('Select all'), findsOneWidget);
+      expect(_inGroup('Copy'), findsNothing);
+      expect(_inBar(find.byGlyph(AppGlyphs.more)), findsNothing);
+    }
+
+    expectSplit('Search');
+
+    await tester.tap(_inBar(find.byTooltip('Search')));
+    await tester.pumpAndSettle();
+    expectSplit('Clear search');
   });
 }

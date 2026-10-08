@@ -1,3 +1,4 @@
+import 'package:fl_clash/common/constant.dart';
 import 'package:fl_clash/common/network_error.dart';
 import 'package:fl_clash/core/desktop/launch_policy.dart';
 import 'package:fl_clash/core/method.dart';
@@ -25,9 +26,21 @@ String userFacingErrorMessage(Object error, AppLocalizations appLocalizations) {
   return networkErrorMessage(error, appLocalizations) ??
       coreLaunchBlockedMessage(error, appLocalizations) ??
       switch (error) {
+        CoreMethodException(code: 'rule_set_empty') =>
+          appLocalizations.ruleSetEmptyTip,
+        CoreMethodException(code: 'rule_set_mixed') =>
+          appLocalizations.ruleSetMixedTip,
+        CoreMethodException(code: 'rule_set_invalid') =>
+          appLocalizations.ruleSetInvalidTip,
         CoreMethodException(:final message) => message,
         _ => error.toString(),
       };
+}
+
+String delayFailureText(int delay, AppLocalizations appLocalizations) {
+  return delay == delayTimedOutValue
+      ? appLocalizations.timeout
+      : appLocalizations.delayFailed;
 }
 
 Locale? getLocaleForString(String? localString) {

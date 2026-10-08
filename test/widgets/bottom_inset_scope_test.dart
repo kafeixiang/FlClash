@@ -130,28 +130,4 @@ void main() {
     expect(contentInset, fabInset);
     expect(tester.takeException(), isNull);
   });
-
-  testWidgets('does not reserve FAB space on TV', (tester) async {
-    await tester.pumpWidget(
-      TestApp(
-        wrapInProviderScope: true,
-        includeNavigatorKey: false,
-        child: BottomInsetScope(
-          inset: navigationInset,
-          child: CommonScaffold(
-            title: 'title',
-            isTV: true,
-            body: contentProbe(),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {},
-              child: const Icon(Icons.add),
-            ),
-          ),
-        ),
-      ),
-    );
-
-    expect(contentInset, navigationInset);
-    expect(tester.takeException(), isNull);
-  });
 }

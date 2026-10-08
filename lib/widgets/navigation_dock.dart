@@ -207,25 +207,6 @@ class NavigationDockDestination {
   final String label;
 }
 
-/// Marks a phone's home page, whose foot the navigation dock holds.
-class DockedPageScope extends InheritedWidget {
-  const DockedPageScope({
-    super.key,
-    required this.docked,
-    required super.child,
-  });
-
-  final bool docked;
-
-  static bool of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<DockedPageScope>()?.docked ??
-      false;
-
-  @override
-  bool updateShouldNotify(DockedPageScope oldWidget) =>
-      docked != oldWidget.docked;
-}
-
 class NavigationDock extends StatelessWidget {
   const NavigationDock({
     super.key,

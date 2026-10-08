@@ -6,13 +6,16 @@ import 'package:fl_clash/icons/icons.dart';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
-const _compactWidth = 48.0;
 const _expandedWidth = 220.0;
 const _itemSize = 40.0;
 const _itemGap = 4.0;
 const _toggleGap = 8.0;
 const _verticalInset = 4.0;
+const _footerSize = 48.0;
+const _footerBottomGap = 16.0;
 const _maxSideInset = 12.0;
+const _compactSideInset = 8.0;
+const _compactWidth = _itemSize + _compactSideInset * 2;
 const _iconSize = 24.0;
 const _labelGap = 12.0;
 const _indicatorWidth = 3.0;
@@ -20,6 +23,7 @@ const _indicatorHeight = 16.0;
 const _expandDuration = Duration(milliseconds: 250);
 const _indicatorDuration = Duration(milliseconds: 320);
 final _itemShape = AppShape.all(10);
+final _footerShape = AppShape.all(14);
 
 class SidebarDestination {
   const SidebarDestination({required this.glyph, required this.label});
@@ -42,6 +46,7 @@ class NavigationSidebar extends StatefulWidget {
     required this.onSelected,
     this.onToggle,
     this.windowControls = Size.zero,
+    this.footer,
   });
 
   final List<SidebarDestination> destinations;
@@ -50,6 +55,12 @@ class NavigationSidebar extends StatefulWidget {
   final ValueChanged<int> onSelected;
   final VoidCallback? onToggle;
   final Size windowControls;
+  final Widget? footer;
+
+  /// Whether [context] sits in a sidebar's [footer], where a button is a
+  /// [SidebarFooterButton].
+  static bool isInFooter(BuildContext context) =>
+      context.getInheritedWidgetOfExactType<_SidebarFooterScope>() != null;
 
   @override
   State<NavigationSidebar> createState() => _NavigationSidebarState();
@@ -132,6 +143,7 @@ class _NavigationSidebarState extends State<NavigationSidebar>
                 _closeOverlay();
               },
               onToggle: _closeOverlay,
+              footer: widget.footer,
             ),
           ),
         );
@@ -149,6 +161,7 @@ class _NavigationSidebarState extends State<NavigationSidebar>
             selectedIndex: widget.selectedIndex,
             onSelected: widget.onSelected,
             onToggle: _handleToggle,
+            footer: widget.footer,
           ),
         ),
       ),
@@ -224,17 +237,31 @@ class _SidebarOverlay extends StatelessWidget {
 
 class _SidebarColors {
   _SidebarColors(ColorScheme scheme)
-    : selectedFill = scheme.onSurface.withValues(alpha: 0.08),
+    : fill = Colors.transparent,
+      selectedFill = scheme.onSurface.withValues(alpha: 0.08),
       label = scheme.onSurface,
       icon = scheme.onSurfaceVariant,
       indicator = scheme.primary,
-      overlay = WidgetStateProperty.fromMap({
-        WidgetState.pressed: scheme.onSurface.withValues(alpha: 0.06),
-        WidgetState.focused: scheme.onSurface.withValues(alpha: 0.1),
-        WidgetState.hovered: scheme.onSurface.withValues(alpha: 0.04),
-        WidgetState.any: Colors.transparent,
-      });
+      overlay = _overlayOf(scheme.onSurface);
 
+  _SidebarColors.filled(ColorScheme scheme)
+    : fill = scheme.primaryContainer,
+      selectedFill = scheme.primaryContainer,
+      label = scheme.onPrimaryContainer,
+      icon = scheme.onPrimaryContainer,
+      indicator = scheme.primary,
+      overlay = _overlayOf(scheme.onPrimaryContainer);
+
+  static WidgetStateProperty<Color> _overlayOf(Color color) {
+    return WidgetStateProperty.fromMap({
+      WidgetState.pressed: color.withValues(alpha: 0.06),
+      WidgetState.focused: color.withValues(alpha: 0.1),
+      WidgetState.hovered: color.withValues(alpha: 0.04),
+      WidgetState.any: Colors.transparent,
+    });
+  }
+
+  final Color fill;
   final Color selectedFill;
   final Color label;
   final Color icon;
@@ -251,6 +278,7 @@ class _SidebarPane extends StatelessWidget {
     required this.selectedIndex,
     required this.onSelected,
     required this.onToggle,
+    required this.footer,
   });
 
   final double progress;
@@ -260,6 +288,7 @@ class _SidebarPane extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onSelected;
   final VoidCallback onToggle;
+  final Widget? footer;
 
   @override
   Widget build(BuildContext context) {
@@ -272,6 +301,7 @@ class _SidebarPane extends StatelessWidget {
     final iconInset = (itemWidth - _iconSize) / 2;
     final itemHeight =
         _itemSize + MediaQuery.textScalerOf(context).scale(fontSize) - fontSize;
+    final footerSide = math.min(_footerSize, itemWidth);
     final rowWidth = _expandedWidth - sideInset * 2;
     final labelStyle = context.textTheme.bodyMedium?.copyWith(
       color: colors.label,
@@ -348,7 +378,16 @@ class _SidebarPane extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: _verticalInset),
+          if (footer case final footer?) ...[
+            const SizedBox(height: _toggleGap),
+            _SidebarFooterScope(
+              side: footerSide,
+              sideInset: sideInset + (itemWidth - footerSide) / 2,
+              child: footer,
+            ),
+            const SizedBox(height: _footerBottomGap - _itemGap / 2),
+          ] else
+            const SizedBox(height: _verticalInset),
         ],
       ),
     );
@@ -366,6 +405,7 @@ class _SidebarButton extends StatelessWidget {
     required this.child,
     this.selected,
     this.tooltipIsLabel = false,
+    this.shape,
   });
 
   final _SidebarColors colors;
@@ -375,10 +415,12 @@ class _SidebarButton extends StatelessWidget {
   final String tooltip;
   final bool tooltipIsLabel;
   final VoidCallback onTap;
+  final ShapeBorder? shape;
   final Widget child;
 
   @override
   Widget build(BuildContext context) {
+    final shape = this.shape ?? _itemShape;
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: sideInset,
@@ -389,11 +431,11 @@ class _SidebarButton extends StatelessWidget {
         button: true,
         selected: selected,
         child: Material(
-          color: selected == true ? colors.selectedFill : Colors.transparent,
-          shape: _itemShape,
+          color: selected == true ? colors.selectedFill : colors.fill,
+          shape: shape,
           child: InkWell(
             onTap: onTap,
-            customBorder: _itemShape,
+            customBorder: shape,
             mouseCursor: SystemMouseCursors.basic,
             splashFactory: NoSplash.splashFactory,
             overlayColor: colors.overlay,
@@ -476,6 +518,58 @@ class _DestinationRow extends StatelessWidget {
             ),
             const SizedBox(width: _labelGap),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SidebarFooterScope extends InheritedWidget {
+  const _SidebarFooterScope({
+    required this.side,
+    required this.sideInset,
+    required super.child,
+  });
+
+  final double side;
+  final double sideInset;
+
+  @override
+  bool updateShouldNotify(_SidebarFooterScope oldWidget) =>
+      side != oldWidget.side || sideInset != oldWidget.sideInset;
+}
+
+/// A filled square in a [NavigationSidebar.footer], centred under the rows'
+/// icons and kept in place as the sidebar expands.
+class SidebarFooterButton extends StatelessWidget {
+  const SidebarFooterButton({
+    super.key,
+    required this.icon,
+    required this.tooltip,
+    required this.onPressed,
+  });
+
+  final Widget icon;
+  final String tooltip;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final scope = context
+        .dependOnInheritedWidgetOfExactType<_SidebarFooterScope>()!;
+    return Align(
+      alignment: AlignmentDirectional.centerStart,
+      child: _SidebarButton(
+        colors: _SidebarColors.filled(context.colorScheme),
+        height: scope.side,
+        sideInset: scope.sideInset,
+        tooltip: tooltip,
+        tooltipIsLabel: true,
+        onTap: onPressed,
+        shape: _footerShape,
+        child: SizedBox(
+          width: scope.side,
+          child: Center(child: icon),
         ),
       ),
     );
