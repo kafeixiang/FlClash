@@ -17,7 +17,7 @@ listed in the SDK's `CHANGELOG.md`.
   became the default desktop renderer, Intel (x86_64) Macs flicker across the whole window while scrolling or
   animating, and text can render garbled. Apple Silicon is not affected.
 - **Fix upstream:** landed on `main` before 2026-08-25 and verified on `3.48.0-1.0.pre-404`; it is not in any
-  3.47.x hotfix (checked through 3.47.5).
+  3.47.x hotfix (checked through 3.47.6).
 - **Workaround:** the release job for `macos-15-intel` (`arch: amd64`) runs
   `plutil -replace FLTEnableImpeller -bool NO macos/Runner/Info.plist` before `dart setup.dart`, so only the Intel
   DMG falls back to Skia. The checked-in `Info.plist` does not set the key, so local builds and the arm64 DMG keep
