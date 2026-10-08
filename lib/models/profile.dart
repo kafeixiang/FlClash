@@ -125,7 +125,7 @@ extension ProfilesExt on List<Profile> {
     return profile.copyWith(
       label: uniqueLabelFor(
         profile.label,
-        fallback: profile.id.toString(),
+        fallback: profile.defaultLabel,
         taken: (label) =>
             any((item) => item.label == label && item.id != profile.id),
       ),
@@ -136,7 +136,9 @@ extension ProfilesExt on List<Profile> {
 extension ProfileExtension on Profile {
   bool get realAutoUpdate => type == ProfileType.url && autoUpdate;
 
-  String get realLabel => label.takeFirstValid([id.toString()]);
+  String get realLabel => label.takeFirstValid([defaultLabel]);
+
+  String get defaultLabel => url.webUri?.host ?? id.toString();
 
   String get fileName => '$id.yaml';
 
@@ -176,7 +178,7 @@ extension ProfileExtension on Profile {
     return copyWith(
       label: label.takeFirstValid([
         getFileNameForDisposition(disposition),
-        id.toString(),
+        defaultLabel,
       ]),
       subscriptionInfo: SubscriptionInfo.formHString(userinfo),
     ).saveFile(
