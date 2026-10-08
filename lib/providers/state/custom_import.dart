@@ -327,7 +327,7 @@ _importProxies(
       if (!existingNames.contains(_nameOf(group))) _nameOf(group),
   };
   final taken = {
-    ...reservedProxyNames,
+    ...reservedCustomProxyNames,
     ...existingNames,
     ...groupNames,
     ...kept,
@@ -347,7 +347,9 @@ _importProxies(
     } else if (identities.contains(_identityOf(definition))) {
       imported = name;
     } else {
-      imported = freeName(name);
+      imported = reservedCustomProxyNames.contains(name)
+          ? freeProxyName(name, taken)
+          : freeName(name);
       added.add({...definition, 'name': imported});
     }
     names.putIfAbsent(name, () => imported);

@@ -750,6 +750,29 @@ void main() {
       ]);
     });
 
+    test('a proxy cannot take GLOBAL, which a group may', () {
+      const proxy = CustomProxy(id: 1, definition: {'name': 'GLOBAL'});
+      expect(
+        customProxyIssues(proxy, proxies: const [proxy], groupNames: const {}),
+        [const CustomIssue.reservedName('GLOBAL')],
+      );
+      const group = ProxyGroup(
+        id: 3,
+        name: 'GLOBAL',
+        type: GroupType.Selector,
+        proxies: ['DIRECT'],
+      );
+      expect(proxyGroupIssues(group, profileData), isEmpty);
+    });
+
+    test('a rule cannot target a name holding a comma', () {
+      final data = profileData.copyWith(ruleTargets: {'DIRECT', 'A,B'});
+      const rule = Rule(id: 1, ruleAction: RuleAction.MATCH, ruleTarget: 'A,B');
+      expect(customRuleIssues(rule, data), [
+        const CustomIssue.missingTarget('A,B'),
+      ]);
+    });
+
     test('custom proxies report names and core errors together', () {
       const first = CustomProxy(id: 1, definition: {'name': 'X'});
       const second = CustomProxy(id: 2, definition: {'name': 'X'});
@@ -822,6 +845,7 @@ void main() {
         {'name': '', 'type': 'vless', 'server': 'b.example'},
         {'name': '-01', 'type': 'vless', 'server': 'b.example'},
         {'name': 'DIRECT', 'type': 'trojan', 'server': 'c.example'},
+        {'name': 'GLOBAL', 'type': 'trojan', 'server': 'd.example'},
       ],
       existing: const [
         CustomProxy(id: 1, definition: {'name': 'Home', 'type': 'ss'}),
@@ -834,14 +858,16 @@ void main() {
       'b.example-01',
       'b.example-02',
       'DIRECT-01',
+      'GLOBAL-01',
     ]);
     expect(proxies.map((proxy) => proxy.server), [
       'a.example',
       'b.example',
       'b.example',
       'c.example',
+      'd.example',
     ]);
-    expect(proxies.map((proxy) => proxy.id).toSet(), hasLength(4));
+    expect(proxies.map((proxy) => proxy.id).toSet(), hasLength(5));
   });
 
   group('share link edit', () {

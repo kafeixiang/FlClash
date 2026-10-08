@@ -81,14 +81,22 @@ class YamlSchema {
 
 enum EditorSchema {
   config(clashConfigSchema),
-  dns(_dns),
-  ntp(_ntp),
+  dns(_dns, 'dns'),
+  ntp(_ntp, 'ntp'),
+  sniffer(_sniffer, 'sniffer'),
   proxy(_proxy),
+  proxyGroup(_proxyGroup, 'proxy-groups'),
+  rules(_rules),
+  shareLinks(_str),
   provider(_providerFile);
 
   final YamlSchema root;
 
-  const EditorSchema(this.root);
+  /// The configuration key that holds this part, which a pasted fragment may
+  /// still carry.
+  final String? section;
+
+  const EditorSchema(this.root, [this.section]);
 }
 
 const _str = YamlSchema.scalar();
@@ -263,6 +271,7 @@ const _proxyTypes = [
   'snell',
   'ssh',
   'mieru',
+  'easytier',
   'direct',
   'dns',
 ];
@@ -568,6 +577,37 @@ const _proxyVariants = <String, Map<String, YamlSchema>>{
       'MULTIPLEXING_HIGH',
     ]),
   },
+  'easytier': {
+    'network-name': _str,
+    'network-secret': _str,
+    'hostname': _str,
+    'ipv4': _str,
+    'dhcp': _bool,
+    'peers': _strList,
+    'listeners': _strList,
+    'no-listener': _bool,
+    'mapped-listeners': _strList,
+    'exit-nodes': _strList,
+    'proxy-networks': _strList,
+    'instance-name': _str,
+    'state-dir': _str,
+    'accept-dns': _bool,
+    'enable-exit-node': _bool,
+    'enable-encryption': _bool,
+    'encryption-algorithm': _str,
+    'private-mode': _bool,
+    'latency-first': _bool,
+    'disable-p2p': _bool,
+    'enable-kcp-proxy': _bool,
+    'disable-kcp-input': _bool,
+    'enable-quic-proxy': _bool,
+    'disable-quic-input': _bool,
+    'mtu': _str,
+    'tld-dns-zone': _str,
+    'secure-mode': _bool,
+    'local-private-key': _str,
+    'local-public-key': _str,
+  },
   'direct': {},
   'dns': {},
 };
@@ -609,15 +649,15 @@ const _proxyGroup = YamlSchema.map(
     'lazy': _bool,
     'timeout': _str,
     'max-failed-times': _str,
+    'empty-fallback': _policy,
     'expected-status': _str,
     ..._groupFilters,
     'disable-udp': _bool,
-    'interface-name': _str,
-    'routing-mark': _str,
     'hidden': _bool,
     'icon': _str,
   },
   variants: {
+    'select': {'default-selected': _policy},
     'url-test': {'tolerance': _str},
     'load-balance': {
       'strategy': YamlSchema.scalar([
@@ -625,6 +665,7 @@ const _proxyGroup = YamlSchema.map(
         'round-robin',
         'sticky-sessions',
       ]),
+      'hash-key': YamlSchema.scalar(['in-user']),
     },
   },
 );

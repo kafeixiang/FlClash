@@ -401,6 +401,21 @@ rules:
       expect(config.rules.single.ruleTarget, 'G');
     });
 
+    test('moves a proxy off a name the Core keeps, but not a group', () {
+      final config = _read('''
+proxies:
+  - {name: GLOBAL, type: ss, server: a.example.com}
+proxy-groups:
+  - {name: GLOBAL, type: select, proxies: [DIRECT]}
+''');
+
+      expect(
+        [for (final proxy in config.proxies) proxy['name']],
+        ['GLOBAL-01'],
+      );
+      expect(config.proxyGroups.single.name, 'GLOBAL');
+    });
+
     test(
       'drops include-all-providers and keeps the proxies of include-all',
       () {
