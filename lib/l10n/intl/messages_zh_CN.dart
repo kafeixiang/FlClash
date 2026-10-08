@@ -290,6 +290,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "cameraUnavailable": MessageLookupByLibrary.simpleMessage("相机不可用"),
     "cancel": MessageLookupByLibrary.simpleMessage("取消"),
     "cancelSelectAll": MessageLookupByLibrary.simpleMessage("取消全选"),
+    "cannotSave": MessageLookupByLibrary.simpleMessage("无法保存"),
     "changeProxyFailedTip": MessageLookupByLibrary.simpleMessage(
       "切换代理失败，已恢复上一次的选择",
     ),
@@ -688,15 +689,25 @@ class MessageLookup extends MessageLookupByLibrary {
     "interval": MessageLookupByLibrary.simpleMessage("间隔"),
     "intranetIP": MessageLookupByLibrary.simpleMessage("内网 IP"),
     "invalidBackupFile": MessageLookupByLibrary.simpleMessage("无效备份文件"),
+    "invalidCidrContent": MessageLookupByLibrary.simpleMessage(
+      "请输入 CIDR 格式的 IP 段，如 192.168.0.0/16",
+    ),
     "invalidDscpContent": MessageLookupByLibrary.simpleMessage(
       "DSCP 标记不能超过 63",
     ),
+    "invalidHostContent": MessageLookupByLibrary.simpleMessage("请输入域名或 IP 地址"),
     "invalidIconSet": MessageLookupByLibrary.simpleMessage("不是有效的图标集"),
     "invalidLinkTip": MessageLookupByLibrary.simpleMessage("不是有效的订阅链接或代理分享链接"),
+    "invalidListenContent": MessageLookupByLibrary.simpleMessage(
+      "请输入地址和端口，如 0.0.0.0:1053",
+    ),
     "invalidNetworkContent": MessageLookupByLibrary.simpleMessage(
       "仅支持 tcp 或 udp",
     ),
     "invalidPolicy": m31,
+    "invalidPortRangeContent": MessageLookupByLibrary.simpleMessage(
+      "请输入端口或范围，如 443 或 8000-9000",
+    ),
     "invalidProfileQrcode": MessageLookupByLibrary.simpleMessage(
       "该二维码不包含配置文件链接",
     ),
@@ -1267,6 +1278,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "tproxyPort": MessageLookupByLibrary.simpleMessage("Tproxy端口"),
     "trafficUsage": MessageLookupByLibrary.simpleMessage("流量统计"),
     "tun": MessageLookupByLibrary.simpleMessage("虚拟网卡"),
+    "tunAuthorizationFailed": MessageLookupByLibrary.simpleMessage(
+      "虚拟网卡授权失败，已关闭。",
+    ),
     "tunDesc": MessageLookupByLibrary.simpleMessage("虚拟网卡仅在管理员模式生效。"),
     "turnOff": MessageLookupByLibrary.simpleMessage("关闭"),
     "turnOn": MessageLookupByLibrary.simpleMessage("开启"),

@@ -3375,6 +3375,11 @@ class AppLocalizations {
     );
   }
 
+  /// `Can't save`
+  String get cannotSave {
+    return Intl.message('Can\'t save', name: 'cannotSave', desc: '', args: []);
+  }
+
   /// `Bottom bar`
   String get navigationBarStyle {
     return Intl.message(
@@ -4865,6 +4870,16 @@ class AppLocalizations {
     );
   }
 
+  /// `TUN could not be authorized, so it was turned off.`
+  String get tunAuthorizationFailed {
+    return Intl.message(
+      'TUN could not be authorized, so it was turned off.',
+      name: 'tunAuthorizationFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Enter your password for sudo`
   String get sudoPasswordTitle {
     return Intl.message(
@@ -5620,6 +5635,46 @@ class AppLocalizations {
     return Intl.message(
       'A DSCP mark cannot exceed 63',
       name: 'invalidDscpContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter an IP range in CIDR form such as 192.168.0.0/16`
+  String get invalidCidrContent {
+    return Intl.message(
+      'Enter an IP range in CIDR form such as 192.168.0.0/16',
+      name: 'invalidCidrContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter a port or a range such as 443 or 8000-9000`
+  String get invalidPortRangeContent {
+    return Intl.message(
+      'Enter a port or a range such as 443 or 8000-9000',
+      name: 'invalidPortRangeContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter a domain or an IP address`
+  String get invalidHostContent {
+    return Intl.message(
+      'Enter a domain or an IP address',
+      name: 'invalidHostContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter an address and port such as 0.0.0.0:1053`
+  String get invalidListenContent {
+    return Intl.message(
+      'Enter an address and port such as 0.0.0.0:1053',
+      name: 'invalidListenContent',
       desc: '',
       args: [],
     );

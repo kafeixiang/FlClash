@@ -369,6 +369,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "cancelSelectAll": MessageLookupByLibrary.simpleMessage("Deselect all"),
+    "cannotSave": MessageLookupByLibrary.simpleMessage("Can\'t save"),
     "changeProxyFailedTip": MessageLookupByLibrary.simpleMessage(
       "Failed to switch proxy; the previous selection has been restored",
     ),
@@ -890,8 +891,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "invalidBackupFile": MessageLookupByLibrary.simpleMessage(
       "Invalid backup file",
     ),
+    "invalidCidrContent": MessageLookupByLibrary.simpleMessage(
+      "Enter an IP range in CIDR form such as 192.168.0.0/16",
+    ),
     "invalidDscpContent": MessageLookupByLibrary.simpleMessage(
       "A DSCP mark cannot exceed 63",
+    ),
+    "invalidHostContent": MessageLookupByLibrary.simpleMessage(
+      "Enter a domain or an IP address",
     ),
     "invalidIconSet": MessageLookupByLibrary.simpleMessage(
       "Not a valid icon set",
@@ -899,10 +906,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "invalidLinkTip": MessageLookupByLibrary.simpleMessage(
       "Not a subscription link or a proxy share link",
     ),
+    "invalidListenContent": MessageLookupByLibrary.simpleMessage(
+      "Enter an address and port such as 0.0.0.0:1053",
+    ),
     "invalidNetworkContent": MessageLookupByLibrary.simpleMessage(
       "Only tcp or udp is supported",
     ),
     "invalidPolicy": m31,
+    "invalidPortRangeContent": MessageLookupByLibrary.simpleMessage(
+      "Enter a port or a range such as 443 or 8000-9000",
+    ),
     "invalidProfileQrcode": MessageLookupByLibrary.simpleMessage(
       "This QR code doesn\'t contain a profile link",
     ),
@@ -1653,6 +1666,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "tproxyPort": MessageLookupByLibrary.simpleMessage("TProxy port"),
     "trafficUsage": MessageLookupByLibrary.simpleMessage("Traffic usage"),
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
+    "tunAuthorizationFailed": MessageLookupByLibrary.simpleMessage(
+      "TUN could not be authorized, so it was turned off.",
+    ),
     "tunDesc": MessageLookupByLibrary.simpleMessage(
       "TUN works only in administrator mode.",
     ),

@@ -30,7 +30,7 @@ typedef ConfigCounts = ({int groups, int proxies, int rules});
 
 typedef ProfileStats = ({int groups, int proxies, int rules, int providers});
 
-/// Counts what the Core was handed, overwrites included, rather than what the
+/// Counts what the Core was handed, extensions included, rather than what the
 /// profile file declares.
 ConfigCounts configCountsOf(Map<String, dynamic> config) {
   int lengthOf(Object? value) => value is List ? value.length : 0;
@@ -157,7 +157,7 @@ class _ProfileDetailSheetState extends ConsumerState<ProfileDetailSheet> {
           ),
         IconButtonData(
           glyph: AppGlyphs.eye,
-          tooltip: appLocalizations.preview,
+          tooltip: appLocalizations.finalConfig,
           onPressed: () => _handlePreview(profile),
         ),
       ],
@@ -193,10 +193,11 @@ class _ProfileDetailSheetState extends ConsumerState<ProfileDetailSheet> {
                   lastUpdateDate: profile.lastUpdateDate,
                 ),
               ),
-              _InfoRow(
-                label: appLocalizations.overrideMode,
-                value: Text(_overwriteLabel(context, profile.overwriteType)),
-              ),
+              if (profile.type != ProfileType.custom)
+                _InfoRow(
+                  label: appLocalizations.extendMode,
+                  value: Text(_extendLabel(context, profile.extendType)),
+                ),
             ],
           ),
           if (providers.isNotEmpty)
@@ -213,11 +214,10 @@ class _ProfileDetailSheetState extends ConsumerState<ProfileDetailSheet> {
   }
 }
 
-String _overwriteLabel(BuildContext context, OverwriteType type) {
+String _extendLabel(BuildContext context, ExtendType type) {
   return switch (type) {
-    OverwriteType.standard => context.appLocalizations.standard,
-    OverwriteType.script => context.appLocalizations.script,
-    OverwriteType.custom => context.appLocalizations.overwriteTypeCustom,
+    ExtendType.standard => context.appLocalizations.standard,
+    ExtendType.script => context.appLocalizations.script,
   };
 }
 
@@ -233,7 +233,7 @@ class _StatsGrid extends StatelessWidget {
     final stats = this.stats;
     final tiles = [
       (appLocalizations.proxyGroup, stats?.groups),
-      (appLocalizations.proxyNode, stats?.proxies),
+      (appLocalizations.proxies, stats?.proxies),
       (appLocalizations.rules, stats?.rules),
       (appLocalizations.providers, stats?.providers),
     ];

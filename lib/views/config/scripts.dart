@@ -67,17 +67,10 @@ class _ScriptsViewState extends ConsumerState<ScriptsView> {
         ).copyWith(top: context.contentTopPadding),
         buildDefaultDragHandles: false,
         itemCount: scripts.length,
-        itemBuilder: (_, index) {
-          final script = scripts[index];
-          return ReorderableDelayedDragStartListener(
-            key: ValueKey(script.id),
-            index: index,
-            child: _buildItem(script, index, scripts.length),
-          );
-        },
+        itemBuilder: (_, index) => _buildItem(scripts, index),
         proxyDecorator: (_, index, animation) {
           return commonProxyDecorator(
-            _buildItem(scripts[index], index, scripts.length),
+            _buildItem(scripts, index),
             index,
             animation,
           );
@@ -87,31 +80,77 @@ class _ScriptsViewState extends ConsumerState<ScriptsView> {
     );
   }
 
-  Widget _buildItem(Script script, int index, int length) {
-    return ItemPositionProvider(
-      position: ItemPosition.get(index, length),
-      child: DecorationListItem(
-        minVerticalPadding: 0,
-        contentPadding: const EdgeInsets.only(left: 16, right: 6),
-        title: _ScriptItemTitle(script: script),
-        trailing: _ScriptItemMenu(
-          script: script,
-          onEdit: () {
-            _handleToEditor(script);
-          },
-          onEditUrl: () {
-            _handleEditUrl(script);
-          },
-          onUpdate: () {
-            _handleUpdate(script);
-          },
-          onDelete: () {
-            _handleDelete(script);
-          },
-        ),
+  List<CommonPopupMenuItem> _buildMenuItems(Script script) {
+    final appLocalizations = context.appLocalizations;
+    return [
+      CommonPopupMenuItem(
+        glyph: AppGlyphs.edit,
+        label: appLocalizations.edit,
         onPressed: () {
           _handleToEditor(script);
         },
+      ),
+      if (script.url != null) ...[
+        CommonPopupMenuItem(
+          glyph: AppGlyphs.link,
+          label: appLocalizations.url,
+          onPressed: () {
+            _handleEditUrl(script);
+          },
+        ),
+        CommonPopupMenuItem(
+          glyph: AppGlyphs.sync,
+          label: appLocalizations.sync,
+          onPressed: () {
+            _handleUpdate(script);
+          },
+        ),
+      ],
+      CommonPopupMenuItem(
+        danger: true,
+        glyph: AppGlyphs.delete,
+        label: appLocalizations.delete,
+        onPressed: () {
+          _handleDelete(script);
+        },
+      ),
+    ];
+  }
+
+  Widget _buildItem(List<Script> scripts, int index) {
+    final script = scripts[index];
+    return SortableItem(
+      key: ValueKey(script.id),
+      index: index,
+      child: Consumer(
+        builder: (_, ref, child) => ContextMenuRegion(
+          menuItems: ref.watch(isUpdatingProvider(script.updatingKey))
+              ? null
+              : _buildMenuItems(script),
+          child: child!,
+        ),
+        child: ItemPositionProvider(
+          position: ItemPosition.get(index, scripts.length),
+          child: DecorationListItem(
+            contentPadding: const EdgeInsets.only(left: 16),
+            leading: GlyphIcon(
+              script.url != null ? AppGlyphs.cloud : AppGlyphs.file,
+            ),
+            title: Text(
+              script.label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            subtitle: LastUpdateTimeText(
+              lastUpdateDate: script.lastUpdateTime,
+              style: context.listCaptionStyle,
+            ),
+            trailing: _ScriptTrailing(script: script),
+            onPressed: () {
+              _handleToEditor(script);
+            },
+          ),
+        ),
       ),
     );
   }
@@ -303,16 +342,18 @@ class _ScriptsViewState extends ConsumerState<ScriptsView> {
     final scripts = scriptsState.value ?? [];
     final isLoading = ref.watch(loadingProvider(LoadingTag.scripts));
     return CommonScaffold(
+      canSort: scripts.length > 1,
       isLoading: isLoading,
       actions: [
         CommonPopupBox(
           targetBuilder: (open) {
-            return FilledButton.tonal(
+            return IconButton(
+              tooltip: appLocalizations.add,
               onPressed: () {
                 final isMobile = ref.read(isMobileViewProvider);
                 open(offset: Offset(0, isMobile ? 0 : 20));
               },
-              child: Text(appLocalizations.add),
+              icon: const GlyphIcon(AppGlyphs.addCircle),
             );
           },
           popupBuilder: (_) => CommonPopupMenu(
@@ -342,115 +383,25 @@ class _ScriptsViewState extends ConsumerState<ScriptsView> {
   }
 }
 
-class _ScriptItemTitle extends StatelessWidget {
-  const _ScriptItemTitle({required this.script});
+class _ScriptTrailing extends ConsumerWidget {
+  const _ScriptTrailing({required this.script});
 
   final Script script;
-
-  @override
-  Widget build(BuildContext context) {
-    final style = DefaultTextStyle.of(context).style;
-    return Align(
-      alignment: AlignmentDirectional.centerStart,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            script.label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: style.copyWith(
-              fontSize: context.textTheme.bodyLarge?.fontSize,
-            ),
-          ),
-          if (script.url != null)
-            LastUpdateTimeText(
-              lastUpdateDate: script.lastUpdateTime,
-              style: style.copyWith(
-                fontSize: context.textTheme.bodySmall?.fontSize,
-                color: style.color?.opacity60,
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ScriptItemMenu extends ConsumerWidget {
-  const _ScriptItemMenu({
-    required this.script,
-    required this.onEdit,
-    required this.onEditUrl,
-    required this.onUpdate,
-    required this.onDelete,
-  });
-
-  final Script script;
-  final VoidCallback onEdit;
-  final VoidCallback onEditUrl;
-  final VoidCallback onUpdate;
-  final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final appLocalizations = context.appLocalizations;
     final isUpdating = ref.watch(isUpdatingProvider(script.updatingKey));
     return SizedBox.square(
-      dimension: 40,
+      dimension: kMinInteractiveDimension,
       child: FadeThroughBox(
         alignment: Alignment.center,
         child: isUpdating
             ? const Padding(
                 key: ValueKey('loading'),
-                padding: EdgeInsets.all(8),
+                padding: EdgeInsets.all(12),
                 child: CommonCircleLoading(),
               )
-            : CommonPopupBox(
-                key: const ValueKey('menu'),
-                popupBuilder: (_) => CommonPopupMenu(
-                  items: [
-                    CommonPopupMenuItem(
-                      glyph: AppGlyphs.edit,
-                      label: appLocalizations.edit,
-                      onPressed: onEdit,
-                    ),
-                    if (script.url != null) ...[
-                      CommonPopupMenuItem(
-                        glyph: AppGlyphs.link,
-                        label: appLocalizations.url,
-                        onPressed: onEditUrl,
-                      ),
-                      CommonPopupMenuItem(
-                        glyph: AppGlyphs.sync,
-                        label: appLocalizations.sync,
-                        onPressed: onUpdate,
-                      ),
-                    ],
-                    CommonPopupMenuItem(
-                      danger: true,
-                      glyph: AppGlyphs.delete,
-                      label: appLocalizations.delete,
-                      onPressed: onDelete,
-                    ),
-                  ],
-                ),
-                targetBuilder: (open) {
-                  return IconButton(
-                    style: IconButton.styleFrom(
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      visualDensity: VisualDensity.standard,
-                    ),
-                    tooltip: appLocalizations.more,
-                    onPressed: () {
-                      open();
-                    },
-                    icon: const GlyphIcon(AppGlyphs.more),
-                  );
-                },
-              ),
+            : const DisclosureIndicator(key: ValueKey('open')),
       ),
     );
   }

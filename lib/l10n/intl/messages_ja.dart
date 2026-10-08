@@ -313,6 +313,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "cameraUnavailable": MessageLookupByLibrary.simpleMessage("カメラを使用できません"),
     "cancel": MessageLookupByLibrary.simpleMessage("キャンセル"),
     "cancelSelectAll": MessageLookupByLibrary.simpleMessage("すべて選択解除"),
+    "cannotSave": MessageLookupByLibrary.simpleMessage("保存できません"),
     "changeProxyFailedTip": MessageLookupByLibrary.simpleMessage(
       "プロキシの切り替えに失敗したため、前回の選択に戻しました",
     ),
@@ -753,17 +754,29 @@ class MessageLookup extends MessageLookupByLibrary {
     "interval": MessageLookupByLibrary.simpleMessage("間隔"),
     "intranetIP": MessageLookupByLibrary.simpleMessage("イントラネットIP"),
     "invalidBackupFile": MessageLookupByLibrary.simpleMessage("無効なバックアップファイル"),
+    "invalidCidrContent": MessageLookupByLibrary.simpleMessage(
+      "192.168.0.0/16 のような CIDR 形式の IP 範囲を入力してください",
+    ),
     "invalidDscpContent": MessageLookupByLibrary.simpleMessage(
       "DSCP マークは 63 を超えられません",
+    ),
+    "invalidHostContent": MessageLookupByLibrary.simpleMessage(
+      "ドメインまたは IP アドレスを入力してください",
     ),
     "invalidIconSet": MessageLookupByLibrary.simpleMessage("有効なアイコンセットではありません"),
     "invalidLinkTip": MessageLookupByLibrary.simpleMessage(
       "サブスクリプションリンクまたはプロキシの共有リンクではありません",
     ),
+    "invalidListenContent": MessageLookupByLibrary.simpleMessage(
+      "0.0.0.0:1053 のようなアドレスとポートを入力してください",
+    ),
     "invalidNetworkContent": MessageLookupByLibrary.simpleMessage(
       "tcp または udp のみ対応しています",
     ),
     "invalidPolicy": m31,
+    "invalidPortRangeContent": MessageLookupByLibrary.simpleMessage(
+      "443 や 8000-9000 のようなポートまたは範囲を入力してください",
+    ),
     "invalidProfileQrcode": MessageLookupByLibrary.simpleMessage(
       "このQRコードにはプロファイルのリンクが含まれていません",
     ),
@@ -1414,6 +1427,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "tproxyPort": MessageLookupByLibrary.simpleMessage("TProxyポート"),
     "trafficUsage": MessageLookupByLibrary.simpleMessage("トラフィック統計"),
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
+    "tunAuthorizationFailed": MessageLookupByLibrary.simpleMessage(
+      "TUN の権限を取得できなかったため、オフにしました。",
+    ),
     "tunDesc": MessageLookupByLibrary.simpleMessage("TUN は管理者モードでのみ有効です。"),
     "turnOff": MessageLookupByLibrary.simpleMessage("オフにする"),
     "turnOn": MessageLookupByLibrary.simpleMessage("オンにする"),

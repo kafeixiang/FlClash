@@ -386,6 +386,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "cancel": MessageLookupByLibrary.simpleMessage("Отмена"),
     "cancelSelectAll": MessageLookupByLibrary.simpleMessage("Снять выделение"),
+    "cannotSave": MessageLookupByLibrary.simpleMessage("Не удалось сохранить"),
     "changeProxyFailedTip": MessageLookupByLibrary.simpleMessage(
       "Не удалось переключить прокси; восстановлен предыдущий выбор",
     ),
@@ -923,8 +924,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "invalidBackupFile": MessageLookupByLibrary.simpleMessage(
       "Недопустимый файл резервной копии",
     ),
+    "invalidCidrContent": MessageLookupByLibrary.simpleMessage(
+      "Введите диапазон IP в формате CIDR, например 192.168.0.0/16",
+    ),
     "invalidDscpContent": MessageLookupByLibrary.simpleMessage(
       "Метка DSCP не может превышать 63",
+    ),
+    "invalidHostContent": MessageLookupByLibrary.simpleMessage(
+      "Введите домен или IP-адрес",
     ),
     "invalidIconSet": MessageLookupByLibrary.simpleMessage(
       "Это не набор значков",
@@ -932,10 +939,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "invalidLinkTip": MessageLookupByLibrary.simpleMessage(
       "Это не ссылка на подписку и не ссылка на прокси",
     ),
+    "invalidListenContent": MessageLookupByLibrary.simpleMessage(
+      "Введите адрес и порт, например 0.0.0.0:1053",
+    ),
     "invalidNetworkContent": MessageLookupByLibrary.simpleMessage(
       "Поддерживаются только tcp и udp",
     ),
     "invalidPolicy": m31,
+    "invalidPortRangeContent": MessageLookupByLibrary.simpleMessage(
+      "Введите порт или диапазон, например 443 или 8000-9000",
+    ),
     "invalidProfileQrcode": MessageLookupByLibrary.simpleMessage(
       "Этот QR-код не содержит ссылку на профиль",
     ),
@@ -1738,6 +1751,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "tproxyPort": MessageLookupByLibrary.simpleMessage("Порт TProxy"),
     "trafficUsage": MessageLookupByLibrary.simpleMessage("Статистика трафика"),
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
+    "tunAuthorizationFailed": MessageLookupByLibrary.simpleMessage(
+      "Не удалось получить права для TUN, поэтому он выключен.",
+    ),
     "tunDesc": MessageLookupByLibrary.simpleMessage(
       "TUN работает только в режиме администратора.",
     ),

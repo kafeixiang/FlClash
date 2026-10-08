@@ -52,7 +52,7 @@ class TrackerInfoItem extends ConsumerWidget {
     );
     return RecordListItem(
       onTap: () {
-        showExtend(
+        showSheetPageOrExtend<void>(
           context,
           builder: (_) {
             return CommonScaffold(

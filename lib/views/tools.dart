@@ -35,19 +35,6 @@ class _ToolViewState extends ConsumerState<ToolsView> {
     );
   }
 
-  Widget _buildNavigationMenu(List<NavigationItem> navigationItems) {
-    return Column(
-      children: [
-        for (final navigationItem in navigationItems) ...[
-          _buildNavigationMenuItem(navigationItem),
-          navigationItems.last != navigationItem
-              ? const Divider(height: 0)
-              : Container(),
-        ],
-      ],
-    );
-  }
-
   List<Widget> _getOtherList(bool enableDeveloperMode) {
     return generateSection(
       title: context.appLocalizations.other,
@@ -89,10 +76,10 @@ class _ToolViewState extends ConsumerState<ToolsView> {
             return Container();
           }
           return Column(
-            children: [
-              ListHeader(title: context.appLocalizations.more),
-              _buildNavigationMenu(state.navigationItems),
-            ],
+            children: generateSection(
+              title: context.appLocalizations.more,
+              items: state.navigationItems.map(_buildNavigationMenuItem),
+            ),
           );
         },
       ),
@@ -101,13 +88,15 @@ class _ToolViewState extends ConsumerState<ToolsView> {
     ];
     return CommonScaffold(
       title: context.appLocalizations.tools,
-      body: ListView.builder(
-        key: toolsStoreKey,
-        itemCount: items.length,
-        itemBuilder: (_, index) => items[index],
-        padding: EdgeInsets.only(
-          top: context.appBarInset,
-          bottom: 20 + BottomInsetScope.of(context),
+      body: Builder(
+        builder: (context) => ListView.builder(
+          key: toolsStoreKey,
+          itemCount: items.length,
+          itemBuilder: (_, index) => items[index],
+          padding: EdgeInsets.only(
+            top: context.appBarInset,
+            bottom: 20 + BottomInsetScope.of(context),
+          ),
         ),
       ),
     );

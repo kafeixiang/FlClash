@@ -657,14 +657,25 @@ void main() {
       );
     });
 
-    test('a failed authorization continues but stays unauthorized', () async {
+    test('a failed authorization turns tun off and asks again on the next '
+        'enable', () async {
+      await AppLocalizations.load(const Locale('en'));
+      container
+          .read(patchClashConfigProvider.notifier)
+          .update((state) => state.copyWith.tun(enable: true));
       action.authorizeResult = AuthorizeCode.error;
 
       expect(await action.requestAdmin(true), isTrue);
+      expect(container.read(patchClashConfigProvider).tun.enable, isFalse);
       expect(
         container.read(authorizedTunEnableProvider),
-        TunAuthorizationState.unauthorized,
+        TunAuthorizationState.none,
       );
+
+      action.authorizeResult = AuthorizeCode.success;
+
+      expect(await action.requestAdmin(true), isFalse);
+      expect(action.authorizeCalls, 2);
     });
   });
 
@@ -1141,6 +1152,9 @@ void main() {
       scoped.invalidate(setupStateProvider);
       await leaveEditor();
       verify(() => core.getConfig(any())).called(1);
+      // Queued behind the rebuild: one that outlasts the pump would compare
+      // against the md5 tearDown resets and push into a disposed container.
+      await setupAction.applyProfile();
     });
 
     test('a custom profile declares only the proxies and providers it names, '
