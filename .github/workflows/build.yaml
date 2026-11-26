@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/v') }}
 
 env:
-  IS_STABLE: ${{ !contains(github.ref, '-') }}
+  IS_STABLE: ${{ startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '-') }}
   # See CI Caches in .agents/commands.md.
   BRANCH_CACHE: ${{ !startsWith(github.ref, 'refs/tags/') }}
   FLUTTER_VERSION: '3.50.1'
@@ -339,8 +339,7 @@ jobs:
 
   version:
     name: Version
-    # Releases publish where the release links point: the public repository.
-    if: &release github.repository == 'chen08209/FlClash' && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push'
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.tag.outputs.version }}
@@ -357,21 +356,23 @@ jobs:
         env:
           TAG: ${{ github.ref_name }}
         run: |
-          if [[ ! "$TAG" =~ ^v([0-9]+\.[0-9]+\.[0-9]+)(-pre\.[0-9]+(\+[0-9]+)?)?$ ]]; then
-            echo "::error::$TAG is neither vX.Y.Z nor vX.Y.Z-pre.N[+M]"
-            exit 1
+          if [[ "$TAG" =~ ^v([0-9]+\.[0-9]+\.[0-9]+)(-pre\.[0-9]+(\+[0-9]+)?)?$ ]]; then
+            name="${BASH_REMATCH[1]}"
+            committed="$(sed -n 's/^version: .*+\([0-9]*\)$/\1/p' pubspec.yaml)"
+            build="$(date -u +%Y%m%d%H)"
+            if ((build <= ${committed:-0})); then
+              build=$((committed + 1))
+            fi
+            echo "version=$name+$build" >> "$GITHUB_OUTPUT"
+            echo "$TAG builds $name+$build"
+          else
+            version="$(sed -n 's/^version: //p' pubspec.yaml)"
+            echo "version=$version" >> "$GITHUB_OUTPUT"
+            echo "Non-tag $TAG uses $version"
           fi
-          name="${BASH_REMATCH[1]}"
-          committed="$(sed -n 's/^version: .*+\([0-9]*\)$/\1/p' pubspec.yaml)"
-          build="$(date -u +%Y%m%d%H)"
-          if ((build <= ${committed:-0})); then
-            build=$((committed + 1))
-          fi
-          echo "version=$name+$build" >> "$GITHUB_OUTPUT"
-          echo "$TAG builds $name+$build"
 
   build:
-    if: *release
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push'
     needs: version
     runs-on: ${{ matrix.os }}
     strategy:
@@ -416,6 +417,7 @@ jobs:
           submodules: recursive
 
       - name: Apply the tag's version
+        if: startsWith(github.ref, 'refs/tags/v')
         shell: bash
         env:
           VERSION: ${{ needs.version.outputs.version }}
@@ -500,7 +502,7 @@ jobs:
           # The setup hook builds the Core for the host slice only, so an x86_64 slice in the arm64 app cannot run.
           FLUTTER_MACOS_ARM64_ONLY: ${{ matrix.platform == 'macos' && matrix.arch == 'arm64' }}
         # `dart run` first runs every build hook for this runner, Linux GTK and the Go core included; the packager builds them for the target itself.
-        run: dart tool/package.dart ${{ matrix.platform }} ${{ env.IS_STABLE == 'true' && '--env stable' || '' }} -v
+        run: dart tool/package.dart ${{ matrix.platform }} --env stable -v
 
       - name: Upload
         uses: actions/upload-artifact@v4
@@ -510,6 +512,7 @@ jobs:
           overwrite: true
 
   upload:
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: write
     needs: [ version, build, dart, plugins, go, android, rust, windows-helper-test ]
@@ -613,27 +616,7 @@ jobs:
           commit-message: Update Homebrew cask from ${{ github.ref_name }}
           target-directory: /
 
-      - name: Create Fdroid Source Dir
-        if: ${{ env.IS_STABLE == 'true' }}
-        run: |
-          mkdir -p ./tmp
-          apk=$(jq -er '.artifacts[] | select(.os == "android" and .arch == "arm64") | .name' dist/manifest.json)
-          cp "./dist/$apk" ./tmp/
 
-      - name: Push to fdroid repo
-        if: ${{ env.IS_STABLE == 'true' }}
-        uses: cpina/github-action-push-to-another-repository@v1.7.2
-        env:
-          SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
-        with:
-          source-directory: ./tmp/
-          destination-github-username: chen08209
-          destination-repository-name: FlClash-fdroid-repo
-          user-name: 'chen08029'
-          user-email: 'chen08209@gmail.com'
-          target-branch: main
-          commit-message: Update from ${{ github.ref_name }}
-          target-directory: /tmp/
 
       # After the packages, so a failed post holds none of them back.
       - name: Post to Telegram
